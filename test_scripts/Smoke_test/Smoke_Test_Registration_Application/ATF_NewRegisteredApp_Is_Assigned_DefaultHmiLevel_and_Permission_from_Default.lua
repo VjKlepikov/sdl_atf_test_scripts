@@ -6,7 +6,9 @@
 -- on any PTU trigger. Ford-specific and EXTERNAL_PROPRIETARY exception:
 -- No notification should be sent on user requested PTU from HMI (via SDL.UpdateSDL request).
 
--- Precondition: SDL is started at the 1st life cycle
+-- Precondition:
+-- 1. App is configured to do not reply for OnSystemRequest.
+-- 2. Device is consented
 
 -- Steps:
 -- 1. Register new App
