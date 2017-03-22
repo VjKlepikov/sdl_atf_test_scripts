@@ -3,10 +3,7 @@
 -- [APPLINK-22374]:[Policies]: Creation of LocalPT from PreloadedPT
 
 -- Description:
--- In case the Local Table does not yet exist (as a result of first SDL run or Master Reset)
--- PoliciesManager must create the Local PT from the Preloaded PT.
--- PoliciesManager must populate the LocalPT with items (that is, sections, sub-sections and fields)
--- defined as 'required' in Data Dictionary 043 under "PT Snapshot" column.
+-- Check that SDL create policy DB from sdl_preload_pt.json on 1st start
 
 -- Preconditions: SDL was never started before, policy DB absent on file system
 

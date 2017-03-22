@@ -2,10 +2,9 @@
 -- Requirement summary:
 -- [APPLINK-16839]: [Policies] HMI Levels the request is allowed to be processed in (multiple functional groups)
 
--- Description: In case the RPC is listed under more than one functional group in "functional_groupings" section
--- of Policy Table, Policy Manager must perform a logical
--- OR among all of the possible allowed permissions scenarios
--- for the RPC (and parameter/or HMI level) defined by each of the functional groups.
+-- Description: 
+-- Check that SDL verifies every App's request before processing it using appropriate 
+-- group of permissions
 
 -- Precondition: App is registered and has default permissions
 

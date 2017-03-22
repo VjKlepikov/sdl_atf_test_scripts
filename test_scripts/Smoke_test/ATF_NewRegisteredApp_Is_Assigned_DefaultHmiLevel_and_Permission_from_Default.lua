@@ -1,13 +1,12 @@
 ---------------------------------------------------------------------------------------------
 -- Requirement summary:
--- APPLINK-22733]: [Policies] "default" policies assigned to the application and "priority" value
---[APPLINK-19072]: [PolicyTableUpdate] OnStatusUpdate(UPDATE_NEEDED) on new PTU request
+-- [APPLINK-22733]: [Policies] "default" policies assigned to the application and "priority" value
+-- [APPLINK-19072]: [PolicyTableUpdate] OnStatusUpdate(UPDATE_NEEDED) on new PTU request
 
--- Description: PoliciesManager must:
--- Adds new appIDs to local policy table;
--- Send OnHMIStatus with default hmi level to mobile
--- Send OnPermissionsChange with RPCs from default section to mobile
--- Start PTU process
+-- Description: Check that SDL:
+-- adds new appIDs to local policy table
+-- sends OnHMIStatus with default hmi level
+-- sends OnPermissionChange with RPCs from default
 
 -- Precondition:
 -- 1. Device is consented

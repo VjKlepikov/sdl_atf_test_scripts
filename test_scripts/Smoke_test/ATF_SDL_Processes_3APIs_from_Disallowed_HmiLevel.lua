@@ -2,10 +2,9 @@
 -- Requirement summary:
 -- [APPLINK-16833]:DISALLOWED in case app's current HMI Level is not listed in assigned policies
 
--- Description: In case Policy Table doesn't contain current application's HMILevel
--- defined in Policy Table "functional_groupings" section for a specified RPC,
--- PoliciesManager must return DISALLOWED resultCode and success:"false"
--- to this RPC requested by the application.
+-- Description: 
+-- Check that SDL verifies every App's request before processing it using appropriate 
+-- group of permissions
 
 -- Precondition: App is registered and has default permissions
 

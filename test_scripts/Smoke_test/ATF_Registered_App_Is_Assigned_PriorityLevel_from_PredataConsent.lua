@@ -1,9 +1,10 @@
 ---------------------------------------------------------------------------------------------
 -- Requirement summary:
--- [APPLINK-22733]: [Policies] "default" policies assigned to the application and "priority" value
+-- [APPLINK-23203]: [Policies]  "pre_DataConsent" policies  assigned to the application and "priority" value
 
--- Description: In case the "default" policies are assigned to the application,
--- PoliciesManager must provide to HMI the app`s priority value taken from "priority" field in "default" section of PolicyTable.
+-- Description: 
+-- Check that SDL assigns correct Priority level (from "pre_DataConsent" section)
+-- to all registered mobile applications
 
 -- Precondition: SDL is started at the 1st life cycle
 
@@ -28,8 +29,8 @@ function Test:Delete_Policy_Table()
 end
 common_steps:PreconditionSteps("PreconditionSteps", 6)
 
-local default_priority = common_functions:GetParameterValueInJsonFile
-(config.pathToSDL.."sdl_preloaded_pt.json", {"policy_table", "app_policies", "default", "priority"})
+local preDataConsent_priority = common_functions:GetParameterValueInJsonFile
+(config.pathToSDL.."sdl_preloaded_pt.json", {"policy_table", "app_policies", "pre_DataConsent", "priority"})
 ---------------------------------------- Steps ----------------------------------------------
 common_steps:UnregisterApp("Unregister_Application", const.default_app_name)
 
@@ -37,7 +38,7 @@ function Test:Verify_Registered_App_Is_Assigned_PriorityLevel_from_PredataConsen
   local app_name = config.application1.registerAppInterfaceParams.appName
   local app_id = config.application1.registerAppInterfaceParams.appID
   local cid = self.mobileSession:SendRPC("RegisterAppInterface", config.application1.registerAppInterfaceParams)
-  EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", {application = {appName = app_name}, priority = default_priority})
+  EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", {application = {appName = app_name}, priority = preDataConsent_priority})
   EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 end
 
