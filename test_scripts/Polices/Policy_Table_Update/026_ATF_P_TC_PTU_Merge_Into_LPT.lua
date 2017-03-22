@@ -26,6 +26,7 @@ config.deviceMAC = "12ca17b49af2289436f303e0166030a21e525d266e209267433801a8fd40
 local json = require("modules/json")
 local mobileSession = require("mobile_session")
 local commonFunctions = require("user_modules/shared_testcases_genivi/commonFunctions")
+local fsCommonFunctions = require('user_modules/common_functions')
 local commonSteps = require("user_modules/shared_testcases_genivi/commonSteps")
 local testCasesForPolicyTable = require('user_modules/shared_testcases_genivi/testCasesForPolicyTable')
 
@@ -133,6 +134,9 @@ end
 function Test:TestStep_ValidateResult()
   self.mobileSession:ExpectAny()
   :ValidIf(function(_, _)
+      local parent_item = {"policy_table", "module_config"}
+      local item_to_remove = {"preloaded_date"}
+      fsCommonFunctions:RemoveItemsFromJsonFile(policy_file_path .. "/sdl_snapshot.json", parent_item, item_to_remove)
       local pts = json_to_table(policy_file_path .. "/sdl_snapshot.json")
       local ptu = json_to_table(ptu_file)
       -- Reconcile expected vs actual
