@@ -3,16 +3,21 @@
 -- [Policies] "usage_and_error_counts" and "count_sync_out_of_memory" update
 --
 -- Check SDL behavior in case got SDL.OnSystemError("SYNC_OUT_OF_MEMORY ")
--- 1. Used preconditions:
--- Start default SDL
--- InitHMI register MobileApp
+-- Used preconditions:
+-- 1) Preconditions, start SDL (policy database will be created from preloaded_pt)
+-- 2) Stop SDL
 --
--- 2. Performed steps:
--- Send DL.OnSystemError("SYNC_OUT_OF_MEMORY ") from HMI
--- Check LocalPT changes
+-- Performed steps:
+-- 1) Start SDL 2nd time ("usage_and_error_counts" and "count_sync_out_of_memory" will be loaded and equal to 0)
+-- 2) Send OnSystemError with SYNC_OUT_OF_MEMORY 4 times
+-- 3) Stop SDL 2nd time ("count_sync_out_of_memory" will be saved to DB and equal to 4)
+-- 4) Start SDL 3rd time ("count_sync_out_of_memory" will be loaded and equal to 4)
+-- 5) Send OnSystemError with SYNC_OUT_OF_MEMORY 5 times
+-- 6) Stop SDL 3rd time ("count_sync_out_of_memory" will be saved to DB and equal to 9)
+-- 7) Check "count_sync_out_of_memory"
 --
 -- Expected result:
--- SDL must: increment "count_sync_out_of_memory" section value of Local Policy Table.
+-- "count_sync_out_of_memory" value of Local Policy Table equals to 9
 ---------------------------------------------------------------------------------------------
 
 --[[ General configuration parameters ]]
@@ -192,18 +197,12 @@ function Test:Precondition()
   TestData:init(self)
 end
 
---[[ Test ]]
-commonFunctions:newTestCasesGroup("Test")
-function Test:HMIsendOnSystemError()
-  for _ = 1, 5 do
-    os.execute("sleep 2")
-    self:onSystemError("SYNC_OUT_OF_MEMMORY")
-  end
-end
-
 function Test:StopSDL()
   StopSDL(self)
 end
+
+--[[ Test ]]
+commonFunctions:newTestCasesGroup("Test")
 
 function Test:StartSDL2()
   StartSDL(config.pathToSDL, config.ExitOnCrash, self)
@@ -218,13 +217,37 @@ function Test:InitHMI_OnReady2()
 
 end
 function Test:HMIsendOnSystemError2()
-  for _ = 1, 4 do
+  for _ = 1, 4 do    
+    self:onSystemError("SYNC_OUT_OF_MEMORY")
     commonTestCases:DelayedExp(2000)
-    self:onSystemError("SYNC_OUT_OF_MEMMORY")
   end
 end
 
 function Test:StopSDL2()
+  StopSDL(self)
+end
+
+
+function Test:StartSDL3()
+  StartSDL(config.pathToSDL, config.ExitOnCrash, self)
+end
+
+function Test:InitHMI3()
+  self:initHMI()
+end
+
+function Test:InitHMI_OnReady3()
+  self:initHMI_onReady()
+
+end
+function Test:HMIsendOnSystemError3()
+  for _ = 1, 5 do    
+    self:onSystemError("SYNC_OUT_OF_MEMORY")
+    commonTestCases:DelayedExp(2000)
+  end
+end
+
+function Test:StopSDL3()
   StopSDL(self)
 end
 
@@ -254,5 +277,3 @@ function Test.Postcondition()
   commonSteps:DeletePolicyTable()
   TestData:info()
 end
-
-return Test
