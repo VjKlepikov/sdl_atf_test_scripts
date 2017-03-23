@@ -1,8 +1,8 @@
 ---------------------------------------------------------------------------------------------
 -- Requirement summary:
--- [APPLINK-23203]: [Policies]  "pre_DataConsent" policies  assigned to the application and "priority" value
+-- [APPLINK-23203]: [Policies] "pre_DataConsent" policies assigned to the application and "priority" value
 
--- Description: 
+-- Description:
 -- Check that SDL assigns correct Priority level (from "pre_DataConsent" section)
 -- to all registered mobile applications
 
@@ -24,13 +24,8 @@
 require('user_modules/all_common_modules')
 
 ------------------------------------ Precondition -------------------------------------------
-function Test:Delete_Policy_Table()
-  common_functions:DeletePolicyTable()
-end
-common_steps:PreconditionSteps("PreconditionSteps", 6)
+common_steps:PreconditionSteps("PreconditionSteps", const.precondition.REGISTER_APP)
 
-local preDataConsent_priority = common_functions:GetParameterValueInJsonFile
-(config.pathToSDL.."sdl_preloaded_pt.json", {"policy_table", "app_policies", "pre_DataConsent", "priority"})
 ---------------------------------------- Steps ----------------------------------------------
 common_steps:UnregisterApp("Unregister_Application", const.default_app_name)
 

@@ -2,11 +2,12 @@
 -- Requirement summary:
 -- [APPLINK-16839]: [Policies] HMI Levels the request is allowed to be processed in (multiple functional groups)
 
--- Description: 
--- Check that SDL verifies every App's request before processing it using appropriate 
+-- Description:
+-- Check that SDL verifies every App's request before processing it using appropriate
 -- group of permissions
 
 -- Precondition: App is registered and has default permissions
+-- AddCommand, DeleteCommand, PutFile APIs are assigned to default permissions with FULL hmi_levels
 
 -- Steps:
 -- 1. Send 3 APIs from allowed levels with valid parameters
@@ -19,7 +20,7 @@ require('user_modules/all_common_modules')
 
 ---------------------------- Variables and Common function ----------------------------------
 local path_sdl_preload_file = config.pathToSDL.."sdl_preloaded_pt.json"
-local removed_item = {"policy_table", "functional_groupings","Base-4","rpcs"}
+local parent_item = {"policy_table", "functional_groupings","Base-4","rpcs"}
 local icon_image_full_path = common_functions:GetFullPathIcon("icon.png")
 local added_items = [[{
   "AddCommand": {
@@ -44,11 +45,8 @@ local added_items = [[{
 
 ------------------------------------ Precondition -------------------------------------------
 common_steps:BackupFile("Precondition_Backup_PreloadedPT", "sdl_preloaded_pt.json")
-function Test:Delete_Policy_Table()
-  common_functions:DeletePolicyTable()
-end
-common_functions:AddItemsIntoJsonFile(path_sdl_preload_file, removed_item, added_items)
-common_steps:PreconditionSteps("PreconditionSteps", 7)
+common_functions:AddItemsIntoJsonFile(path_sdl_preload_file, parent_item, added_items)
+common_steps:PreconditionSteps("PreconditionSteps", const.precondition.ACTIVATE_APP)
 
 ------------------------------------------- Steps -------------------------------------------
 function Test:Verify_PutFile_ALLOWED()

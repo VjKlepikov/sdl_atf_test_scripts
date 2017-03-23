@@ -16,16 +16,12 @@
 -----------------------------Required Shared Libraries---------------------------------------
 require('user_modules/all_common_modules')
 
------------------------------------- Precondition -------------------------------------------
-function Test:Delete_Policy_Table()
-  common_functions:DeletePolicyTable()
-end
-
 ---------------------------------------- Steps ----------------------------------------------
 common_steps:StartSDL("StartSDL")
 
 function Test:Check_SDL_Create_Policy_Table()
-  local exist_flag = common_functions:IsFileExist (config.pathToSDL .. "storage/policy.sqlite")
+  local policy_file = config.pathToSDL .. common_functions:GetValueFromIniFile("AppStorageFolder") .. "/policy.sqlite"
+  local exist_flag = common_functions:IsFileExist (policy_file)
   if exist_flag == false then
     self.FailTestCase()
   end

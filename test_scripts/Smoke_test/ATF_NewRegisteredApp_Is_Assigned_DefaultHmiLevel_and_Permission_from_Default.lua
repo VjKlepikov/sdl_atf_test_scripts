@@ -23,24 +23,24 @@
 
 -----------------------------Required Shared Libraries---------------------------------------
 require('user_modules/all_common_modules')
-local testCasesForPolicyTable = require('user_modules/shared_testcases/testCasesForPolicyTable')
-local testCasesForPolicyTableSnapshot = require('user_modules/shared_testcases_genivi/testCasesForPolicyTableSnapshot')
+local policy = require('user_modules/shared_testcases/testCasesForPolicyTable')
+local snapshot = require('user_modules/shared_testcases_genivi/testCasesForPolicyTableSnapshot')
 
 ------------------------------ Variables and Common Functions -------------------------------
 app = common_functions:CreateRegisterAppParameters(
   {appID = "2", appName = "NAVIGATION", isMediaApplication = false, appHMIType = {"NAVIGATION"}}
 )
-preloaded_file = config.pathToSDL .. "sdl_preloaded_pt.json"
-copied_preload_file = config.pathToSDL .. "update_sdl_preloaded_pt.json"
-parent_item = {"policy_table","app_policies","default","default_hmi"}
-default_hmi = common_functions:GetParameterValueInJsonFile(preloaded_file, parent_item)
+local preloaded_file = config.pathToSDL .. "sdl_preloaded_pt.json"
+local copied_preload_file = config.pathToSDL .. "update_sdl_preloaded_pt.json"
+local parent_item = {"policy_table","app_policies","default","default_hmi"}
+local default_hmi = common_functions:GetParameterValueInJsonFile(preloaded_file, parent_item)
 
 local RPC_Base4 = {}
 local function Get_RPCs()
-  testCasesForPolicyTableSnapshot:extract_preloaded_pt()
-  for i = 1, #testCasesForPolicyTableSnapshot.preloaded_elements do
-    if ( string.sub(testCasesForPolicyTableSnapshot.preloaded_elements[i].name,1,string.len("functional_groupings.Base-4.rpcs.")) == "functional_groupings.Base-4.rpcs." ) then
-      local str = string.match(testCasesForPolicyTableSnapshot.preloaded_elements[i].name, "functional_groupings%.Base%-4%.rpcs%.(%S+)%.%S+%.%S+")
+  snapshot:extract_preloaded_pt()
+  for i = 1, #snapshot.preloaded_elements do
+    if ( string.sub(snapshot.preloaded_elements[i].name,1,string.len("functional_groupings.Base-4.rpcs.")) == "functional_groupings.Base-4.rpcs." ) then
+      local str = string.match(snapshot.preloaded_elements[i].name, "functional_groupings%.Base%-4%.rpcs%.(%S+)%.%S+%.%S+")
 
       if(#RPC_Base4 == 0) then
         RPC_Base4[#RPC_Base4 + 1] = str
@@ -55,11 +55,6 @@ end
 Get_RPCs()
 
 ------------------------------------ Precondition -------------------------------------------
-
-function Test:Delete_Policy_Table()
-  common_functions:DeletePolicyTable()
-end
-
 function Test:Create_PTU_file()
   os.execute(" cp " .. preloaded_file .. " " .. copied_preload_file)
   local parent_item = {"policy_table","module_config"}
@@ -67,9 +62,9 @@ function Test:Create_PTU_file()
   common_functions:RemoveItemsFromJsonFile(copied_preload_file, parent_item, removed_json_items)
 end
 
-common_steps:PreconditionSteps("PreconditionSteps", 7)
+common_steps:PreconditionSteps("PreconditionSteps", const.precondition.ACTIVATE_APP)
 
-testCasesForPolicyTable:updatePolicy(copied_preload_file, _, "PreconditionSteps_UpdatePolicy")
+policy:updatePolicy(copied_preload_file, _, "PreconditionSteps_UpdatePolicy")
 
 ---------------------------------------- Steps ----------------------------------------------
 function Test:StartNewSession()
@@ -124,7 +119,6 @@ function Test:Register_NewApp_And_Verify_SDL_Send_Correct_Params_to_HMI()
       if(is_test_fail == true) then
         self:FailTestCase("Test is FAILED. See prints.")
       end
-      common_functions:PrintTable(RPC_Base4)
     end)
 end
 
