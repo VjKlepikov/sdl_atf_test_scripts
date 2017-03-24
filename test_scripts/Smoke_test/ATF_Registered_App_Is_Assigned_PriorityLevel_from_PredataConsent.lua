@@ -23,17 +23,37 @@
 -----------------------------Required Shared Libraries---------------------------------------
 require('user_modules/all_common_modules')
 
+------------------------------Variables and Functions----------------------------------------
+local mobile_session_name = "mobileSession"
+
 ------------------------------------ Precondition -------------------------------------------
-common_steps:PreconditionSteps("PreconditionSteps", const.precondition.REGISTER_APP)
-
+local preDataConsent_priority = common_functions:GetParameterValueInJsonFile
+(config.pathToSDL.."sdl_preloaded_pt.json", {"policy_table", "app_policies", "pre_DataConsent", "priority"})
 ---------------------------------------- Steps ----------------------------------------------
-common_steps:UnregisterApp("Unregister_Application", const.default_app_name)
+common_steps:PreconditionSteps("PreconditionSteps", const.precondition.ADD_MOBILE_SESSION)
 
-function Test:Verify_Registered_App_Is_Assigned_PriorityLevel_from_PredataConsent()
-  local app_name = config.application1.registerAppInterfaceParams.appName
-  local app_id = config.application1.registerAppInterfaceParams.appID
-  local cid = self.mobileSession:SendRPC("RegisterAppInterface", config.application1.registerAppInterfaceParams)
-  EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", {application = {appName = app_name}, priority = preDataConsent_priority})
+function Test:Verify_App1_Is_Assigned_PriorityLevel_from_PredataConsent()
+  common_functions:StoreApplicationData(mobile_session_name, const.default_app.appName, const.default_app, _, self)
+  local cid = self.mobileSession:SendRPC("RegisterAppInterface", const.default_app)
+  EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", {application = {appName = const.default_app.appName}, priority = preDataConsent_priority})
+  :Do(function(_,data)
+      common_functions:StoreHmiAppId(const.default_app.appName, data.params.application.appID, self)
+    end)
+  EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
+end
+
+common_steps:UnregisterApp("Unregister_Application", const.default_app.appName)
+
+function Test:Verify_App2_Is_Assigned_PriorityLevel_from_PredataConsent()
+  local app = common_functions:CreateRegisterAppParameters(
+    {appID = "2", appName = "NAVIGATION", isMediaApplication = false, appHMIType = {"NAVIGATION"}}
+  )
+  common_functions:StoreApplicationData(mobile_session_name, app.appName, app, _, self)
+  local cid = self.mobileSession:SendRPC("RegisterAppInterface", app)
+  EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", {application = {appName = app.appName}, priority = preDataConsent_priority})
+  :Do(function(_,data)
+      common_functions:StoreHmiAppId(app.appName, data.params.application.appID, self)
+    end)
   EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 end
 

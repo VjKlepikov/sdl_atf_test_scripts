@@ -7,7 +7,7 @@
 -- group of permissions
 
 -- Precondition: App is registered and has default permissions
--- AddSubMenu, Show, PuScrollableMessagetFile APIs are assigned to default permissions
+-- AddSubMenu, Show, ScrollableMessagetFile APIs are assigned to default permissions
 -- that are not allowed in FULL hmi_levels
 
 -- Steps:
