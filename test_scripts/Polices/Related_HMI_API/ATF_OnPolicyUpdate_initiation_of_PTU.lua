@@ -21,6 +21,7 @@ local commonPreconditions = require('user_modules/shared_testcases_genivi/common
 local testCasesForPolicyTable = require('user_modules/shared_testcases_genivi/testCasesForPolicyTable')
 local testCasesForPolicyTableSnapshot = require ('user_modules/shared_testcases_genivi/testCasesForPolicyTableSnapshot')
 local policyTable = require('user_modules/shared_testcases_genivi/testCasesForPolicyTable')
+local const = require('user_modules/consts')
 
 --[[ General Precondition before ATF start ]]
 commonFunctions:cleanup_environment()

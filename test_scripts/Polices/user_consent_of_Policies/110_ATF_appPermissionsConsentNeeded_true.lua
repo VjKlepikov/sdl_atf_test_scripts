@@ -40,6 +40,11 @@ config.defaultProtocolVersion = 2
 Test = require('user_modules/shared_testcases_genivi/connecttest')
 require('cardinalities')
 require('user_modules/AppTypes')
+local common_functions = require('user_modules/common_functions')
+endpoints_rpc_url = common_functions:GetItemsFromJsonFile(
+  config.pathToSDL .. "sdl_preloaded_pt.json",
+  {"policy_table", "module_config", "endpoints", "0x07", "default", 1})
+
 
 --[[ Preconditions ]]
 commonFunctions:newTestCasesGroup("Preconditions")

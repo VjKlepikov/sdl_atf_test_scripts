@@ -26,6 +26,7 @@ local commonTestCases = require ('user_modules/shared_testcases_genivi/commonTes
 local commonPreconditions = require ('user_modules/shared_testcases_genivi/commonPreconditions')
 local testCasesForPolicyTableSnapshot = require ('user_modules/shared_testcases_genivi/testCasesForPolicyTableSnapshot')
 local testCasesForPolicyTable = require ('user_modules/shared_testcases_genivi/testCasesForPolicyTable')
+local const = require('user_modules/consts')
 
 --[[ Local variables ]]
 local ServerAddress = commonFunctions:read_parameter_from_smart_device_link_ini("ServerAddress")
