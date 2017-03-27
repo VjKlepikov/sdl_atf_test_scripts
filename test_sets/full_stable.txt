@@ -311,6 +311,7 @@
 ./test_scripts/Smoke_test/ATF_RevokedApp_DISALLOWED_RPCs.lua APPLINK-32944
 ./test_scripts/Smoke_test/ATF_HeartBeat_V2_Protocol.lua
 ./test_scripts/Smoke_test/ATF_HeartBeat_V3_CheckedHeartBeatAndACKFromSDL_UncheckedACKFromMobile.lua
+./test_scripts/Smoke_test/ATF_HeartBeat_V3_AppNotAnswerHeartBeat.lua
 ./test_scripts/Smoke_test/ATF_Smoke_testing_resumption_after_heartbeat_disconnect.lua
 ./test_scripts/Capabilities/UI-GetCapabilities/hmiCapabilities/ATF_UI_GetCapabilities_hmiCapabilities_phoneCall_miss.lua
 ./test_scripts/Capabilities/UI-GetCapabilities/hmiCapabilities/ATF_UI_GetCapabilities_hmiCapabilities_navigation_miss.lua
