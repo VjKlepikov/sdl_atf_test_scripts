@@ -30,7 +30,7 @@ common_steps:AddNewTestCasesGroup("Preconditions")
 
 -- An app is registered and activated
 common_steps:PreconditionSteps("Preconditions", 7)
-update_policy:updatePolicy("files/ptu_revokedapp_smoke.json", _, "PTU_With_RevokedApp")
+update_policy:updatePolicy("files/PTU_For_SmokeTesting.json", _, "PTU_With_RevokedApp")
 local mobile_session_name = "mobilesession2"
 common_steps:AddMobileSession("AddMobileSession_For_Revoked_App",_, mobile_session_name)
 local app_revoked = common_functions:CreateRegisterAppParameters(

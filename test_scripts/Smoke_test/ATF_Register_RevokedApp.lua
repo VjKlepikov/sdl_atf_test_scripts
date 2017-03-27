@@ -25,7 +25,7 @@ require('user_modules/all_common_modules')
 ---------------------------------------------------------------------------------------------
 common_steps:AddNewTestCasesGroup("Precondtions")
 common_steps:PreconditionSteps("PrecondtionSteps", 7)
-update_policy:updatePolicy("files/ptu_revokedapp_smoke.json", _, "Preconditions_PTU_With_RevokedApp")
+update_policy:updatePolicy("files/PTU_For_SmokeTesting.json", _, "Preconditions_PTU_With_RevokedApp")
 common_steps:UnregisterApp("PrecondtionSteps_UnRegister_Normal_App", config.application1.registerAppInterfaceParams.appName)
 
 common_steps:AddNewTestCasesGroup("Test")
