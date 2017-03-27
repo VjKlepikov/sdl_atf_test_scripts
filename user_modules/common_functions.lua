@@ -683,15 +683,18 @@ function CommonFunctions:PrintTable(tbl)
 end
 
 function CommonFunctions:CloneTable(original)
-  if original == nil then
-    return {}
-  end
-  local copy = {}
-  for k, v in pairs(original) do
-    if type(v) == 'table' then
-      v = CommonFunctions:CloneTable(v)
+  local orig_type = type(original)
+  local copy
+  if orig_type == 'table' then
+    copy = {}
+    for k, v in pairs(original) do
+      if type(v) == 'table' then
+        v = CommonFunctions:CloneTable(v)
+      end
+      copy[k] = v
     end
-    copy[k] = v
+  else
+    copy = original
   end
   return copy
 end
@@ -711,6 +714,64 @@ function CommonFunctions:CompareTables(t1,t2)
     if v1 == nil or not CommonFunctions:CompareTables(v1,v2) then return false end
   end
   return true
+end
+
+function CommonFunctions:CompareTablesNotSorted(table1,table2)
+  local t1 = CommonFunctions:CloneTable(table1)
+  local t2 = CommonFunctions:CloneTable(table2)
+  local ty1 = type(t1)
+  local ty2 = type(t2)
+  if ty1 ~= ty2 then
+    return false
+  end
+  -- non-table types can be directly compared
+  if ty1 ~= 'table' and ty2 ~= 'table' then
+    return t1 == t2
+  end
+  -- find each item of table t1 on table t2. if find, remove this item on both table
+  local total_find_items_of_table1 = 0
+  local number_of_items_on_table1 = 0
+  for k1, v1 in pairs(t1) do
+    number_of_items_on_table1 = number_of_items_on_table1 + 1
+    local v2 = t2[k1]
+    if type(k1) == 'number' then
+      -- compare array with care about order
+      -- find v1 in array t2
+      local find = false
+      for k2, v2 in pairs (t2) do
+        if type(k2) == 'number' then
+          if CommonFunctions:CompareTablesNotSorted(v1, v2) then
+            find = true
+            total_find_items_of_table1 = total_find_items_of_table1 + 1
+            t2[k2] = nil
+            break
+          end
+        end
+      end
+
+      if find == false then -- if v1 is not found in array t2
+        return false
+      end
+
+    else
+      if v2 == nil then
+        return false
+      end
+      if CommonFunctions:CompareTablesNotSorted(v1,v2) then -- found v1 = v2
+        total_find_items_of_table1 = total_find_items_of_table1 + 1
+        t2[k1] = nil
+      end
+    end
+    if total_find_items_of_table1 == number_of_items_on_table1 then
+    end
+  end
+
+  local rest_items_on_table2 = 0
+  for k2, v2 in pairs(t2) do
+    rest_items_on_table2 = rest_items_on_table2 + 1
+  end
+  return total_find_items_of_table1 == number_of_items_on_table1 and rest_items_on_table2 == 0
+
 end
 
 -- Check if specified value (which also may be a table) is present in a table.
@@ -828,7 +889,7 @@ end
 -- @param image_file_name: name of the image
 -----------------------------------------------------------------------------
 function CommonFunctions:GetFullPathIcon(image_file_name, appId)
-  if not appId then 
+  if not appId then
     appId = config.application1.registerAppInterfaceParams.appID
   end
   local full_path_icon = table.concat({config.pathToSDL, "storage/", appId, "_", config.deviceMAC, "/", image_file_name})
