@@ -11,7 +11,7 @@
 --    Base-4 includes 3 RPCs:
 --      PutFile: hmi_levels = "NONE"
 --      SetAppIcon: hmi_levels = "FULL"
---      ListFiles: hmi_levels = "FULL"
+--      Show: hmi_levels = "FULL"
 --    SendLocationOnly includes 3 RPCs:
 --      SendLocation: hmi_levels = "NONE"
 --      GetWayPoints: hmi_levels = "NONE"
@@ -23,7 +23,7 @@
 -- 2. Send RPC SendLocation
 -- 3. Send RPC GetWayPoints
 -- 4. Send RPC SetAppIcon
--- 5. Send RPC ListFiles
+-- 5. Send RPC Show
 -- 6. Send RPC SubscribeVehicleData
 
 -- Expected result:
@@ -55,7 +55,7 @@ function Test:Preconditions_Update_Group_Base_4_In_LPT()
     SetAppIcon = {
       hmi_levels = { 
         "FULL"}},
-    ListFiles = {
+    Show = {
       hmi_levels = { 
         "FULL"}}}
   common_functions:AddItemsIntoJsonFile(json_file, parent_item, added_json_items)
@@ -76,7 +76,7 @@ function Test:Preconditions_Update_Group_SendLocationOnly_In_LPT()
       hmi_levels = { 
         "FULL"}}}
   common_functions:AddItemsIntoJsonFile(json_file, parent_item, added_json_items)
-  local removed_items = {"PutFile", "SetAppIcon", "ListFiles"}
+  local removed_items = {"PutFile", "SetAppIcon", "Show"}
   common_functions:RemoveItemsFromJsonFile(json_file, parent_item, removed_items)
 end
 
@@ -92,7 +92,7 @@ function Test:Preconditions_Add_App_Policy_with_Base_4_and_SendLocationOnly_Grou
   common_functions:AddItemsIntoJsonFile(json_file, parent_item, added_json_items)
 end
 
-common_steps:PreconditionSteps("PreconditionSteps", const.precondition.REGISTER_APP)
+common_steps:PreconditionSteps("Preconditions", const.precondition.REGISTER_APP)
 
 --------------------------------------------Test----------------------------------------------
 common_steps:AddNewTestCasesGroup("Tests")
@@ -133,8 +133,8 @@ function Test:SetAppIcon_Disallowed()
   EXPECT_RESPONSE(cid, {success = false, resultCode = "DISALLOWED"})
 end
 
-function Test:ListFiles_Disallowed()
-  local cid = self.mobileSession:SendRPC("ListFiles", {})
+function Test:Show_Disallowed()
+	local cid = self.mobileSession:SendRPC("Show", {mainField1 = "a"})
   EXPECT_RESPONSE(cid, {success = false, resultCode = "DISALLOWED"})
 end
 
