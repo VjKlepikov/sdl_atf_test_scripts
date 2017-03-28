@@ -88,7 +88,7 @@ common_steps:AddNewTestCasesGroup("Tests")
 common_steps:CloseMobileSession("Turn_off_Transport", "mobileSession")
 common_steps:AddMobileSession("Turn_on_Transport")
 
-function Test:TC_SDL_Resume_AppData_After_Unexpected_Disconnect()
+function Test:TC_SDL_Resume_AppData_And_HMILevel_After_Unexpected_Disconnect()
   const.default_app.hashID = self.currentHashID
   common_functions:StoreApplicationData("mobileSession", const.default_app.appName, const.default_app, _, self)
   local cid = self.mobileSession:SendRPC("RegisterAppInterface", const.default_app)
@@ -101,8 +101,8 @@ function Test:TC_SDL_Resume_AppData_After_Unexpected_Disconnect()
       self.hmiConnection:SendResponse(data.id,"BasicCommunication.ActivateApp", "SUCCESS", {})
     end)
   EXPECT_NOTIFICATION("OnHMIStatus",
-    {hmiLevel = "NONE", systemContext = "MAIN", audioStreamingState = "NOT_AUDIBLE"},
-    {hmiLevel = "FULL", systemContext = "MAIN", audioStreamingState = "AUDIBLE"})
+    {hmiLevel = "NONE", systemContext = "MAIN"},
+    {hmiLevel = "FULL", systemContext = "MAIN"})
   :ValidIf(function(exp,data)
       if exp.occurences == 2 then
         local time2 = timestamp()
