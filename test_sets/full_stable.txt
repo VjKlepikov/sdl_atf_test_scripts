@@ -349,3 +349,4 @@
 ./test_scripts/Smoke_test/ATF_SDL_Processes_3APIs_from_Allowed_HmiLevel.lua
 ./test_scripts/Smoke_test/ATF_Registered_App_Is_Assigned_PriorityLevel_from_PredataConsent.lua
 ./test_scripts/Smoke_test/ATF_NewRegisteredApp_Is_Assigned_DefaultHmiLevel_and_Permission_from_Default.lua
+./test_scripts/Smoke_test/ATF_Smoke_testing_Priority_Level.lua
