@@ -134,7 +134,7 @@ function Test:SetAppIcon_Disallowed()
 end
 
 function Test:Show_Disallowed()
-	local cid = self.mobileSession:SendRPC("Show", {mainField1 = "a"})
+  local cid = self.mobileSession:SendRPC("Show", {mainField1 = "a"})
   EXPECT_RESPONSE(cid, {success = false, resultCode = "DISALLOWED"})
 end
 
