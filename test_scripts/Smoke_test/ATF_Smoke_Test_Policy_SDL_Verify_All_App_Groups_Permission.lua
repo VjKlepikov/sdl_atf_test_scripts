@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------
 -- Requirement summary:
--- APPLINK-19314	[GeneralResultCodes]DISALLOWED: RPC is omitted in the PolicyTable group(s) assigned to the application
+-- APPLINK-19314 [GeneralResultCodes]DISALLOWED: RPC is omitted in the PolicyTable group(s) assigned to the application
 -- APPLINK-16839 [Policies] HMI Levels the request is allowed to be processed in (multiple functional groups)
 
 -- Description:
