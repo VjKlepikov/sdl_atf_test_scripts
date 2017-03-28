@@ -304,6 +304,7 @@
 ./test_scripts/Capabilities/TTS_GetCapabilities/ATF_TTS_Capabilities_IsEmpty.lua
 ./test_scripts/Capabilities/TTS_GetCapabilities/ATF_TTS_Capabilities_GENERIC_ERROR.lua
 ./test_scripts/API/ATF_PutFile/ATF_Putfile_Response_INVALID_DATA_Mandatory_spaceAvailable_Missing.lua APPLINK-32994
+./test_scripts/Smoke_test/ATF_Smoke_testing_resumption_big_data.lua APPLINK-13656
 ./test_scripts/Smoke_test/ATF_App_Unregistered_After_PTU_Success_Wrong_Nickname.lua
 ./test_scripts/Smoke_test/ATF_Register_DISALLOWED_With_Wrong_Nickname.lua
 ./test_scripts/Smoke_test/ATF_Register_RevokedApp.lua APPLINK-32944
