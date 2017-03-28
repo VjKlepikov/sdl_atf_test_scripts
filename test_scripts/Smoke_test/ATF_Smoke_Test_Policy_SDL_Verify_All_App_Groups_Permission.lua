@@ -80,7 +80,7 @@ function Test:Preconditions_Update_Group_SendLocationOnly_In_LPT()
   common_functions:RemoveItemsFromJsonFile(json_file, parent_item, removed_items)
 end
 
-function Test:Preconditions_Add_App_Policy_with_Base_4_Group()
+function Test:Preconditions_Add_App_Policy_with_Base_4_and_SendLocationOnly_Groups()
   local parent_item = {"policy_table", "app_policies"}
   local added_json_items = {}
   added_json_items[const.default_app.appID] = {
@@ -123,11 +123,7 @@ function Test:GetWayPoints_Allowed()
 	EXPECT_HMICALL("Navigation.GetWayPoints", {wayPointType = "ALL"})
 	:Do(function(_,data)
 		self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {
-			coordinate =
-			{
-				latitudeDegrees = 1.1,
-				longitudeDegrees = 1.1
-			}})
+			coordinate = {latitudeDegrees = 1.1, longitudeDegrees = 1.1}})
 	end)
 	EXPECT_RESPONSE(cid, {success = true, resultCode = "SUCCESS"})
 end
