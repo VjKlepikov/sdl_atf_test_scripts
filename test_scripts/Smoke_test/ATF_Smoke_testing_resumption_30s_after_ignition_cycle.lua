@@ -26,11 +26,26 @@ require('user_modules/all_common_modules')
 const.default_app.isMediaApplication = true
 
 ---------------------------------------------------------------------------------------------
+--[[ Local Funcitons ]]
+
+--[[ @SendNotificationSuspend: the function send BC.OnExitAllApplications(SUSPEND)
+--    and expects HMI Notification BC.OnSDLPersistenceComplete. This ensures data
+--    is stored for data resumption after IGNITION OFF
+--]]
+local function SendNotificationSuspend(self)
+  self.hmiConnection:SendNotification("BasicCommunication.OnExitAllApplications", { reason = "SUSPEND" })
+  EXPECT_HMINOTIFICATION("BasicCommunication.OnSDLPersistenceComplete")
+end
+
+---------------------------------------------------------------------------------------------
 --[[ Preconditions ]]
 common_steps:PreconditionSteps("Precondition", const.precondition.ACTIVATE_APP)
 
 ---------------------------------------------------------------------------------------------
 --[[ Test There is no hmiLevel Resumption 30s after Ignition ON ]]
+function Test:TestStep_SendNotificationSuspend()
+  SendNotificationSuspend(self)
+end
 common_steps:IgnitionOff("TestStep_IgnitionOff")
 common_steps:IgnitionOn("TestStep_IgnitionOn")
 
