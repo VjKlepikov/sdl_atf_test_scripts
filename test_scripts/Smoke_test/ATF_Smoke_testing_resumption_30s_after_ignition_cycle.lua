@@ -4,7 +4,8 @@
 -- [APPLINK-15606]: [HMILevel Resumption] Conditions to resume app to FULL in the next ignition cycle.
 
 -- Description:
--- SDL Must Not perform hmiLevel Resumption of Activated App, 30 seconds after Ignition cycle
+-- SDL Must Not perform hmiLevel Resumption when App is connecting
+--  more than 30 seconds after Ignition On
 
 -- Preconditions:
 -- 1. App is registered and activated
