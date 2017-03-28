@@ -7,13 +7,14 @@
 -- Check that SDL verifies every App's request before processing it using appropriate group of permissions.
 
 -- Precondition
--- 1. App policies includes Base-4
---    Base-4 includes 6 RPCs:
+-- 1. App policies includes Base-4 and SendLocationOnly
+--    Base-4 includes 3 RPCs:
 --      PutFile: hmi_levels = "NONE"
---      SendLocation: hmi_levels = "NONE"
---      GetWayPoints: hmi_levels = "NONE"
 --      SetAppIcon: hmi_levels = "FULL"
 --      ListFiles: hmi_levels = "FULL"
+--    SendLocationOnly includes 3 RPCs:
+--      SendLocation: hmi_levels = "NONE"
+--      GetWayPoints: hmi_levels = "NONE"
 --      SubscribeVehicleData: hmi_levels = "FULL"
 -- 2. Register app (HMI level = NONE)
 
@@ -51,22 +52,32 @@ function Test:Preconditions_Update_Group_Base_4_In_LPT()
     PutFile = {
       hmi_levels = { 
         "NONE"}},
+    SetAppIcon = {
+      hmi_levels = { 
+        "FULL"}},
+    ListFiles = {
+      hmi_levels = { 
+        "FULL"}}}
+  common_functions:AddItemsIntoJsonFile(json_file, parent_item, added_json_items)
+  local removed_items = {"SendLocation", "GetWayPoints", "SubscribeVehicleData"}
+  common_functions:RemoveItemsFromJsonFile(json_file, parent_item, removed_items)
+end
+
+function Test:Preconditions_Update_Group_SendLocationOnly_In_LPT()
+  local parent_item = {"policy_table", "functional_groupings", "SendLocationOnly", "rpcs"}
+  local added_json_items = {
     SendLocation = {
       hmi_levels = { 
         "NONE"}},
     GetWayPoints = {
       hmi_levels = { 
         "NONE"}},
-    SetAppIcon = {
-      hmi_levels = { 
-        "FULL"}},
-    ListFiles = {
-      hmi_levels = { 
-        "FULL"}},
     SubscribeVehicleData = {
       hmi_levels = { 
         "FULL"}}}
   common_functions:AddItemsIntoJsonFile(json_file, parent_item, added_json_items)
+  local removed_items = {"PutFile", "SetAppIcon", "ListFiles"}
+  common_functions:RemoveItemsFromJsonFile(json_file, parent_item, removed_items)
 end
 
 function Test:Preconditions_Add_App_Policy_with_Base_4_Group()
@@ -77,7 +88,7 @@ function Test:Preconditions_Add_App_Policy_with_Base_4_Group()
     steal_focus = false,
     priority = "NONE",
     default_hmi = "NONE",
-    groups = {"Base-4"}}
+    groups = {"Base-4", "SendLocationOnly"}}
   common_functions:AddItemsIntoJsonFile(json_file, parent_item, added_json_items)
 end
 
