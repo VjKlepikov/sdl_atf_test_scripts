@@ -83,10 +83,11 @@ function Test:TestStep_PTU_appPermissionsConsentNeeded_true()
           :Do(function(_,data)
               if(data.params.status == "UP_TO_DATE") then
                 local occurrences = 0
+                local occurrence_created_by_script = 3
                 EXPECT_HMINOTIFICATION("SDL.OnAppPermissionChanged", {appID = HMIAppID})
                 :Do(function(_,_)
                     occurrences = occurrences + 1
-                    if occurrences == 3 then
+                    if occurrences == occurrence_created_by_script then
                       if data.params.appPermissionsConsentNeeded ~= true then
                         self:FailTestCase("appPermissionsConsentNeeded is false")
                       end

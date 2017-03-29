@@ -177,10 +177,11 @@ function Test:Precondition_Activate_App_Consent_Device_Make_PTU_Consent_Group()
 
   -- Check SDL sends SDL.OnAppPermissionChanged to HMI and OnPermissionsChange to mobile
   local occurrences = 0
+  local occurrence_created_by_script = 3
   EXPECT_HMINOTIFICATION("SDL.OnAppPermissionChanged", {appID = self.HMIAppID})
   :Do(function(_,data)
   	occurrences = occurrences + 1
-  	if occurrences == 3 then
+  	if occurrences == occurrence_created_by_script then
   	 	if data.params.appPermissionsConsentNeeded ~= true then
   	 		self:FailTestCase("appPermissionsConsentNeeded is false")
   	 	end
@@ -196,14 +197,18 @@ function Test:Precondition_Activate_App_Consent_Device_Make_PTU_Consent_Group()
         	local RequestIdGetUserFriendlyMessage = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", {language = "EN-US", messageCodes = {"Location"}})
         	EXPECT_HMIRESPONSE(RequestIdGetUserFriendlyMessage,{result = {code = 0, method = "SDL.GetUserFriendlyMessage"}})
         	:Do(function(_,_)
-            	local functionalGroupID = data1.result.allowedFunctions[1].id
-            	self.hmiConnection:SendNotification("SDL.OnAppPermissionConsent",
-            	{ appID = hmi_app_id, source = "GUI", consentedFunctions = {{name = "Location", allowed = true, id = functionalGroupID} }})
-    	        	GetCurrentTimeStampGroupConsent()
+              if #data1.result.allowedFunctions > 0 then
+            	 local functionalGroupID = data1.result.allowedFunctions[1].id
+            	 self.hmiConnection:SendNotification("SDL.OnAppPermissionConsent",
+            	 { appID = hmi_app_id, source = "GUI", consentedFunctions = {{name = "Location", allowed = true, id = functionalGroupID} }})
+    	        	  GetCurrentTimeStampGroupConsent()
+              else
+                self:FailTestCase("allowedFunctions is empty")
+              end
         	end)
     	end)
   	end
-  end):Times(AtLeast(1))
+  end):Times(AtLeast(2))
   EXPECT_NOTIFICATION("OnPermissionsChange", {})
 end
 
