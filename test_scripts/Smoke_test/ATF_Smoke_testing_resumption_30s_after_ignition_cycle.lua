@@ -11,9 +11,9 @@
 -- 1. App is registered and activated
 
 -- Steps:
--- 1. Perform IgnitionOn, IgnitionOff cycle
+-- 1. Perform IgnitionOff, IgnitionOn cycle
 -- 2. Wait 31 seconds before adding Mobile Session
--- 3. Register App and check hmiLevel Resumption
+-- 3. Register App and check default hmiLevel is set
 -- 4. Wait 3.5 seconds and check there is no BC.ActivateApp
 
 -- Expected result:
@@ -62,7 +62,7 @@ function Test:TestStep_Register_App_and_check_no_resumption()
   local correlation_id = self.mobileSession:SendRPC("RegisterAppInterface", const.default_app)
   
   -- Delay expectation: ActivateApp comes ~ 3s after RegisterAppInterface
-  common_functions:DelayedExp(3500)
+  common_functions:DelayedExp(5000)
  
   EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered")
 
