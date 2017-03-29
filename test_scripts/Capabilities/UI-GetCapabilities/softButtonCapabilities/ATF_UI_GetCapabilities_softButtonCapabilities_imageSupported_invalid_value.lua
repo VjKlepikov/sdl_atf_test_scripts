@@ -1,6 +1,7 @@
 ---------------------------------------------------------------------------------------------
 -- Requirement summary:
 -- [APPLINK-19635]: SDL must use the default values in case HMI does not provide values
+-- [APPLINK-23626]: response from HMI and RegisterAppInterface
 
 -- Description:
 -- SDL will use default capabilities stored at hmi_capabilities.json file when value softButtonCapabilities.imageSupported is invalid
@@ -19,6 +20,8 @@ require('user_modules/all_common_modules')
 --[[ Local variables]]
 local functions_UIGetCapabilities = require('test_scripts/Capabilities/UI-GetCapabilities/common_functions_for_UI_GetCapabilities')
 local softButtonCapabilities = common_functions:GetItemsFromJsonFile(config.pathToSDL .. "hmi_capabilities.json", {"UI", "softButtonCapabilities"})
+
+local const = require('user_modules/consts')
 
 --[[ Preconditions ]]
 common_steps:AddNewTestCasesGroup("Preconditions")
