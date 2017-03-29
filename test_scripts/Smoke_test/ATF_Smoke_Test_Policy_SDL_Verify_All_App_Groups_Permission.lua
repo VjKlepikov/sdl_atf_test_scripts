@@ -48,7 +48,7 @@ common_steps:BackupFile("Preconditions_Back_Up_sdl_preloaded_pt", "sdl_preloaded
 
 function Test:Preconditions_Update_Group_Base_4_In_LPT()
   local parent_item = {"policy_table", "functional_groupings", "Base-4", "rpcs"}
-  local added_json_items = {
+  local items_to_add = {
     PutFile = {
       hmi_levels = { 
         "NONE"}},
@@ -58,14 +58,14 @@ function Test:Preconditions_Update_Group_Base_4_In_LPT()
     Show = {
       hmi_levels = { 
         "FULL"}}}
-  common_functions:AddItemsIntoJsonFile(json_file, parent_item, added_json_items)
-  local removed_items = {"SendLocation", "GetWayPoints", "SubscribeVehicleData"}
-  common_functions:RemoveItemsFromJsonFile(json_file, parent_item, removed_items)
+  common_functions:AddItemsIntoJsonFile(json_file, parent_item, items_to_add)
+  local items_to_remove = {"SendLocation", "GetWayPoints", "SubscribeVehicleData"}
+  common_functions:RemoveItemsFromJsonFile(json_file, parent_item, items_to_remove)
 end
 
 function Test:Preconditions_Update_Group_SendLocationOnly_In_LPT()
   local parent_item = {"policy_table", "functional_groupings", "SendLocationOnly", "rpcs"}
-  local added_json_items = {
+  local items_to_add = {
     SendLocation = {
       hmi_levels = { 
         "NONE"}},
@@ -75,28 +75,27 @@ function Test:Preconditions_Update_Group_SendLocationOnly_In_LPT()
     SubscribeVehicleData = {
       hmi_levels = { 
         "FULL"}}}
-  common_functions:AddItemsIntoJsonFile(json_file, parent_item, added_json_items)
-  local removed_items = {"PutFile", "SetAppIcon", "Show"}
-  common_functions:RemoveItemsFromJsonFile(json_file, parent_item, removed_items)
+  common_functions:AddItemsIntoJsonFile(json_file, parent_item, items_to_add)
+  local items_to_remove = {"PutFile", "SetAppIcon", "Show"}
+  common_functions:RemoveItemsFromJsonFile(json_file, parent_item, items_to_remove)
 end
 
 function Test:Preconditions_Add_App_Policy_with_Base_4_and_SendLocationOnly_Groups()
   local parent_item = {"policy_table", "app_policies"}
-  local added_json_items = {}
-  added_json_items[const.default_app.appID] = {
+  local items_to_add = {}
+  items_to_add[const.default_app.appID] = {
     keep_context = false,
     steal_focus = false,
     priority = "NONE",
     default_hmi = "NONE",
     groups = {"Base-4", "SendLocationOnly"}}
-  common_functions:AddItemsIntoJsonFile(json_file, parent_item, added_json_items)
+  common_functions:AddItemsIntoJsonFile(json_file, parent_item, items_to_add)
 end
 
 common_steps:PreconditionSteps("Preconditions", const.precondition.REGISTER_APP)
 
 --------------------------------------------Test----------------------------------------------
 common_steps:AddNewTestCasesGroup("Tests")
-
 
 function Test:PutFile_Allowed()
   local cid = self.mobileSession:SendRPC("PutFile", {
