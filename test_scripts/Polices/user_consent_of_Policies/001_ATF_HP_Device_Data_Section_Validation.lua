@@ -44,9 +44,11 @@ require('cardinalities')
 --[[ Required Shared libraries ]]
 local commonSteps = require ('user_modules/shared_testcases_genivi/commonSteps')
 local commonFunctions = require ('user_modules/shared_testcases_genivi/commonFunctions')
+local const = require('user_modules/consts')
 require('user_modules/AppTypes')
 local utils = require('user_modules/utils')
 local common_functions = require('user_modules/common_functions')
+local common_steps = require('user_modules/common_steps')
 endpoints_rpc_url = common_functions:GetItemsFromJsonFile(
   config.pathToSDL .. "sdl_preloaded_pt.json",
   {"policy_table", "module_config", "endpoints", "0x07", "default", 1})
@@ -174,25 +176,34 @@ function Test:Precondition_Activate_App_Consent_Device_Make_PTU_Consent_Group()
     end)
 
   -- Check SDL sends SDL.OnAppPermissionChanged to HMI and OnPermissionsChange to mobile
-  EXPECT_HMINOTIFICATION("SDL.OnAppPermissionChanged", {appID = self.HMIAppID, appPermissionsConsentNeeded = true})
-  :Do(function(_,_)
-      local RequestIdListOfPermissions = self.hmiConnection:SendRequest("SDL.GetListOfPermissions", { appID = hmi_app_id })
-      EXPECT_HMIRESPONSE(RequestIdListOfPermissions,
-        {
-          code = 0,
-          allowedFunctions = {{name = "Location"}},
-          method = "SDL.GetListOfPermissions"})
-      :Do(function(_,data1)
-          local RequestIdGetUserFriendlyMessage = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", {language = "EN-US", messageCodes = {"Location"}})
-          EXPECT_HMIRESPONSE(RequestIdGetUserFriendlyMessage,{result = {code = 0, method = "SDL.GetUserFriendlyMessage"}})
-          :Do(function(_,_)
-              local functionalGroupID = data1.result.allowedFunctions[1].id
-              self.hmiConnection:SendNotification("SDL.OnAppPermissionConsent",
-                { appID = hmi_app_id, source = "GUI", consentedFunctions = {{name = "Location", allowed = true, id = functionalGroupID} }})
-              GetCurrentTimeStampGroupConsent()
-            end)
-        end)
-    end)
+  local occurrences = 0
+  EXPECT_HMINOTIFICATION("SDL.OnAppPermissionChanged", {appID = self.HMIAppID})
+  :Do(function(_,data)
+  	occurrences = occurrences + 1
+  	if occurrences == 3 then
+  	 	if data.params.appPermissionsConsentNeeded ~= true then
+  	 		self:FailTestCase("appPermissionsConsentNeeded is false")
+  	 	end
+  	 
+    	local RequestIdListOfPermissions = self.hmiConnection:SendRequest("SDL.GetListOfPermissions", { appID = hmi_app_id })
+    	EXPECT_HMIRESPONSE(RequestIdListOfPermissions,
+	    {
+    	    code = 0,
+        	allowedFunctions = {{name = "Location"}},
+       		method = "SDL.GetListOfPermissions"
+    	})
+    	:Do(function(_,data1)
+        	local RequestIdGetUserFriendlyMessage = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", {language = "EN-US", messageCodes = {"Location"}})
+        	EXPECT_HMIRESPONSE(RequestIdGetUserFriendlyMessage,{result = {code = 0, method = "SDL.GetUserFriendlyMessage"}})
+        	:Do(function(_,_)
+            	local functionalGroupID = data1.result.allowedFunctions[1].id
+            	self.hmiConnection:SendNotification("SDL.OnAppPermissionConsent",
+            	{ appID = hmi_app_id, source = "GUI", consentedFunctions = {{name = "Location", allowed = true, id = functionalGroupID} }})
+    	        	GetCurrentTimeStampGroupConsent()
+        	end)
+    	end)
+  	end
+  end):Times(AtLeast(1))
   EXPECT_NOTIFICATION("OnPermissionsChange", {})
 end
 

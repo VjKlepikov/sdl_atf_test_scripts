@@ -107,7 +107,7 @@ function Test:TestStep_Update_Policy_With_New_Permissions_And_Check_Them_In_OnPe
                     print("Tables are not equal.")
                     return false
                   end
-                end)
+                end):Times(2)
             end)
         end)
     end)
