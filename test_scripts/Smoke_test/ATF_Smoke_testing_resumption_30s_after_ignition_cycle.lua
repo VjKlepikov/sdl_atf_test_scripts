@@ -14,7 +14,7 @@
 -- 1. Perform IgnitionOff, IgnitionOn cycle
 -- 2. Wait 31 seconds before adding Mobile Session
 -- 3. Register App and check default hmiLevel is set
--- 4. Wait 3.5 seconds and check there is no BC.ActivateApp
+-- 4. Wait 5 seconds and check there is no BC.ActivateApp
 
 -- Expected result:
 -- SDL -> HMI: BasicCommunication.OnAppRegistered
