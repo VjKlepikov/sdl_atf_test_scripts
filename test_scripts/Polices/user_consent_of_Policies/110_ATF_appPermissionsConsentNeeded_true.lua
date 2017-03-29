@@ -72,7 +72,7 @@ function Test:TestStep_PTU_appPermissionsConsentNeeded_true()
 
                   EXPECT_HMIRESPONSE(RequestIdListOfPermissions)
                   :Do(function(_,data1)
-                    local groups = {}
+                      local groups = {}
                       if #data1.result.allowedFunctions > 0 then
                         for i = 1, #data1.result.allowedFunctions do
                           groups[i] = {
@@ -86,36 +86,36 @@ function Test:TestStep_PTU_appPermissionsConsentNeeded_true()
                       EXPECT_NOTIFICATION("OnPermissionsChange")
                     end)
                 end
-              end):Times(AtLeast(1))
+                end):Times(AtLeast(1))
             end
-        end)
-      self.hmiConnection:SendNotification("BasicCommunication.OnSystemRequest", { requestType = "PROPRIETARY", fileName = "filename"})
+          end)
+        self.hmiConnection:SendNotification("BasicCommunication.OnSystemRequest", { requestType = "PROPRIETARY", fileName = "filename"})
 
-      EXPECT_NOTIFICATION("OnSystemRequest", { requestType = "PROPRIETARY" })
-      :Do(function(_,_)
+        EXPECT_NOTIFICATION("OnSystemRequest", { requestType = "PROPRIETARY" })
+        :Do(function(_,_)
 
-          self.mobileSession:SendRPC("SystemRequest", { fileName = "PolicyTableUpdate", requestType = "PROPRIETARY"}, "files/PTU_NewPermissionsForUserConsent.json")
+            self.mobileSession:SendRPC("SystemRequest", { fileName = "PolicyTableUpdate", requestType = "PROPRIETARY"}, "files/PTU_NewPermissionsForUserConsent.json")
 
-          local systemRequestId
-          EXPECT_HMICALL("BasicCommunication.SystemRequest")
-          :Do(function(_,data)
-              systemRequestId = data.id
-              self.hmiConnection:SendNotification("SDL.OnReceivedPolicyUpdate", { policyfile = "/tmp/fs/mp/images/ivsu_cache/PolicyTableUpdate"})
+            local systemRequestId
+            EXPECT_HMICALL("BasicCommunication.SystemRequest")
+            :Do(function(_,data)
+                systemRequestId = data.id
+                self.hmiConnection:SendNotification("SDL.OnReceivedPolicyUpdate", { policyfile = "/tmp/fs/mp/images/ivsu_cache/PolicyTableUpdate"})
 
-              local function to_run()
-                self.hmiConnection:SendResponse(systemRequestId,"BasicCommunication.SystemRequest", "SUCCESS", {})
-              end
-              RUN_AFTER(to_run, 500)
-            end)
+                local function to_run()
+                  self.hmiConnection:SendResponse(systemRequestId,"BasicCommunication.SystemRequest", "SUCCESS", {})
+                end
+                RUN_AFTER(to_run, 500)
+              end)
 
-        end)
-    end)
-end
+          end)
+      end)
+  end
 
---[[ Postconditions ]]
-commonFunctions:newTestCasesGroup("Postconditions")
-function Test.Postcondition_StopSDL()
-  StopSDL()
-end
+  --[[ Postconditions ]]
+  commonFunctions:newTestCasesGroup("Postconditions")
+  function Test.Postcondition_StopSDL()
+    StopSDL()
+  end
 
-return Test
+  return Test

@@ -106,103 +106,103 @@ function Test:TestStep_PTU_appPermissionsConsentNeeded_true()
                             end
                           end
 
-                        self.hmiConnection:SendNotification("SDL.OnAppPermissionConsent", { appID = self.applications[config.application1.registerAppInterfaceParams.appName], consentedFunctions = groups, source = "GUI"})
-                        EXPECT_NOTIFICATION("OnPermissionsChange")
-                      end)
+                          self.hmiConnection:SendNotification("SDL.OnAppPermissionConsent", { appID = self.applications[config.application1.registerAppInterfaceParams.appName], consentedFunctions = groups, source = "GUI"})
+                          EXPECT_NOTIFICATION("OnPermissionsChange")
+                        end)
                     end
-                  end):Times(AtLeast(1))
-              end
-            end)
-        end)
-    end)
-end
+                    end):Times(AtLeast(1))
+                end
+              end)
+          end)
+      end)
+  end
 
-function Test:Precondition_trigger_user_request_update_from_HMI()
-  testCasesForPolicyTable:trigger_user_request_update_from_HMI(self)
-end
+  function Test:Precondition_trigger_user_request_update_from_HMI()
+    testCasesForPolicyTable:trigger_user_request_update_from_HMI(self)
+  end
 
--- function Test:SetAppTo_BACKGROUND()
--- self.hmiConnection:SendNotification("BasicCommunication.OnAppDeactivated", { appID = HMIAppID })
--- EXPECT_NOTIFICATION("OnHMIStatus", { hmiLevel = "BACKGROUND" })
--- end
+  -- function Test:SetAppTo_BACKGROUND()
+  -- self.hmiConnection:SendNotification("BasicCommunication.OnAppDeactivated", { appID = HMIAppID })
+  -- EXPECT_NOTIFICATION("OnHMIStatus", { hmiLevel = "BACKGROUND" })
+  -- end
 
-function Test:SetAppTo_NONE()
-  self.hmiConnection:SendNotification("BasicCommunication.OnExitApplication", { appID = HMIAppID, reason = "USER_EXIT" })
-  EXPECT_NOTIFICATION("OnHMIStatus", { hmiLevel = "NONE" })
-end
+  function Test:SetAppTo_NONE()
+    self.hmiConnection:SendNotification("BasicCommunication.OnExitApplication", { appID = HMIAppID, reason = "USER_EXIT" })
+    EXPECT_NOTIFICATION("OnHMIStatus", { hmiLevel = "NONE" })
+  end
 
-function Test:Precondition_PTU_revoke_app_group()
-  HMIAppID = self.applications[config.application1.registerAppInterfaceParams.appName]
-  local RequestIdGetURLS = self.hmiConnection:SendRequest("SDL.GetURLS", { service = 7 })
-  EXPECT_HMIRESPONSE(RequestIdGetURLS,{result = {code = 0, method = "SDL.GetURLS", urls = {{url = "https://policies.telematics.ford.com/api/policies"}}}})
-  :Do(function()
-      self.hmiConnection:SendNotification("BasicCommunication.OnSystemRequest", { requestType = "PROPRIETARY", fileName = "filename"})
+  function Test:Precondition_PTU_revoke_app_group()
+    HMIAppID = self.applications[config.application1.registerAppInterfaceParams.appName]
+    local RequestIdGetURLS = self.hmiConnection:SendRequest("SDL.GetURLS", { service = 7 })
+    EXPECT_HMIRESPONSE(RequestIdGetURLS,{result = {code = 0, method = "SDL.GetURLS", urls = {{url = "https://policies.telematics.ford.com/api/policies"}}}})
+    :Do(function()
+        self.hmiConnection:SendNotification("BasicCommunication.OnSystemRequest", { requestType = "PROPRIETARY", fileName = "filename"})
 
-      EXPECT_NOTIFICATION("OnSystemRequest", { requestType = "PROPRIETARY" })
-      :Do(function()
-          local CorIdSystemRequest = self.mobileSession:SendRPC("SystemRequest",
-            { fileName = "PolicyTableUpdate", requestType = "PROPRIETARY"}, "files/PTU_AppPermissionsRevoked.json")
+        EXPECT_NOTIFICATION("OnSystemRequest", { requestType = "PROPRIETARY" })
+        :Do(function()
+            local CorIdSystemRequest = self.mobileSession:SendRPC("SystemRequest",
+              { fileName = "PolicyTableUpdate", requestType = "PROPRIETARY"}, "files/PTU_AppPermissionsRevoked.json")
 
-          EXPECT_HMICALL("BasicCommunication.SystemRequest")
-          :Do(function(_,data)
-              self.hmiConnection:SendNotification("SDL.OnReceivedPolicyUpdate", { policyfile = "/tmp/fs/mp/images/ivsu_cache/PolicyTableUpdate"})
+            EXPECT_HMICALL("BasicCommunication.SystemRequest")
+            :Do(function(_,data)
+                self.hmiConnection:SendNotification("SDL.OnReceivedPolicyUpdate", { policyfile = "/tmp/fs/mp/images/ivsu_cache/PolicyTableUpdate"})
 
-              local function to_run()
-                self.hmiConnection:SendResponse(data.id,"BasicCommunication.SystemRequest", "SUCCESS", {})
-              end
-              RUN_AFTER(to_run, 1000)
-              self.mobileSession:ExpectResponse(CorIdSystemRequest, {success = true, resultCode = "SUCCESS"})
-            end)
+                local function to_run()
+                  self.hmiConnection:SendResponse(data.id,"BasicCommunication.SystemRequest", "SUCCESS", {})
+                end
+                RUN_AFTER(to_run, 1000)
+                self.mobileSession:ExpectResponse(CorIdSystemRequest, {success = true, resultCode = "SUCCESS"})
+              end)
 
-          EXPECT_HMINOTIFICATION("SDL.OnStatusUpdate"):Times(AtLeast(1))
-          :Do(function(_,data)
-              if(data.params.status == "UP_TO_DATE") then
+            EXPECT_HMINOTIFICATION("SDL.OnStatusUpdate"):Times(AtLeast(1))
+            :Do(function(_,data)
+                if(data.params.status == "UP_TO_DATE") then
 
-                EXPECT_HMINOTIFICATION("SDL.OnAppPermissionChanged", {appID = HMIAppID, isAppPermissionsRevoked = true, appRevokedPermissions = { {name = "DrivingCharacteristics"} } })
-                :Times(0)
-                -- :Do(function(_,_)
-                -- -- EXPECT_NOTIFICATION("OnPermissionsChange")
-                -- local RequestIdListOfPermissions = self.hmiConnection:SendRequest("SDL.GetListOfPermissions", { appID = HMIAppID })
-                -- EXPECT_HMIRESPONSE(RequestIdListOfPermissions)
-                -- :Do(function()
-                -- local ReqIDGetUserFriendlyMessage = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", {language = "EN-US", messageCodes = {"AppPermissionsRevoked"}})
-                -- EXPECT_HMIRESPONSE(ReqIDGetUserFriendlyMessage, { result = { code = 0, messages = {{ messageCode = "AppPermissionsRevoked"}}, method = "SDL.GetUserFriendlyMessage"}})
-                -- end)
+                  EXPECT_HMINOTIFICATION("SDL.OnAppPermissionChanged", {appID = HMIAppID, isAppPermissionsRevoked = true, appRevokedPermissions = { {name = "DrivingCharacteristics"} } })
+                  :Times(0)
+                  -- :Do(function(_,_)
+                  -- -- EXPECT_NOTIFICATION("OnPermissionsChange")
+                  -- local RequestIdListOfPermissions = self.hmiConnection:SendRequest("SDL.GetListOfPermissions", { appID = HMIAppID })
+                  -- EXPECT_HMIRESPONSE(RequestIdListOfPermissions)
+                  -- :Do(function()
+                  -- local ReqIDGetUserFriendlyMessage = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", {language = "EN-US", messageCodes = {"AppPermissionsRevoked"}})
+                  -- EXPECT_HMIRESPONSE(ReqIDGetUserFriendlyMessage, { result = { code = 0, messages = {{ messageCode = "AppPermissionsRevoked"}}, method = "SDL.GetUserFriendlyMessage"}})
+                  -- end)
 
-                -- end)
+                  -- end)
 
-              end
-            end)
-        end)
-    end)
-end
+                end
+              end)
+          end)
+      end)
+  end
 
--- --[[ Test ]]
-commonFunctions:newTestCasesGroup("Test")
-function Test:TestStep_Activate_app_isAppPermissionRevoked_true()
-  local RequestIdActivateAppAgain = self.hmiConnection:SendRequest("SDL.ActivateApp", { appID = HMIAppID })
-  EXPECT_HMIRESPONSE(RequestIdActivateAppAgain,
-    {
-      result =
+  -- --[[ Test ]]
+  commonFunctions:newTestCasesGroup("Test")
+  function Test:TestStep_Activate_app_isAppPermissionRevoked_true()
+    local RequestIdActivateAppAgain = self.hmiConnection:SendRequest("SDL.ActivateApp", { appID = HMIAppID })
+    EXPECT_HMIRESPONSE(RequestIdActivateAppAgain,
       {
-        code = 0,
-        method = "SDL.ActivateApp",
-        isAppRevoked = false,
-        isAppPermissionsRevoked = true,
-        appRevokedPermissions =
+        result =
         {
-          { name = "DrivingCharacteristics"}
+          code = 0,
+          method = "SDL.ActivateApp",
+          isAppRevoked = false,
+          isAppPermissionsRevoked = true,
+          appRevokedPermissions =
+          {
+            { name = "DrivingCharacteristics"}
+          }
         }
-      }
-    })
-end
+      })
+  end
 
---[[ Postconditions ]]
-commonFunctions:newTestCasesGroup("Postconditions")
--- testCasesForPolicyTable:Restore_preloaded_pt()
+  --[[ Postconditions ]]
+  commonFunctions:newTestCasesGroup("Postconditions")
+  -- testCasesForPolicyTable:Restore_preloaded_pt()
 
-function Test.Postcondition_Stop()
-  StopSDL()
-end
+  function Test.Postcondition_Stop()
+    StopSDL()
+  end
 
-return Test
+  return Test

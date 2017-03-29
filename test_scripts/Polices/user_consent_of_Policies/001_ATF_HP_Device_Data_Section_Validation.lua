@@ -180,72 +180,72 @@ function Test:Precondition_Activate_App_Consent_Device_Make_PTU_Consent_Group()
   local occurrence_created_by_script = 3
   EXPECT_HMINOTIFICATION("SDL.OnAppPermissionChanged", {appID = self.HMIAppID})
   :Do(function(_,data)
-  	occurrences = occurrences + 1
-  	if occurrences == occurrence_created_by_script then
-  	 	if data.params.appPermissionsConsentNeeded ~= true then
-  	 		self:FailTestCase("appPermissionsConsentNeeded is false")
-  	 	end
-  	 
-    	local RequestIdListOfPermissions = self.hmiConnection:SendRequest("SDL.GetListOfPermissions", { appID = hmi_app_id })
-    	EXPECT_HMIRESPONSE(RequestIdListOfPermissions,
-	    {
-    	    code = 0,
-        	allowedFunctions = {{name = "Location"}},
-       		method = "SDL.GetListOfPermissions"
-    	})
-    	:Do(function(_,data1)
-        	local RequestIdGetUserFriendlyMessage = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", {language = "EN-US", messageCodes = {"Location"}})
-        	EXPECT_HMIRESPONSE(RequestIdGetUserFriendlyMessage,{result = {code = 0, method = "SDL.GetUserFriendlyMessage"}})
-        	:Do(function(_,_)
-              if #data1.result.allowedFunctions > 0 then
-            	 local functionalGroupID = data1.result.allowedFunctions[1].id
-            	 self.hmiConnection:SendNotification("SDL.OnAppPermissionConsent",
-            	 { appID = hmi_app_id, source = "GUI", consentedFunctions = {{name = "Location", allowed = true, id = functionalGroupID} }})
-    	        	  GetCurrentTimeStampGroupConsent()
-              else
-                self:FailTestCase("allowedFunctions is empty")
-              end
-        	end)
-    	end)
-  	end
-  end):Times(AtLeast(2))
-  EXPECT_NOTIFICATION("OnPermissionsChange", {})
-end
-
---[[ Test ]]
-commonFunctions:newTestCasesGroup("Test")
-function Test:Validate_Snapshot_Values()
-  self.hmiConnection:SendNotification("SDL.OnPolicyUpdate")
-  EXPECT_HMICALL("BasicCommunication.PolicyUpdate")
-  :ValidIf(function(_,data)
-      pathToSnapshot = data.params.file
-      local valuesFromPTS = GetDataFromSnapshot(pathToSnapshot)
-      local verificationValues = {
-        deviceConsentTimeStamp = consentDeviceSystemTimeStamp,
-        deviceInput = "GUI",
-        deviceGroups = "DataConsent-2",
-        inputOfAppIdConsent = "GUI",
-        groupUserconsentTimeStamp = consentGroupSystemTimeStamp,
-        userConsentGroup = "Location-1"
-      }
-
-      local result = true
-      for k, v in pairs(valuesFromPTS) do
-        if k == "deviceConsentTimeStamp" or k == "groupUserconsentTimeStamp "then
-          result = result and CompareTimestamps(valuesFromPTS, verificationValues, k)
-        elseif v ~= verificationValues[k] then
-          print("\nWrong snapshot value of \"" .. k .. "\" received!")
-          print("Expected: " .. verificationValues[k] )
-          print("Actual: " .. v .. "\n")
-          result = false
+      occurrences = occurrences + 1
+      if occurrences == occurrence_created_by_script then
+        if data.params.appPermissionsConsentNeeded ~= true then
+          self:FailTestCase("appPermissionsConsentNeeded is false")
         end
-      end
-      return result
-    end)
-end
 
---[[ Postcondition ]]
-commonFunctions:newTestCasesGroup("Postcondition")
-function Test.Postcondition_StopSDL()
-  StopSDL()
-end
+        local RequestIdListOfPermissions = self.hmiConnection:SendRequest("SDL.GetListOfPermissions", { appID = hmi_app_id })
+        EXPECT_HMIRESPONSE(RequestIdListOfPermissions,
+          {
+            code = 0,
+            allowedFunctions = {{name = "Location"}},
+            method = "SDL.GetListOfPermissions"
+          })
+        :Do(function(_,data1)
+            local RequestIdGetUserFriendlyMessage = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", {language = "EN-US", messageCodes = {"Location"}})
+            EXPECT_HMIRESPONSE(RequestIdGetUserFriendlyMessage,{result = {code = 0, method = "SDL.GetUserFriendlyMessage"}})
+            :Do(function(_,_)
+                if #data1.result.allowedFunctions > 0 then
+                  local functionalGroupID = data1.result.allowedFunctions[1].id
+                  self.hmiConnection:SendNotification("SDL.OnAppPermissionConsent",
+                    { appID = hmi_app_id, source = "GUI", consentedFunctions = {{name = "Location", allowed = true, id = functionalGroupID} }})
+                  GetCurrentTimeStampGroupConsent()
+                else
+                  self:FailTestCase("allowedFunctions is empty")
+                end
+              end)
+          end)
+      end
+      end):Times(AtLeast(2))
+    EXPECT_NOTIFICATION("OnPermissionsChange", {})
+  end
+
+  --[[ Test ]]
+  commonFunctions:newTestCasesGroup("Test")
+  function Test:Validate_Snapshot_Values()
+    self.hmiConnection:SendNotification("SDL.OnPolicyUpdate")
+    EXPECT_HMICALL("BasicCommunication.PolicyUpdate")
+    :ValidIf(function(_,data)
+        pathToSnapshot = data.params.file
+        local valuesFromPTS = GetDataFromSnapshot(pathToSnapshot)
+        local verificationValues = {
+          deviceConsentTimeStamp = consentDeviceSystemTimeStamp,
+          deviceInput = "GUI",
+          deviceGroups = "DataConsent-2",
+          inputOfAppIdConsent = "GUI",
+          groupUserconsentTimeStamp = consentGroupSystemTimeStamp,
+          userConsentGroup = "Location-1"
+        }
+
+        local result = true
+        for k, v in pairs(valuesFromPTS) do
+          if k == "deviceConsentTimeStamp" or k == "groupUserconsentTimeStamp "then
+            result = result and CompareTimestamps(valuesFromPTS, verificationValues, k)
+          elseif v ~= verificationValues[k] then
+            print("\nWrong snapshot value of \"" .. k .. "\" received!")
+            print("Expected: " .. verificationValues[k] )
+            print("Actual: " .. v .. "\n")
+            result = false
+          end
+        end
+        return result
+      end)
+  end
+
+  --[[ Postcondition ]]
+  commonFunctions:newTestCasesGroup("Postcondition")
+  function Test.Postcondition_StopSDL()
+    StopSDL()
+  end
