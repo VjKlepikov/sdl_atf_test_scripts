@@ -39,7 +39,7 @@ function Test:PTU_Success_App_Unregistered_UNAUTHORIZED()
 		self.hmiConnection:SendNotification("BasicCommunication.OnSystemRequest",{requestType = "PROPRIETARY", fileName = "filename"})
 		EXPECT_NOTIFICATION("OnSystemRequest", { requestType = "PROPRIETARY" })
 		:Do(function()
-			local CorIdSystemRequest = self.mobileSession:SendRPC("SystemRequest", {fileName = "PolicyTableUpdate", requestType = "PROPRIETARY"}, "files/ptu_nickname_smoke.json")
+			local CorIdSystemRequest = self.mobileSession:SendRPC("SystemRequest", {fileName = "PolicyTableUpdate", requestType = "PROPRIETARY"}, "files/PTU_For_SmokeTesting.json")
 			local systemRequestId
 			EXPECT_HMICALL("BasicCommunication.SystemRequest")
 			:Do(function(_,data)

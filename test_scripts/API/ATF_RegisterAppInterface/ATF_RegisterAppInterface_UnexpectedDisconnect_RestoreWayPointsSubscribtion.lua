@@ -41,7 +41,7 @@ local added_json_items =
       "NONE"
     }
   },
-  UnSubscribeWayPoints =
+  UnsubscribeWayPoints =
   {
     hmi_levels =
     {
@@ -66,16 +66,17 @@ function Test:SubscribeWayPoints()
     end)
   EXPECT_RESPONSE(CorIdSWP, {success = true , resultCode = "SUCCESS"})
   EXPECT_NOTIFICATION("OnHashChange")
+  :Do(function(_,data)
+    self.currentHashID = data.payload.hashID
+  end)
 end
 
-function Test:CloseMobileSessionAndUnsubscribeWayPoints()
-  local mobile_session_name = "mobileSession"
-  local app_name = common_functions:GetApplicationName(mobile_session_name, self)
-  common_steps:CloseMobileSession_InternalUsed(app_name, self)
-  EXPECT_HMICALL("Navigation.UnsubscribeWayPoints")
-  :Do(function(_,data)
-      self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-    end)
+function Test:CloseMobileSessionAndUnsubscribeWayPoints() 
+  self["mobileConnection"]:Close() 
+  EXPECT_HMICALL("Navigation.UnsubscribeWayPoints") 
+  :Do(function(_,data) 
+      self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {}) 
+    end) 
 end
 
 common_steps:AddMobileConnection("AddMobileConnection")
@@ -85,6 +86,7 @@ function Test:RegisterApplication()
   local mobile_session_name = "mobileSession"
   local application_parameters = config.application1.registerAppInterfaceParams
   local app_name = application_parameters.appName
+  application_parameters.hashID = self.currentHashID
   common_functions:StoreApplicationData(mobile_session_name, app_name, application_parameters, _, self)
   local CorIdRAI = self[mobile_session_name]:SendRPC("RegisterAppInterface", application_parameters)
   EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", {application = {appName = app_name}})
@@ -96,16 +98,7 @@ function Test:RegisterApplication()
   local expected_on_hmi_status = {audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"}
   EXPECT_HMICALL("Navigation.SubscribeWayPoints")
   self[mobile_session_name]:ExpectNotification("OnHMIStatus", expected_on_hmi_status)
-  :ValidIf(function(exp, data)
-      if exp.occurences == 1 and data.payload.hmiLevel ~= "NONE" then
-        return false
-      elseif exp.occurences == 2 and data.payload.hmiLevel ~= "FULL" then
-        return false
-      end
-    end)
-  :Times(2)
-  :Timeout(4000)
-end
+ end
 -------------------------------------------------------------------------------------------
 -- [[ Postconditions ]]
 function Test:RestoreFile()

@@ -58,7 +58,7 @@ local function DelayedExp(time)
   event.matches = function(self, e) return self == e end
   EXPECT_EVENT(event, "Delayed event")
   :Timeout(time+1000)
-  
+
   RUN_AFTER(function()
     RAISE_EVENT(event, event)
   end,
@@ -94,7 +94,8 @@ function Test:TestStep_GetAndCheck_HeartBeat_Time()
     (data.frameInfo == 0) --HeartBeat
   end
   print("No heartbeat yet")
-  
+
+
   self.mobileSession:ExpectEvent(event, "Heartbeat")
   :Do(
   function()
@@ -121,7 +122,7 @@ function Test:TestStep_GetAndCheck_HeartBeat_Time()
         HBTime_max = HB_interval
       end
     end
-    
+
     self.mobileSession:Send(
     { frameType = constants.FRAME_TYPE.CONTROL_FRAME,
       serviceType = constants.SERVICE_TYPE.CONTROL,
@@ -129,7 +130,16 @@ function Test:TestStep_GetAndCheck_HeartBeat_Time()
     }
     )
   end):Times(AtLeast(1))
-  
+
+     --TODO should be removed after changes in sending ATF HB
+      EXPECT_ANY():Do(
+         function()
+            time_now = timestamp()
+            print("Received a non-HB request(e.g.HB ACK or RPC)")
+        end
+    ):Times(AnyNumber())
+
+
   DelayedExp(20000)
 end
 
