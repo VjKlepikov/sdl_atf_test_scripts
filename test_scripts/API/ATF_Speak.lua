@@ -229,61 +229,50 @@ local function SpecialRequestChecks()
 
 		function Test:Speak_CorrelationID_IsDuplicated()
 
-			--mobile side: sending Speak request
-			local cid = self.mobileSession:SendRPC("Speak",
-			{
-				ttsChunks =
-				{
-					{
-						text ="a",
-						type ="TEXT"
-					}
-				}
-			})
-			self.mobileSession.correlationId = cid
-			--request from mobile side
-			local msg =
-			{
-			  serviceType      = 7,
-			  frameInfo        = 0,
-			  rpcType          = 0,
-			  rpcFunctionId    = 14,
-			  rpcCorrelationId = self.mobileSession.correlationId,
-			  payload          = '{"ttsChunks":[{"text":"a","type":"TEXT"}]}'
-			}
+    --mobile side: sending Speak request
+    local cid = self.mobileSession:SendRPC("Speak",
+      {
+        ttsChunks =
+        {
+          {
+            text ="a",
+            type ="TEXT"
+          }
+        }
+      })
+    self.mobileSession.correlationId = cid
+    --request from mobile side
+    local msg =
+    {
+      serviceType = 7,
+      frameInfo = 0,
+      rpcType = 0,
+      rpcFunctionId = 14,
+      rpcCorrelationId = self.mobileSession.correlationId,
+      payload = '{"ttsChunks":[{"text":"a","type":"TEXT"}]}'
+    }
 
-			--hmi side: expect TTS.Speak request
-			EXPECT_HMICALL("TTS.Speak", { ttsChunks = {{text ="a", type ="TEXT"}}} )
-			:Do(function(exp,data)
+    --hmi side: expect TTS.Speak request
+    EXPECT_HMICALL("TTS.Speak", { ttsChunks = {{text ="a", type ="TEXT"}}} )
+    :Do(function(_,data)
 
-				local function speakResponse(RequestId)
-					self.hmiConnection:SendResponse(RequestId, "TTS.Speak", "SUCCESS", { })
+        self.hmiConnection:SendNotification("TTS.Started")
+        SpeakId = data.id
 
-					self.hmiConnection:SendNotification("TTS.Stopped")
-				end
+        local function speakResponse()
+          self.hmiConnection:SendResponse(SpeakId, "TTS.Speak", "SUCCESS", { })
+          self.hmiConnection:SendNotification("TTS.Stopped")
+        end
+        self.mobileSession:Send(msg)
+        RUN_AFTER(speakResponse, 1000)
+      end)
 
-				if exp.occurences == 1 then
-					self.mobileSession:Send(msg)
-					SpeakId1 = data.id
-					RUN_AFTER(function() speakResponse(SpeakId1) end, 1000)
-				elseif
-					exp.occurences == 2 then
-					SpeakId2 = data.id
-					RUN_AFTER(function() speakResponse(SpeakId2) end, 1000)
-				end
+    ExpectOnHMIStatusWithAudioStateChanged(self, "FULL", nil, 2)
 
-				self.hmiConnection:SendNotification("TTS.Started")
-			end)
-			:Times(2)
+    --response on mobile side
+    EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_ID" }, { success = true, resultCode = "SUCCESS" }):Times(2)
 
-			ExpectOnHMIStatusWithAudioStateChanged(self, "FULL", nil, 4)
-
-
-			--response on mobile side
-			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Times(2)
-
-		end
+  end
 
 	--End Test case NegativeRequestCheck.2
 
