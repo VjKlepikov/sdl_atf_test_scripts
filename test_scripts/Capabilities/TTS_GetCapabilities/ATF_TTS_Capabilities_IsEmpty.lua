@@ -269,7 +269,7 @@ local function MobileRegisterAppAndVerifyTTSCapabilities(self)
     , config.application1.registerAppInterfaceParams)
   EXPECT_RESPONSE(correlationId, {success = true, speechCapabilities = TTSCapabilities_Default})
   :ValidIf(function(_, data)
-      return data.payload.prerecordedSpeech
+      return (data.payload.prerecordedSpeech == nil)
     end)
 end
 ---------------------------------------- Steps ---------------------------------------
