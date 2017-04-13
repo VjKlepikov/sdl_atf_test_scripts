@@ -298,11 +298,11 @@
 ./test_scripts/API/ATF_OnExitAllApplications/ATF_OnExitAllApplications_SPECIAL_CASES.lua
 ./test_scripts/API/ATF_PutFile/ATF_Putfile_Response_INVALID_DATA_Mandatory_spaceAvailable_Missing.lua
 ./test_scripts/Capabilities/TTS_GetCapabilities/ATF_TTS_Capabilities_SUCCESS.lua
-./test_scripts/Capabilities/TTS_GetCapabilities/ATF_TTS_Capabilities_IsWrongType.lua [APPLINK-33219]
-./test_scripts/Capabilities/TTS_GetCapabilities/ATF_TTS_Capabilities_IsNotExist.lua [APPLINK-33219]
-./test_scripts/Capabilities/TTS_GetCapabilities/ATF_TTS_Capabilities_IsInvalidValue.lua [APPLINK-33219]
-./test_scripts/Capabilities/TTS_GetCapabilities/ATF_TTS_Capabilities_IsEmpty.lua [APPLINK-33219]
-./test_scripts/Capabilities/TTS_GetCapabilities/ATF_TTS_Capabilities_GENERIC_ERROR.lua [APPLINK-33219]
+./test_scripts/Capabilities/TTS_GetCapabilities/ATF_TTS_Capabilities_IsWrongType.lua
+./test_scripts/Capabilities/TTS_GetCapabilities/ATF_TTS_Capabilities_IsNotExist.lua
+./test_scripts/Capabilities/TTS_GetCapabilities/ATF_TTS_Capabilities_IsInvalidValue.lua
+./test_scripts/Capabilities/TTS_GetCapabilities/ATF_TTS_Capabilities_IsEmpty.lua
+./test_scripts/Capabilities/TTS_GetCapabilities/ATF_TTS_Capabilities_GENERIC_ERROR.lua
 ./test_scripts/API/ATF_PutFile/ATF_Putfile_Response_INVALID_DATA_Mandatory_spaceAvailable_Missing.lua [APPLINK-32994]
 ./test_scripts/Smoke_test/ATF_Smoke_testing_resumption_big_data.lua [APPLINK-13656]
 ./test_scripts/Smoke_test/ATF_App_Unregistered_After_PTU_Success_Wrong_Nickname.lua
