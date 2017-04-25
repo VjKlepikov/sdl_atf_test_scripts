@@ -2,6 +2,8 @@
 --APPLINK-13417: SDL writes ERROR in log and ignore all responses after HMI send UI.SetMediaClockTimer response with fake parameter
 --ToDO: will be updated according to APPLINK-14765
 ---------------------------------------------------------------------------------------------
+config.deviceMAC = "12ca17b49af2289436f303e0166030a21e525d266e209267433801a8fd4071a0"
+
 config.application1 =
 {
   registerAppInterfaceParams =
@@ -105,7 +107,7 @@ end
 								:Do(function(_,data)
 									self.hmiConnection:SendResponse(data.id,"BasicCommunication.ActivateApp", "SUCCESS", {})
 								end)
-								:Times(2)
+								:Times(1)
 						end)
 
 				end
@@ -1485,7 +1487,7 @@ end
 
 					--startTime
 					for j =1, #updateModeCountUpDown do
-						Test["SetMediaClockTimer_startTime_IsInvalidValue_missing" .."_"..tostring(updateModeCountUpDown[j]).."_INVALID_DATA"] = function(self)
+						Test["SetMediaClockTimer_startTime_IsInvalidValue_missing" .."_"..tostring(updateModeCountUpDown[j]).."_REJECTED"] = function(self)
 
 							--mobile side: sending SetMediaClockTimer request
 							local cid = self.mobileSession:SendRPC("SetMediaClockTimer",
@@ -1505,7 +1507,7 @@ end
 							:Times(0)
 
 							--mobile side: expect SetMediaClockTimer response
-							EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
+							EXPECT_RESPONSE(cid, { success = false, resultCode = "REJECTED"})
 							:Timeout(iTimeout)
 
 						end
@@ -1776,7 +1778,7 @@ end
 								minutes = 1,
 								seconds = 35
 							},
-							updateMode = 1
+							updateMode = { "a" }
 						})
 
 						--hmi side: expect absence of UI.SetMediaClockTimer request
@@ -1841,6 +1843,7 @@ end
 			  	self.mobileSession2 = mobile_session.MobileSession(
 			    self,
 			    self.mobileConnection)
+			    self.mobileSession2:StartService(7)
 			end
 
 

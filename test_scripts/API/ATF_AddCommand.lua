@@ -1,6 +1,6 @@
-Test = require('connecttest')	
+Test = require('connecttest')
 require('cardinalities')
-local events = require('events')	
+local events = require('events')
 local mobile_session = require('mobile_session')
 
 local commonFunctions = require('user_modules/shared_testcases/commonFunctions')
@@ -15,7 +15,7 @@ config.defaultProtocolVersion = 2
 local storagePath = config.pathToSDL .. "storage/" ..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
 local imageValues = {"i", "icon.png", "qwertyuiopasdfghjklzxcvbnm1234567890[]'.!@#$%^&*()_+-=qwertyuiopasdfghjklzxcvbnm1234567890[]'.!@#$%^&*()_+-=QWERTYUIOPASDFGHJKLZXCVBNM{}|?>:<qwertyuiopasdfghjklzxcvbnm1234567890[]'.!@#$%^&*()_+-=qwertyuiopasdfghjklzxcvbnm1234567890[]'.!@#$%^&*()_+-=QWERTY"}
 local grammarIDValue
-local appId2
+-- local appId2
 local infoMessage = "qwertyuiopasdfghjklzxcvbnm1234567890[]'.!@#$%^&*()_+-=qwertyuiopasdfghjklzxcvbnm1234567890[]'.!@#$%^&*()_+-=QWERTYUIOPASDFGHJKLZXCVBNM{}|?>:<qwertyuiopasdfghjklzxcvbnm1234567890[]'.!@#$%^&*()_+-=qwertyuiopasdfghjklzxcvbnm1234567890[]'.!@#$%^&*()_+-=QWERTYqwertyuiopasdfghjklzxcvbnm1234567890[]'.!@#$%^&*()_+-=qwertyuiopasdfghjklzxcvbnm1234567890[]'.!@#$%^&*()_+-=QWERTYUIOPASDFGHJKLZXCVBNM{}|?>:<qwertyuiopasdfghjklzxcvbnm1234567890[]'.!@#$%^&*()_+-=qwertyuiopasdfghjklzxcvbnm1234567890[]'.!@#$%^&*()_+-=QWERTYqwertyuiopasdfghjklzxcvbnm1234567890[]'.!@#$%^&*()_+-=qwertyuiopasdfghjklzxcvbnm1234567890[]'.!@#$%^&*()_+-=QWERTYUIOPASDFGHJKLZXCVBNM{}|?>:<qwertyuiopasdfghjklzxcvbnm1234567890[]'.!@#$%^&*()_+-=qwertyuiopasdfghjklzxcvbnm1234567890[]'.!@#$%^&*()_+-=QWERTYqwertyuiopasdfghjklzxcvbnm1234567890[]'.!@#$%^&*()_+-=qwertyuiopasdfghjklzxcvbnm1234567890[]'.!@#$%^&*()_+-=QWERTYUIOPASDFGHJKLZXCVBNM{}|?>:<qwertyuiopasdfghjklzxcvbnm1234567890[]'.!@#$%^&*()_+-=qwertyuiopasdfghjklzxcvbnm1234567890[]'"
 
 
@@ -43,38 +43,38 @@ end
 			local cid = self.mobileSession:SendRPC("AddCommand",
 			{
 				cmdID = iCmdID,
-				menuParams = 	
+				menuParams =
 				{
 					position = iPosition,
 					menuName ="Command"..tostring(iCmdID)
 				}
 			})
-			
-			--hmi side: expect UI.AddCommand request 
-			EXPECT_HMICALL("UI.AddCommand", 
-			{ 
-				cmdID = iCmdID,		
-				menuParams = 
+
+			--hmi side: expect UI.AddCommand request
+			EXPECT_HMICALL("UI.AddCommand",
+			{
+				cmdID = iCmdID,
+				menuParams =
 				{
 					position = iPosition,
 					menuName ="Command"..tostring(iCmdID)
 				}
 			})
 			:Do(function(_,data)
-				--hmi side: sending UI.AddCommand response 
+				--hmi side: sending UI.AddCommand response
 				self.hmiConnection:SendResponse(data.id, data.method, sResultCode, {})
-			end)	
-			
-			--mobile side: expect AddCommand response 
+			end)
+
+			--mobile side: expect AddCommand response
 			EXPECT_RESPONSE(cid, {  success = bSucccess, resultCode = sResultCode  })
 			if sResultCode == "SUCCESS" then
 				EXPECT_NOTIFICATION("OnHashChange")
-			end			
+			end
 		end
 	--End Common.1
-	
+
 	-----------------------------------------------------------------------------------------
-	
+
 	--Begin Common.2
 	--Description: AddCommand with specified image name
 		--iCmdID : unique ID of the command to add
@@ -86,28 +86,28 @@ end
 			local cid = self.mobileSession:SendRPC("AddCommand",
 			{
 				cmdID = iCmdID,
-				menuParams = 	
+				menuParams =
 				{
 					menuName ="CommandImageValue"..tostring(iCmdID)
 				},
-				cmdIcon = 	
-				{ 
+				cmdIcon =
+				{
 					value = sImageValue,
 					imageType =ImageType
 				}
 			})
-			
+
 			if ImageType == "DYNAMIC" then
 				--hmi side: expect UI.AddCommand request
-				EXPECT_HMICALL("UI.AddCommand", 
-				{ 
+				EXPECT_HMICALL("UI.AddCommand",
+				{
 					cmdID = iCmdID,
-					menuParams = 	
+					menuParams =
 					{
 						menuName ="CommandImageValue"..tostring(iCmdID)
 					}
 					-- Verification is done below
-					-- ,cmdIcon = 
+					-- ,cmdIcon =
 					-- {
 					-- 	value = storagePath..sImageValue,
 					-- 	imageType = ImageType
@@ -116,7 +116,7 @@ end
 				:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -134,17 +134,17 @@ end
 				:Do(function(_,data)
 					--hmi side: sending UI.AddCommand response
 					self.hmiConnection:SendResponse(data.id, data.method, sResultCode, {})
-				end)	
+				end)
 			else
 				--hmi side: expect UI.AddCommand request
-				EXPECT_HMICALL("UI.AddCommand", 
-				{ 
+				EXPECT_HMICALL("UI.AddCommand",
+				{
 					cmdID = iCmdID,
-					menuParams = 	
+					menuParams =
 					{
 						menuName ="CommandImageValue"..tostring(iCmdID)
 					},
-					cmdIcon = 
+					cmdIcon =
 					{
 						value = sImageValue,
 						imageType = ImageType
@@ -155,7 +155,7 @@ end
 					self.hmiConnection:SendResponse(data.id, data.method, sResultCode, {})
 				end)
 			end
-			
+
 			--mobile side: expect AddCommand response
 			EXPECT_RESPONSE(cid, { success = bSucccess, resultCode = sResultCode })
 			if sResultCode == "SUCCESS" then
@@ -163,9 +163,9 @@ end
 			end
 		end
 	--End Common.2
-	
+
 	-----------------------------------------------------------------------------------------
-	
+
 	--Begin Common.3
 	--Description: AddCommand with specified command id
 		--iCmdID : id of command want to add
@@ -176,29 +176,29 @@ end
 			local cid = self.mobileSession:SendRPC("AddCommand",
 			{
 				cmdID = iCmdID,
-				menuParams = 	
+				menuParams =
 				{
 					menuName ="CommandID"..tostring(iCmdID)
 				}
 			})
-			
+
 			--hmi side: expect UI.AddCommand request
-			EXPECT_HMICALL("UI.AddCommand", 
-			{ 
+			EXPECT_HMICALL("UI.AddCommand",
+			{
 				cmdID = iCmdID,
-				menuParams = 	
+				menuParams =
 				{
 					menuName ="CommandID"..tostring(iCmdID)
 				}
 			})
 			:Do(function(_,data)
-				--hmi side: sending UI.AddCommand response 
+				--hmi side: sending UI.AddCommand response
 				self.hmiConnection:SendResponse(data.id, data.method, sResultCode, {})
-			end)			
+			end)
 
-			--mobile side: expect AddCommand response 
+			--mobile side: expect AddCommand response
 			EXPECT_RESPONSE(cid, { success = bSucccess, resultCode = sResultCode })
-			EXPECT_NOTIFICATION("OnHashChange")			
+			EXPECT_NOTIFICATION("OnHashChange")
 		end
 	--End Common.3
 
@@ -215,18 +215,18 @@ end
 			local cid = self.mobileSession:SendRPC("AddCommand",
 			{
 				cmdID = iCmdID,
-				menuParams = 	
+				menuParams =
 				{
 					menuName ="CommandID"..tostring(iCmdID),
 					parentID = iParentID
 				}
 			})
-			
+
 			--hmi side: expect UI.AddCommand request
-			EXPECT_HMICALL("UI.AddCommand", 
-			{ 
+			EXPECT_HMICALL("UI.AddCommand",
+			{
 				cmdID = iCmdID,
-				menuParams = 	
+				menuParams =
 				{
 					menuName ="CommandID"..tostring(iCmdID),
 					parentID = iParentID
@@ -235,18 +235,18 @@ end
 			:Do(function(_,data)
 				--hmi side: sending UI.AddCommand response
 				self.hmiConnection:SendResponse(data.id, data.method, sResultCode, {})
-			end)			
+			end)
 
 			--mobile side: expect AddCommand response
 			EXPECT_RESPONSE(cid, { success = bSucccess, resultCode = sResultCode })
 			if sResultCode == "SUCCESS" then
 				EXPECT_NOTIFICATION("OnHashChange")
-			end	
+			end
 		end
 	--End Common.4
 
 	-----------------------------------------------------------------------------------------
-	
+
 	--Begin Common.5
 	--Description: DelayedExp
 	function DelayedExp()
@@ -258,9 +258,9 @@ end
 		end, 5000)
 	end
 	--End Common.5
-	
-	----------------------------------------------------------------------------------------- 
-	
+
+	-----------------------------------------------------------------------------------------
+
 	--Begin Common.6
 	--Description: Delete existed command by cmdID
 	--				iCmdID : id of command want to delete
@@ -270,68 +270,68 @@ end
 			{
 				cmdID = iCmdID
 			})
-			
+
 			--hmi side: expect UI.DeleteCommand request
-			EXPECT_HMICALL("UI.DeleteCommand", 
-			{ 
+			EXPECT_HMICALL("UI.DeleteCommand",
+			{
 				cmdID = iCmdID
 			})
 			:Do(function(_,data)
 				--hmi side: sending UI.DeleteCommand response
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
-			
+
 			--hmi side: expect VR.DeleteCommand request
-			EXPECT_HMICALL("VR.DeleteCommand", 
-			{ 
+			EXPECT_HMICALL("VR.DeleteCommand",
+			{
 				cmdID = iCmdID
 			})
 			:Do(function(_,data)
 				--hmi side: sending VR.DeleteCommand response
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
-						
-			--mobile side: expect DeleteCommand response 
+
+			--mobile side: expect DeleteCommand response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
-			
+
 			--mobile side: expect OnHashChange notification
-			EXPECT_NOTIFICATION("OnHashChange")			
+			EXPECT_NOTIFICATION("OnHashChange")
 		end
 	--End Common.6
 
 	-----------------------------------------------------------------------------------------
-	
+
 	--Begin Common.7
-	--Description: 
+	--Description:
 		-- In case VR.AddCommand gets any erroneous response except REJECTED from HMI - SDL must send AddCommand_response(GENERIC_ERROR) to mobile app.
-		-- In case VR.AddCommand gets any REJECTED from HMI - SDL must send AddCommand_response(REJECTED) to mobile app.		
+		-- In case VR.AddCommand gets any REJECTED from HMI - SDL must send AddCommand_response(REJECTED) to mobile app.
 		function Test:addCommand_VRErroneousResponse (vrResultResponse)
 			local resultCodeValue
-			if vrResultResponse == "REJECTED" or vrResultResponse == "WARNINGS" then				
+			if vrResultResponse == "REJECTED" or vrResultResponse == "WARNINGS" then
 				resultCodeValue = vrResultResponse
-			else				
+			else
 				resultCodeValue = "GENERIC_ERROR"
 			end
-			
+
 			--mobile side: sending AddCommand request
 				local cid = self.mobileSession:SendRPC("AddCommand",
 					{
 														cmdID = 2006,
-														menuParams = 	
-														{ 																
+														menuParams =
+														{
 															menuName ="Command2006"
-														}, 
-														vrCommands = 
-														{ 
+														},
+														vrCommands =
+														{
 															"VRCommand2006"
 														}
 													})
 			--hmi side: expect UI.AddCommand request
-			EXPECT_HMICALL("UI.AddCommand", 
-							{ 
+			EXPECT_HMICALL("UI.AddCommand",
+							{
 								cmdID = 2006,
-								menuParams = 
-								{ 											
+								menuParams =
+								{
 									menuName ="Command2006"
 								}
 							})
@@ -339,13 +339,13 @@ end
 				--hmi side: send UI.AddCommand response
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
-			
+
 			--hmi side: expect VR.AddCommand request
-			EXPECT_HMICALL("VR.AddCommand", 
-							{ 
-								cmdID = 2006,							
+			EXPECT_HMICALL("VR.AddCommand",
+							{
+								cmdID = 2006,
 								type = "Command",
-								vrCommands = 
+								vrCommands =
 								{
 									"VRCommand2006"
 								}
@@ -354,72 +354,72 @@ end
 				--hmi side: sending VR.AddCommand response
 				self.hmiConnection:SendError(data.id, data.method, vrResultResponse, "Error Messages")
 			end)
-			
+
 			if vrResultResponse ~= "WARNINGS" then
 				--hmi side: expect UI.DeleteCommand request
 				EXPECT_HMICALL("UI.DeleteCommand",
-				{cmdID = 2006})				
+				{cmdID = 2006})
 				:Timeout(15000)
 				:Do(function(exp,data)
 					--hmi side: sending UI.DeleteCommand response
 					self.hmiConnection:SendResponse(data.id,"UI.DeleteCommand", "SUCCESS", {})
 				end)
-			
+
 				--mobile side: expect response
-				EXPECT_RESPONSE(cid, { success = false, resultCode = resultCodeValue })	
+				EXPECT_RESPONSE(cid, { success = false, resultCode = resultCodeValue })
 				:Timeout(12000)
-							
+
 				--mobile side: expect OnHashChange notification is not send to mobile
 				EXPECT_NOTIFICATION("OnHashChange")
 				:Times(0)
 			else
 				--mobile side: expect response
-				EXPECT_RESPONSE(cid, { success = true, resultCode = resultCodeValue })					
-							
+				EXPECT_RESPONSE(cid, { success = true, resultCode = resultCodeValue })
+
 				--mobile side: expect OnHashChange notification
-				EXPECT_NOTIFICATION("OnHashChange")				
+				EXPECT_NOTIFICATION("OnHashChange")
 			end
 		end
 	--End Common.7
-	
+
 	-----------------------------------------------------------------------------------------
-		
+
 	--Begin Common.8
-	--Description: 
+	--Description:
 		-- In case UI.AddCommand gets erroneous response except of WARNINGS and UNSUPPORTED_RESOURCE and REJECTED from HMI - SDL must send AddCommand_response(GENERIC_ERROR) to mobile app.
 		-- In case UI.AddCommand gets REJECTED from HMI - SDL must send AddCommand_response(REJECTED) to mobile app.
 		-- In case of WARNINGS or UNSUPPORTED_RESOURCE from HMI, SDL must transfer the resultCode from HMI's response with adding "success: true" to mobile app.
 		function Test:addCommand_UIErroneousResponse (uiResultResponse, cmdIDValue)
 			local resultCodeValue, succcessValue
-			if uiResultResponse == "REJECTED" or uiResultResponse == "WARNINGS" or uiResultResponse == "UNSUPPORTED_RESOURCE" then				
+			if uiResultResponse == "REJECTED" or uiResultResponse == "WARNINGS" or uiResultResponse == "UNSUPPORTED_RESOURCE" then
 				resultCodeValue = uiResultResponse
 				if uiResultResponse ~= "REJECTED" then
 					succcessValue = true
 				end
-			else				
+			else
 				resultCodeValue = "GENERIC_ERROR"
 				succcessValue = false
 			end
-			
+
 			--mobile side: sending AddCommand request
 				local cid = self.mobileSession:SendRPC("AddCommand",
 					{
 														cmdID = cmdIDValue,
-														menuParams = 	
-														{ 																
+														menuParams =
+														{
 															menuName ="Command"..cmdIDValue
-														}, 
-														vrCommands = 
-														{ 
+														},
+														vrCommands =
+														{
 															"VRCommand"..cmdIDValue
 														}
 													})
 			--hmi side: expect UI.AddCommand request
-			EXPECT_HMICALL("UI.AddCommand", 
-							{ 
+			EXPECT_HMICALL("UI.AddCommand",
+							{
 								cmdID = cmdIDValue,
-								menuParams = 
-								{ 											
+								menuParams =
+								{
 									menuName ="Command"..cmdIDValue
 								}
 							})
@@ -427,13 +427,13 @@ end
 				--hmi side: send UI.AddCommand response
 				self.hmiConnection:SendError(data.id, data.method, uiResultResponse, "Error Messages")
 			end)
-			
+
 			--hmi side: expect VR.AddCommand request
-			EXPECT_HMICALL("VR.AddCommand", 
-							{ 
-								cmdID = cmdIDValue,							
+			EXPECT_HMICALL("VR.AddCommand",
+							{
+								cmdID = cmdIDValue,
 								type = "Command",
-								vrCommands = 
+								vrCommands =
 								{
 									"VRCommand"..cmdIDValue
 								}
@@ -442,45 +442,45 @@ end
 				--hmi side: sending VR.AddCommand response
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
-			
-			if uiResultResponse ~= "WARNINGS" and uiResultResponse ~= "UNSUPPORTED_RESOURCE"  then				
+
+			if uiResultResponse ~= "WARNINGS" and uiResultResponse ~= "UNSUPPORTED_RESOURCE"  then
 				--hmi side: expect VR.DeleteCommand request
 				EXPECT_HMICALL("VR.DeleteCommand",
-				{cmdID = cmdIDValue})				
+				{cmdID = cmdIDValue})
 				:Timeout(15000)
 				:Do(function(exp,data)
 					--hmi side: sending VR.DeleteCommand response
 					self.hmiConnection:SendResponse(data.id,"VR.DeleteCommand", "SUCCESS", {})
 				end)
-				
+
 				--mobile side: expect notification
 				EXPECT_NOTIFICATION("OnHashChange")
 				:Times(0)
 			else
 				--hmi side: expect VR.DeleteCommand request
 				EXPECT_HMICALL("VR.DeleteCommand",
-				{cmdID = cmdIDValue})				
+				{cmdID = cmdIDValue})
 				:Times(0)
-				
+
 				--mobile side: expect notification
 				EXPECT_NOTIFICATION("OnHashChange")
 			end
-			
+
 			--mobile side: expect response
-			EXPECT_RESPONSE(cid, { success = succcessValue, resultCode = resultCodeValue })			
+			EXPECT_RESPONSE(cid, { success = succcessValue, resultCode = resultCodeValue })
 			:Timeout(12000)
-			
+
 			DelayedExp()
 		end
 	--End Common.8
-	
+
 ---------------------------------------------------------------------------------------------
 -------------------------------------------Preconditions-------------------------------------
 ---------------------------------------------------------------------------------------------
 	--Begin Precondition.1
-	--Description: Activation App by sending SDL.ActivateApp	
+	--Description: Activation App by sending SDL.ActivateApp
 		function Test:ActivationApp()
-			
+
 			--hmi side: sending SDL.ActivateApp request
 			local RequestId = self.hmiConnection:SendRequest("SDL.ActivateApp", { appID = self.applications["Test Application"]})
 
@@ -492,7 +492,7 @@ end
 						data.result.isSDLAllowed ~= true then
 
 							--hmi side: sending SDL.GetUserFriendlyMessage request
-							local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", 
+							local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage",
 												{language = "EN-US", messageCodes = {"DataConsent"}})
 
 							--hmi side: expect SDL.GetUserFriendlyMessage response
@@ -501,7 +501,7 @@ end
 								:Do(function(_,data)
 
 									--hmi side: send request SDL.OnAllowSDLFunctionality
-									self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality", 
+									self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality",
 										{allowed = true, source = "GUI", device = {id = config.deviceMAC, name = "127.0.0.1"}})
 
 
@@ -520,9 +520,9 @@ end
 
 				end
 			end)
-			
+
 			--mobile side: expect notification
-			EXPECT_NOTIFICATION("OnHMIStatus", {hmiLevel = "FULL", systemContext = "MAIN"}) 
+			EXPECT_NOTIFICATION("OnHMIStatus", {hmiLevel = "FULL", systemContext = "MAIN"})
 		end
 	--End Precondition.1
 
@@ -533,19 +533,19 @@ end
 		function Test:PutFile()
 			for i=1,#imageValues do
 				local cid = self.mobileSession:SendRPC("PutFile",
-				{			
+				{
 					syncFileName = imageValues[i],
 					fileType	= "GRAPHIC_PNG",
 					persistentFile = false,
 					systemFile = false
-				}, "files/icon.png")	
+				}, "files/icon.png")
 				EXPECT_RESPONSE(cid, { success = true})
 			end
 		end
 	--End Precondition.2
-	
-	----------------------------------------------------------------------------------------- 
-	
+
+	-----------------------------------------------------------------------------------------
+
 	--Begin Precondition.3
 	--Description: Adding SubMenu(AddSubMenus)
 		local menuIDValues = {1, 2, 10, 8888, 1999999999, 2000000000}
@@ -556,9 +556,9 @@ end
 					menuID = menuIDValues[i],
 					menuName = "SubMenu"..tostring(i)
 				})
-				
-				EXPECT_HMICALL("UI.AddSubMenu", 
-				{ 
+
+				EXPECT_HMICALL("UI.AddSubMenu",
+				{
 					menuID = menuIDValues[i],
 					menuParams = { menuName = "SubMenu"..tostring(i) }
 				})
@@ -566,20 +566,20 @@ end
 						--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
-				
+
 				EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 				EXPECT_NOTIFICATION("OnHashChange")
 			end
 		end
 	--End Precondition.3
-	
+
 ---------------------------------------------------------------------------------------------
 -----------------------------------------I TEST BLOCK----------------------------------------
 --CommonRequestCheck: Check of mandatory/conditional request's parameters (mobile protocol)--
 ---------------------------------------------------------------------------------------------
 	--Begin Test suit PositiveRequestCheck
 
-	--Description: TC's checks processing 
+	--Description: TC's checks processing
 		-- request with all parameters
         -- request with only mandatory parameters
         -- request with all combinations of conditional-mandatory parameters (if exist)
@@ -589,51 +589,51 @@ end
         -- request with fake parameters (fake - not from protocol, from another request)
         -- request is sent with invalid JSON structure
         -- different conditions of correlationID parameter (invalid, several the same etc.)
-	
+
 
 		--Begin Test case CommonRequestCheck.1
 		--Description: This test is intended to check positive cases and when all parameters are in boundary conditions
 
-			--Requirement id in JAMA: 
+			--Requirement id in JAMA:
 					--SDLAQ-CRS-21
-					
-			--Verification criteria: 
-					--AddCommand request adds the command to VR Menu, UI Command/SubMenu menu or to the both depending on the parameters sent (VR, UI commands or the both correspondingly);							
+
+			--Verification criteria:
+					--AddCommand request adds the command to VR Menu, UI Command/SubMenu menu or to the both depending on the parameters sent (VR, UI commands or the both correspondingly);
 				function Test:AddCommand_PositiveCase()
 					--mobile side: sending AddCommand request
 					local cid = self.mobileSession:SendRPC("AddCommand",
 															{
 																cmdID = 11,
-																menuParams = 	
-																{ 
+																menuParams =
+																{
 																	parentID = 1,
 																	position = 0,
 																	menuName ="Commandpositive"
-																}, 
-																vrCommands = 
-																{ 
+																},
+																vrCommands =
+																{
 																	"VRCommandonepositive",
 																	"VRCommandonepositivedouble"
-																}, 
-																cmdIcon = 	
-																{ 
+																},
+																cmdIcon =
+																{
 																	value ="icon.png",
 																	imageType ="DYNAMIC"
 																}
 															})
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-									{ 
+					EXPECT_HMICALL("UI.AddCommand",
+									{
 										cmdID = 11,
 										-- Verification is done below
-										--cmdIcon = 
+										--cmdIcon =
 										-- {
 										-- 	value = storagePath.."icon.png",
 										-- 	imageType = "DYNAMIC"
 										-- },
-										menuParams = 
-										{ 
-											parentID = 1,	
+										menuParams =
+										{
+											parentID = 1,
 											position = 0,
 											menuName ="Commandpositive"
 										}
@@ -641,7 +641,7 @@ end
 					:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -660,15 +660,15 @@ end
 						--hmi side: sending UI.AddCommand response
 						self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 					end)
-						
+
 					--hmi side: expect VR.AddCommand request
-					EXPECT_HMICALL("VR.AddCommand", 
-									{ 
+					EXPECT_HMICALL("VR.AddCommand",
+									{
 										cmdID = 11,
 										type = "Command",
-										vrCommands = 
+										vrCommands =
 										{
-											"VRCommandonepositive", 
+											"VRCommandonepositive",
 											"VRCommandonepositivedouble"
 										}
 									})
@@ -676,7 +676,7 @@ end
 						--hmi side: sending VR.AddCommand response
 						self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 					end)
-					
+
 					--mobile side: expect AddCommand response
 					EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 
@@ -684,26 +684,26 @@ end
 					EXPECT_NOTIFICATION("OnHashChange")
 				end
 			--End Test case CommonRequestCheck.1
-						
+
 		--End Test case CommonRequestCheck.1
-		
+
 		-----------------------------------------------------------------------------------------
 
 		--Begin Test case CommonRequestCheck.2
 		--Description: This test is intended to check processing requests with only mandatory parameters
-		
+
 			--Requirement id in JAMA:
 					--SDLAQ-CRS-21,
 					--SDLAQ-CRS-747
 					--SDLAQ-CRS-748
 					--SDLAQ-CRS-757
-					
+
 			--Verification criteria:
 					--AddCommand request adds the command to VR Menu, UI Command/SubMenu menu or to the both depending on the parameters sent (VR, UI commands or the both correspondingly).
 					--AddCommand request with only VR command definitions and no MenuParams definitions adds the command only to VR menu. This command is accessible only from VR menu.
 					--AddCommand request with only MenuParams and no VR command definitions adds the command only to UI Command menu. This command is accessible only from UI Command/SubMenu menu.
 					--The request without "MenuParams" and with "vrCommands" is sent, the SUCCESS response code is returned in case if no errors.
-					
+
 			--Begin Test case CommonRequestCheck.2.1
 			--Description: If the command has only VR command definitions and no MenuParams definitions, the command should be added only to VR menu.
 				function Test:AddCommand_MandatoryVRCommandsOnly()
@@ -711,18 +711,18 @@ end
 					local cid = self.mobileSession:SendRPC("AddCommand",
 					{
 						cmdID = 1005,
-						vrCommands = 
-						{ 
+						vrCommands =
+						{
 							"OnlyVRCommand"
 						}
 					})
-						
+
 					--hmi side: expect VR.AddCommand request
-					EXPECT_HMICALL("VR.AddCommand", 
-					{ 
+					EXPECT_HMICALL("VR.AddCommand",
+					{
 						cmdID = 1005,
 						type = "Command",
-						vrCommands = 
+						vrCommands =
 						{
 							"OnlyVRCommand"
 						}
@@ -730,36 +730,36 @@ end
 					:Do(function(_,data)
 						--hmi side: sending response
 								self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-					end)	
-					
+					end)
+
 					EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 					EXPECT_NOTIFICATION("OnHashChange")
-				end	
+				end
 			--End Test case CommonRequestCheck.2.1
-			
+
 			-----------------------------------------------------------------------------------------
-					
+
 			--Begin Test case CommonRequestCheck.2.2
-			--Description: If the command has only MenuParams definitions and no VR command definitions the command should be added only to UI Commands Menu/SubMenu. 
+			--Description: If the command has only MenuParams definitions and no VR command definitions the command should be added only to UI Commands Menu/SubMenu.
 				function Test:AddCommand_MandatoryMenuParamsOnly()
 					--mobile side: sending AddCommand request
 					local cid = self.mobileSession:SendRPC("AddCommand",
 															{
 																cmdID = 20,
-																menuParams = 	
-																{ 
+																menuParams =
+																{
 																	parentID = 1,
 																	position = 0,
 																	menuName ="Command20"
 																}
 															})
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-									{ 
-										cmdID = 20,										
-										menuParams = 
-										{ 
-											parentID = 1,	
+					EXPECT_HMICALL("UI.AddCommand",
+									{
+										cmdID = 20,
+										menuParams =
+										{
+											parentID = 1,
 											position = 0,
 											menuName ="Command20"
 										}
@@ -768,28 +768,28 @@ end
 						--hmi side: sending UI.AddCommand response
 						self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 					end)
-										
+
 					--mobile side: expect AddCommand response
 					EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 
 					--mobile side: expect OnHashChange notification
 					EXPECT_NOTIFICATION("OnHashChange")
-				end	
+				end
 			--End Test case CommonRequestCheck.2.1
-						
+
 		--End Test case CommonRequestCheck.2
-		
+
 		-----------------------------------------------------------------------------------------
 
 		--Begin Test case CommonRequestCheck.3
 		--Description: This test in intended to check all combinations of conditional-mandatory parameters
-		
+
 			--Requirement id in JAMA:
 					--SDLAQ-CRS-21
 
 			--Verification criteria:
 					--AddCommand request adds the command to VR Menu, UI Command/SubMenu menu or to the both depending on the parameters sent (VR, UI commands or the both correspondingly).
-			
+
 			--Begin Test case CommonRequestCheck.3.1
 			--Description: Only mandatory - with menuParams and with conditional parameters inside menuParam
 				function Test:AddCommand_MenuParamsConditional()
@@ -797,31 +797,31 @@ end
 					local cid = self.mobileSession:SendRPC("AddCommand",
 					{
 						cmdID = 1001,
-						menuParams = 	
-						{ 
+						menuParams =
+						{
 							parentID = 1,
 							position = 0,
 							menuName ="menuParams"
 						}
 					})
-					
+
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-					{ 
-						cmdID = 1001				
+					EXPECT_HMICALL("UI.AddCommand",
+					{
+						cmdID = 1001
 					})
 					:Do(function(_,data)
 						--hmi side: sending UI.AddCommand response
 						self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-					end)	
-					
+					end)
+
 					EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 					EXPECT_NOTIFICATION("OnHashChange")
-				end			
+				end
 			--End Test case CommonRequestCheck.3.1
-			
+
 			-----------------------------------------------------------------------------------------
-			
+
 			--Begin Test case CommonRequestCheck.3.2
 			--Description: Only mandatory - with menuParams and without conditional parameters inside menuParam
 				function Test:AddCommand_MandatoryMenuParamsWithoutConditional()
@@ -829,29 +829,29 @@ end
 					local cid = self.mobileSession:SendRPC("AddCommand",
 					{
 						cmdID = 1002,
-						menuParams = 	
-						{ 
+						menuParams =
+						{
 							menuName ="menuParamswithoutconditional"
 						}
 					})
-					
+
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-					{ 
+					EXPECT_HMICALL("UI.AddCommand",
+					{
 						cmdID = 1002
 					})
 					:Do(function(_,data)
 						--hmi side: sending UI.AddCommand response
 						self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-					end)	
-					
+					end)
+
 					EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 					EXPECT_NOTIFICATION("OnHashChange")
-				end		
-			--End Test case CommonRequestCheck.3.2 
-			
+				end
+			--End Test case CommonRequestCheck.3.2
+
 			-----------------------------------------------------------------------------------------
-			
+
 			--Begin Test case CommonRequestCheck.3.3
 			--Description: Only mandatory - with menuParams and without only ParentID inside menuParam
 				function Test:AddCommand_MandatoryMenuParamsWithoutParentID()
@@ -859,35 +859,35 @@ end
 					local cid = self.mobileSession:SendRPC("AddCommand",
 					{
 						cmdID = 1004,
-						menuParams = 	
-						{ 
+						menuParams =
+						{
 							position = 0,
 							menuName ="Command1004"
 						},
-						vrCommands = 
-						{ 
+						vrCommands =
+						{
 							"VRCommandonezerozerofour",
 							"VRCommandonezerozerofourdouble"
-						}, 
-						cmdIcon = 	
-						{ 
+						},
+						cmdIcon =
+						{
 							value ="icon.png",
 							imageType ="DYNAMIC"
 						}
 					})
-					
+
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-					{ 
+					EXPECT_HMICALL("UI.AddCommand",
+					{
 						cmdID = 1004,
 						-- Verification is done below
-						-- cmdIcon = 
+						-- cmdIcon =
 						-- {
 						-- 	value = storagePath.."icon.png",
 						-- 	imageType = "DYNAMIC"
 						-- },
-						menuParams = 
-						{ 					
+						menuParams =
+						{
 							position = 0,
 							menuName ="Command1004"
 						}
@@ -895,7 +895,7 @@ end
 					:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -914,35 +914,35 @@ end
 						--hmi side: sending UI.AddCommand response
 						self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 					end)
-					
+
 					--hmi side: expect VR.AddCommand request
-					EXPECT_HMICALL("VR.AddCommand", 
-					{ 
+					EXPECT_HMICALL("VR.AddCommand",
+					{
 						cmdID = 1004,
 						type = "Command",
-						vrCommands = 
+						vrCommands =
 						{
-							"VRCommandonezerozerofour", 
+							"VRCommandonezerozerofour",
 							"VRCommandonezerozerofourdouble"
 						}
 					})
 					:Do(function(_,data)
 						--hmi side: sending response
 						self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-					end)	
-					
+					end)
+
 					EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 					EXPECT_NOTIFICATION("OnHashChange")
-				end							
+				end
 			--End Test case CommonRequestCheck.3.3
-			
-		--End Test case CommonRequestCheck.3	
+
+		--End Test case CommonRequestCheck.3
 
 		-----------------------------------------------------------------------------------------
 
 		--Begin Test case CommonRequestCheck.4
 		--Description: This test is intended to check processing requests without mandatory and optional parameters
-		
+
 			--Requirement id in JAMA:
 					--SDLAQ-CRS-404,
 					--SDLAQ-CRS-756,
@@ -954,66 +954,66 @@ end
 						- The request without "cmdID" is sent, the INVALID_DATA response code is returned.
 						- The request without "menuName" and "vrCommands" is sent, the INVALID_DATA response code is returned.
 						- The request with "menuParams" but without "menuName" is sent, the INVALID_DATA response code is returned.
-						- The request without "MenuParams" and with "vrCommands" is sent, the SUCCESS response code is returned in case if no errors.						
+						- The request without "MenuParams" and with "vrCommands" is sent, the SUCCESS response code is returned in case if no errors.
 					]]
-				
+
 			--Begin Test case CommonRequestCheck.4.1
 			--Description: Mandatory missing - cmdID
 				function Test:AddCommand_cmdIDMissing()
 					--mobile side: sending AddCommand request
 					local cid = self.mobileSession:SendRPC("AddCommand",
 					{
-						menuParams = 	
-						{ 
+						menuParams =
+						{
 							parentID = 1,
 							position = 0,
 							menuName ="Command1"
-						}, 
-						vrCommands = 
-						{ 
+						},
+						vrCommands =
+						{
 							"Voicerecognitioncommandone"
-						}, 
-						cmdIcon = 	
-						{ 
+						},
+						cmdIcon =
+						{
 							value ="icon.png",
 							imageType ="DYNAMIC"
 						}
-					})		
-					
+					})
+
 					EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
 				end
 			--End Test case CommonRequestCheck.4.1
-			
+
 			-----------------------------------------------------------------------------------------
-							
+
 			--Begin Test case CommonRequestCheck.4.2
 			--Description: Mandatory missing - menuParams
 				function Test:AddCommand_menuParamsMissing()
 					--mobile side: sending AddCommand request
 					local cid = self.mobileSession:SendRPC("AddCommand",
 															{
-																cmdID = 500,																
-																vrCommands = 
-																{ 
+																cmdID = 500,
+																vrCommands =
+																{
 																	"VRCommand500"
-																}, 
-																cmdIcon = 	
-																{ 
+																},
+																cmdIcon =
+																{
 																	value ="icon.png",
 																	imageType ="DYNAMIC"
 																}
 															})
-											
+
 					--hmi side: expect VR.AddCommand request
-					EXPECT_HMICALL("VR.AddCommand", 
-									{ 
+					EXPECT_HMICALL("VR.AddCommand",
+									{
 										cmdID = 500,
 										type = "Command",
-										vrCommands = 
+										vrCommands =
 										{
 											"VRCommand500"
 										}
@@ -1022,43 +1022,43 @@ end
 						--hmi side: sending VR.AddCommand response
 						self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 					end)
-					
+
 					--mobile side: expect AddCommand response
 					EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 
 					--mobile side: expect OnHashChange notification
 					EXPECT_NOTIFICATION("OnHashChange")
 				end
-			--End Test case CommonRequestCheck.4.2			
-			
+			--End Test case CommonRequestCheck.4.2
+
 			-----------------------------------------------------------------------------------------
-							
+
 			--Begin Test case CommonRequestCheck.4.3
 			--Description: Mandatory missing - vrCommands
 				function Test:AddCommand_vrCommandsMissing()
 					--mobile side: sending AddCommand request
 					local cid = self.mobileSession:SendRPC("AddCommand",
 															{
-																cmdID = 501,																
-																menuParams = 	
-																{ 
+																cmdID = 501,
+																menuParams =
+																{
 																	parentID = 1,
 																	position = 0,
 																	menuName ="Command501"
 																},
-																cmdIcon = 	
-																{ 
+																cmdIcon =
+																{
 																	value ="icon.png",
 																	imageType ="DYNAMIC"
 																}
 															})
-											
+
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-									{ 
+					EXPECT_HMICALL("UI.AddCommand",
+									{
 										cmdID = 501,
-										menuParams = 	
-										{ 
+										menuParams =
+										{
 											parentID = 1,
 											position = 0,
 											menuName ="Command501"
@@ -1068,41 +1068,41 @@ end
 						--hmi side: sending UI.AddCommand response
 						self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 					end)
-					
+
 					--mobile side: expect AddCommand response
 					EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 
 					--mobile side: expect OnHashChange notification
 					EXPECT_NOTIFICATION("OnHashChange")
 				end
-			--End Test case CommonRequestCheck.4.3		
-			
+			--End Test case CommonRequestCheck.4.3
+
 			-----------------------------------------------------------------------------------------
-					
+
 			--Begin Test case CommonRequestCheck.4.4
 			--Description: Mandatory missing - menuParams and vrCommands are not provided
 				function Test:AddCommand_menuParamsVRCommandsMissing()
 					--mobile side: sending AddCommand request
 					local cid = self.mobileSession:SendRPC("AddCommand",
 					{
-						cmdID = 22,				
-						cmdIcon = 	
-						{ 
+						cmdID = 22,
+						cmdIcon =
+						{
 							value ="icon.png",
 							imageType ="DYNAMIC"
 						}
-					})		
-					
+					})
+
 					EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
-				end			
+				end
 			--End Test case CommonRequestCheck.4.4
-			
+
 			-----------------------------------------------------------------------------------------
-					
+
 			--Begin Test case CommonRequestCheck.4.5
 			--Description: Mandatory missing - menuName are not provided
 				function Test:AddCommand_menuNameMissing()
@@ -1110,33 +1110,33 @@ end
 					local cid = self.mobileSession:SendRPC("AddCommand",
 					{
 						cmdID = 123,
-						menuParams = 	
-						{ 
+						menuParams =
+						{
 							parentID = 1,
 							position = 0
-						}, 
-						vrCommands = 
-						{ 
+						},
+						vrCommands =
+						{
 							"VRCommandonepositive",
 							"VRCommandonepositivedouble"
-						}, 
-						cmdIcon = 	
-						{ 
+						},
+						cmdIcon =
+						{
 							value ="icon.png",
 							imageType ="DYNAMIC"
 						}
-					})		
-					
+					})
+
 					EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
-				end					
+				end
 			--End Test case CommonRequestCheck.4.5
-			
+
 			-----------------------------------------------------------------------------------------
-								
+
 			--Begin Test case CommonRequestCheck.4.6
 			--Description: Optional missing - cmdIcon
 				function Test:AddCommand_MandatoryVrCommandCmdIconMissing()
@@ -1144,24 +1144,24 @@ end
 					local cid = self.mobileSession:SendRPC("AddCommand",
 					{
 						cmdID = 2000,
-						menuParams = 	
-						{ 
+						menuParams =
+						{
 							parentID = 1,
 							position = 0,
 							menuName ="cmdIcon"
-						}, 
-						vrCommands = 
-						{ 
+						},
+						vrCommands =
+						{
 							"Withoutcommandicon"
 						}
 					})
-					
+
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-					{ 
+					EXPECT_HMICALL("UI.AddCommand",
+					{
 						cmdID = 2000,
-						menuParams = 
-						{ 		
+						menuParams =
+						{
 							parentID = 1,
 							position = 0,
 							menuName ="cmdIcon"
@@ -1171,13 +1171,13 @@ end
 						--hmi side: sending UI.AddCommand response
 						self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 					end)
-					
+
 					--hmi side: expect VR.AddCommand request
-					EXPECT_HMICALL("VR.AddCommand", 
-					{ 
-						cmdID = 2000,						
+					EXPECT_HMICALL("VR.AddCommand",
+					{
+						cmdID = 2000,
 						type = "Command",
-						vrCommands = 
+						vrCommands =
 						{
 							"Withoutcommandicon"
 						}
@@ -1185,15 +1185,15 @@ end
 					:Do(function(_,data)
 						--hmi side: sending response
 								self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-					end)	
-					
+					end)
+
 					EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 					EXPECT_NOTIFICATION("OnHashChange")
-				end			
+				end
 			--End Test case CommonRequestCheck.4.6
-			
+
 			-----------------------------------------------------------------------------------------
-			
+
 			--Begin Test case CommonRequestCheck.4.7
 			--Description: Mandatory missing - cmdIcon value missing
 				function Test:AddCommand_cmdIconValueMissing()
@@ -1201,32 +1201,32 @@ end
 					local cid = self.mobileSession:SendRPC("AddCommand",
 					{
 						cmdID = 224,
-						menuParams = 	
-						{ 
+						menuParams =
+						{
 							parentID = 1,
 							position = 0,
 							menuName ="Command224"
-						}, 
-						vrCommands = 
-						{ 
+						},
+						vrCommands =
+						{
 							"CommandTwoTwoFour"
 						},
-						cmdIcon = 	
+						cmdIcon =
 						{
 							imageType ="DYNAMIC"
 						}
 					})
-					
+
 					EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
-				end							
+				end
 			--End Test case CommonRequestCheck.4.7
-			
+
 			-----------------------------------------------------------------------------------------
-					
+
 			--Begin Test case CommonRequestCheck.4.8
 			--Description: Mandatory missing - cmdIcon imageType is missing
 				function Test:AddCommand_cmdIconImageTypeMissing()
@@ -1234,52 +1234,52 @@ end
 					local cid = self.mobileSession:SendRPC("AddCommand",
 					{
 						cmdID = 225,
-						menuParams = 	
-						{ 
+						menuParams =
+						{
 							parentID = 1,
 							position = 0,
 							menuName ="Command225"
-						}, 
-						vrCommands = 
-						{ 
+						},
+						vrCommands =
+						{
 							"CommandTwoTwoFive"
 						},
-						cmdIcon = 	
+						cmdIcon =
 						{
 							value ="icon.png"
 						}
 					})
-					
+
 					EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
-				end								
+				end
 			--End Test case CommonRequestCheck.4.8
-			
+
 			-----------------------------------------------------------------------------------------
-					
+
 			--Begin Test case CommonRequestCheck.4.9
 			--Description: All parameter missing
 				function Test:AddCommand_AllParamsMissing()
 					--mobile side: sending AddCommand request
 					local cid = self.mobileSession:SendRPC("AddCommand",
 					{
-					})		
-					
+					})
+
 					EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
-				end		
+				end
 			--End Test case CommonRequestCheck.4.9
-			
+
 		--End Test case CommonRequestCheck.4
-		
+
 		-----------------------------------------------------------------------------------------
-		
+
 		--Begin Test case CommonRequestCheck.5
 		--Description: Check processing request with different fake parameters
 
@@ -1288,46 +1288,46 @@ end
 
 			--Verification criteria:
 					--According to xml tests by Ford team all fake params should be ignored by SDL
-			
+
 			--Begin Test case CommonRequestCheck.5.1
-			--Description: Parameter not from protocol					
+			--Description: Parameter not from protocol
 				function Test:AddCommand_FakeParam()
 					--mobile side: sending AddCommand request
 					local cid = self.mobileSession:SendRPC("AddCommand",
 															{
 																cmdID = 3000,
 																fakeParam ="fakeParam",
-																menuParams = 	
-																{ 
+																menuParams =
+																{
 																	parentID = 1,
 																	position = 0,
 																	menuName ="fakeparam",
 																	fakeParam ="fakeParam"
 																},
-																vrCommands = 
-																{ 
-																	"vrCommand"																	
-																}, 
-																cmdIcon = 	
-																{ 
+																vrCommands =
+																{
+																	"vrCommand"
+																},
+																cmdIcon =
+																{
 																	value ="icon.png",
 																	imageType ="DYNAMIC",
 																	fakeParam ="fakeParam"
 																}
 															})
-					
+
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-					{ 
+					EXPECT_HMICALL("UI.AddCommand",
+					{
 						cmdID = 3000,
 						-- Verification is done below
-						-- cmdIcon = 
+						-- cmdIcon =
 						-- {
 						-- 	value = storagePath.."icon.png",
 						-- 	imageType = "DYNAMIC",
 						-- },
-						menuParams = 
-						{ 					
+						menuParams =
+						{
 							parentID = 1,
 							position = 0,
 							menuName ="fakeparam"
@@ -1336,7 +1336,7 @@ end
 					:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -1356,22 +1356,22 @@ end
 						self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 					end)
 					:ValidIf(function(_,data)
-						if data.params.fakeParam or 
-							data.params.menuParams.fakeParam or							
+						if data.params.fakeParam or
+							data.params.menuParams.fakeParam or
 							data.params.cmdIcon.fakeParam	then
 								print(" SDL re-sends fakeParam parameters to HMI in UI.AddCommand request")
 								return false
-						else 
+						else
 							return true
 						end
 					end)
-					
+
 					--hmi side: expect VR.AddCommand request
-					EXPECT_HMICALL("VR.AddCommand", 
-					{ 
-						cmdID = 3000,						
+					EXPECT_HMICALL("VR.AddCommand",
+					{
+						cmdID = 3000,
 						type = "Command",
-						vrCommands = 
+						vrCommands =
 						{
 							"vrCommand"
 						}
@@ -1384,67 +1384,67 @@ end
 						if data.params.fakeParam then
 								print(" SDL re-sends fakeParam parameters to HMI in VR.AddCommand request")
 								return false
-						else 
+						else
 							return true
 						end
-					end)					
-					
+					end)
+
 					EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 					EXPECT_NOTIFICATION("OnHashChange")
 				end
 			--End Test case CommonRequestCheck.5.1
-			
+
 			-----------------------------------------------------------------------------------------
-			
+
 			--Begin Test case CommonRequestCheck.5.2
 			--Description: Parameters from another request
 				function Test:AddCommand_ParamsAnotherRequest()
 					--mobile side: sending AddCommand request
 					local cid = self.mobileSession:SendRPC("AddCommand",
 															{
-																cmdID = 3200,																
-																menuParams = 	
-																{ 
+																cmdID = 3200,
+																menuParams =
+																{
 																	parentID = 1,
 																	position = 0,
 																	menuName ="Menu3200"
 																},
-																vrCommands = 
-																{ 
+																vrCommands =
+																{
 																	"VrMenu3200"
-																}, 
-																cmdIcon = 	
-																{ 
+																},
+																cmdIcon =
+																{
 																	value ="icon.png",
 																	imageType ="DYNAMIC"
 																},
-																ttsChunks = 
-																	{ 
-																		TTSChunk = 
-																		{ 
+																ttsChunks =
+																	{
+																		TTSChunk =
+																		{
 																			text ="SpeakFirst",
 																			type ="TEXT",
-																		}, 
-																		TTSChunk = 
-																		{ 
+																		},
+																		TTSChunk =
+																		{
 																			text ="SpeakSecond",
 																			type ="TEXT",
-																		}, 
-																	}, 
+																		},
+																	},
 															})
-															
+
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-									{ 
+					EXPECT_HMICALL("UI.AddCommand",
+									{
 										cmdID = 3200,
 										-- Verification is done below
-										-- cmdIcon = 
+										-- cmdIcon =
 										-- {
 										-- 	value = storagePath.."icon.png",
 										-- 	imageType = "DYNAMIC",
 										-- },
-										menuParams = 
-										{ 					
+										menuParams =
+										{
 											parentID = 1,
 											position = 0,
 											menuName ="Menu3200"
@@ -1453,7 +1453,7 @@ end
 					:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -1476,17 +1476,17 @@ end
 						if data.params.ttsChunks then
 								print(" SDL re-sends ttsChunks parameters to HMI in UI.AddCommand request")
 								return false
-						else 
+						else
 							return true
 						end
 					end)
-					
+
 					--hmi side: expect VR.AddCommand request
-					EXPECT_HMICALL("VR.AddCommand", 
-								{ 
-									cmdID = 3200,						
+					EXPECT_HMICALL("VR.AddCommand",
+								{
+									cmdID = 3200,
 									type = "Command",
-									vrCommands = 
+									vrCommands =
 									{
 										"VrMenu3200"
 									}
@@ -1499,18 +1499,18 @@ end
 						if data.params.ttsChunks then
 								print(" SDL re-sends ttsChunks parameters to HMI in VR.AddCommand request")
 								return false
-						else 
+						else
 							return true
 						end
 					end)
-								
+
 					EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 					EXPECT_NOTIFICATION("OnHashChange")
-				end			
+				end
 			--End Test case CommonRequestCheck.5.2
-			
+
 		--End Test case CommonRequestCheck.5
-		
+
 		-----------------------------------------------------------------------------------------
 
 		--Begin Test case CommonRequestCheck.6
@@ -1522,7 +1522,7 @@ end
 			--Verification criteria:
 					--The request with wrong JSON syntax  is sent, the response with INVALID_DATA result code is returned.
 			function Test:AddCommand_IncorrectJSON()
-				local msg = 
+				local msg =
 				{
 					serviceType      = 7,
 					frameInfo        = 0,
@@ -1534,17 +1534,17 @@ end
 				}
 				self.mobileSession:Send(msg)
 				EXPECT_RESPONSE(self.mobileSession.correlationId, { success = false, resultCode = "INVALID_DATA" })
-						
+
 				--mobile side: expect OnHashChange notification is not send to mobile
 				EXPECT_NOTIFICATION("OnHashChange")
-				:Times(0)	
-				
+				:Times(0)
+
 				DelayedExp(1000)
-			end			
+			end
 		--End Test case CommonRequestCheck.6
-		
+
 		-----------------------------------------------------------------------------------------
---TODO: Requirement and Verification criteria need to be updated. 	
+--TODO: Requirement and Verification criteria need to be updated.
 		--Begin Test case CommonRequestCheck.7
 		--Description: different conditions of correlationID parameter (invalid, several the same etc.)
 
@@ -1554,57 +1554,57 @@ end
 
 					local 	CorIdAddCommand = self.mobileSession:SendRPC("AddCommand",
 															{
-																cmdID = 3300,																
-																menuParams = 	
-																{ 
+																cmdID = 3300,
+																menuParams =
+																{
 																	parentID = 1,
 																	position = 0,
 																	menuName ="Menu3300"
 																},
-																vrCommands = 
-																{ 
+																vrCommands =
+																{
 																	"VrMenu3300"
-																}, 
-																cmdIcon = 	
-																{ 
+																},
+																cmdIcon =
+																{
 																	value ="icon.png",
 																	imageType ="DYNAMIC"
 																},
-																ttsChunks = 
-																	{ 
-																		TTSChunk = 
-																		{ 
+																ttsChunks =
+																	{
+																		TTSChunk =
+																		{
 																			text ="SpeakFirst",
 																			type ="TEXT",
-																		}, 
-																		TTSChunk = 
-																		{ 
+																		},
+																		TTSChunk =
+																		{
 																			text ="SpeakSecond",
 																			type ="TEXT",
-																		}, 
-																	}, 
+																		},
+																	},
 															})
 
 					self.mobileSession.correlationId = CorIdAddCommand
 
-					local msg = 
+					local msg =
 					{
 						serviceType      = 7,
 						frameInfo        = 0,
 						rpcType          = 0,
 						rpcFunctionId    = 5,
-						rpcCorrelationId = self.mobileSession.correlationId,					
+						rpcCorrelationId = self.mobileSession.correlationId,
 						payload          = '{"cmdID":3400,"vrCommands":["VRCommand3400"],"menuParams":{"position":1000,"menuName":"Command3400"},"cmdIcon":{"value":"icon.png","imageType":"DYNAMIC"}}'
 					}
 
 
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
+					EXPECT_HMICALL("UI.AddCommand",
 									{cmdID = 3300},
 									{cmdID = 3400})
 					:Times(2)
 					:Do(function(exp,data)
-						if exp.occurences == 1 then 
+						if exp.occurences == 1 then
 							self.mobileSession:Send(msg)
 						end
 						--hmi side: sending UI.AddCommand response
@@ -1614,11 +1614,11 @@ end
 						if data.params.ttsChunks then
 								print(" \27[36m SDL re-sends ttsChunks parameters to HMI in UI.AddCommand request \27[0m ")
 								return false
-						else 
+						else
 							return true
 						end
 					end)
-					
+
 					--hmi side: expect VR.AddCommand request
 					EXPECT_HMICALL("VR.AddCommand")
 					:Times(2)
@@ -1630,7 +1630,7 @@ end
 						if data.params.ttsChunks then
 								print(" \27[36m SDL re-sends ttsChunks parameters to HMI in VR.AddCommand request \27[0m ")
 								return false
-						else 
+						else
 							return true
 						end
 					end)
@@ -1638,13 +1638,13 @@ end
 					--mobile side: receiving response
 					EXPECT_RESPONSE(CorIdAddCommand, { success = true, resultCode = "SUCCESS" })
 					:Times(2)
-						
+
 					--mobile side: expect OnHashChange notification
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(2)
 					:Timeout(5000)
 				end
-			
+
 		--End Test case CommonRequestCheck.7
 	--End Test suit PositiveRequestCheck
 
@@ -1661,55 +1661,55 @@ end
 		--Description: Check of each request parameter value in bound and boundary conditions
 
 			--Begin Test case PositiveRequestCheck.1
-			--Description: Check parameter with lower bound, in bound and upper bound values 
+			--Description: Check parameter with lower bound, in bound and upper bound values
 
-				--Requirement id in JAMA: 
+				--Requirement id in JAMA:
 							-- SDLAQ-CRS-21,
 							-- SDLAQ-CRS-2554
 
-				--Verification criteria: 
+				--Verification criteria:
 							-- AddCommand request adds the command to VR Menu, UI Command/SubMenu menu or to the both depending on the parameters sent (VR, UI commands or the both correspondingly);
 							-- SDL does NOT send UI.AddCommand to HMI at all IN CASE SDL receives AddCommand without MenuParams parameter from mobile application.
 							-- SDL re-sends MenuParams values within UI.AddCommand (menuParams) to HMI IN CASE SDL receives valid parameter of menuParams within AddCommand from mobile application;
 							-- SDL sends VR.AddCommand to HMI IN CASE SDL receives AddCommand without MenuParams parameter and with other valid parameters from mobile application.
-								
+
 				--Begin Test case PositiveRequestCheck.1.1
-				--Description: cmdID - lower bound					
-					function Test:AddCommand_cmdIDLowerBound()						
+				--Description: cmdID - lower bound
+					function Test:AddCommand_cmdIDLowerBound()
 						--/* AddCommand lower bound */--
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 0,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Null"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"Null"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 0,
 							-- Verification is done below
-							-- cmdIcon = 
+							-- cmdIcon =
 							-- {
 							-- 	value = storagePath.."icon.png",
 							-- 	imageType = "DYNAMIC",
 							-- },
-							menuParams = 
-							{ 					
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Null"
@@ -1718,7 +1718,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -1737,13 +1737,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 0,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 0,
 							type = "Command",
-							vrCommands = 
+							vrCommands =
 							{
 								"Null"
 							}
@@ -1751,51 +1751,51 @@ end
 						:Do(function(_,data)
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-						end)	
-						
+						end)
+
 						EXPECT_RESPONSE(cid, {  success = true, resultCode = "SUCCESS"  })
 						EXPECT_NOTIFICATION("OnHashChange")
 					end
 				--End Test case PositiveRequestCheck.1.1
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case PositiveRequestCheck.1.2
-				--Description: menuParams - parentID lower bound					
+				--Description: menuParams - parentID lower bound
 					function Test:AddCommand_MenuParamParentIDLowerBound()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 113,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command113"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandOneOneThree"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 113,
 							-- Verification is done below
-							-- cmdIcon = 
+							-- cmdIcon =
 							-- {
 							-- 	value = storagePath.."icon.png",
 							-- 	imageType = "DYNAMIC",
 							-- },
-							menuParams = 
-							{ 					
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command113"
@@ -1804,7 +1804,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -1823,13 +1823,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 113,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 113,
 							type = "Command",
-							vrCommands = 
+							vrCommands =
 							{
 								"CommandOneOneThree"
 							}
@@ -1837,51 +1837,51 @@ end
 						:Do(function(_,data)
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-						end)	
-						
+						end)
+
 						EXPECT_RESPONSE(cid, {  success = true, resultCode = "SUCCESS"  })
 						EXPECT_NOTIFICATION("OnHashChange")
 					end
 				--End Test case PositiveRequestCheck.1.2
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case PositiveRequestCheck.1.3
-				--Description: menuParams - position lower bound					
+				--Description: menuParams - position lower bound
 					function Test:AddCommand_MenuParamPosLowerBound()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 116,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command116"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandOneOneSix"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 116,
 							-- Verification is done below
-							-- cmdIcon = 
+							-- cmdIcon =
 							-- {
 							-- 	value = storagePath.."icon.png",
 							-- 	imageType = "DYNAMIC",
 							-- },
-							menuParams = 
-							{ 					
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command116"
@@ -1890,7 +1890,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -1909,13 +1909,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 116,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 116,
 							type = "Command",
-							vrCommands = 
+							vrCommands =
 							{
 								"CommandOneOneSix"
 							}
@@ -1923,51 +1923,51 @@ end
 						:Do(function(_,data)
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-						end)	
-						
+						end)
+
 						EXPECT_RESPONSE(cid, {  success = true, resultCode = "SUCCESS"  })
 						EXPECT_NOTIFICATION("OnHashChange")
 					end
 				--End Test case PositiveRequestCheck.1.3
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case PositiveRequestCheck.1.4
-				--Description: menuParams - menuName lower bound					
+				--Description: menuParams - menuName lower bound
 					function Test:AddCommand_MenuParamNameLowerBound()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 120,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="A"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandA"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 120,
 							-- Verification is done below
-							-- cmdIcon = 
+							-- cmdIcon =
 							-- {
 							-- 	value = storagePath.."icon.png",
 							-- 	imageType = "DYNAMIC",
 							-- },
-							menuParams = 
-							{ 					
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="A"
@@ -1976,7 +1976,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -1995,13 +1995,13 @@ end
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 120,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 120,
 							type = "Command",
-							vrCommands = 
+							vrCommands =
 							{
 								"CommandA"
 							}
@@ -2009,52 +2009,52 @@ end
 						:Do(function(_,data)
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-						end)	
-						
+						end)
+
 						EXPECT_RESPONSE(cid, {  success = true, resultCode = "SUCCESS"  })
 						EXPECT_NOTIFICATION("OnHashChange")
 					end
 				--End Test case PositiveRequestCheck.1.4
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case PositiveRequestCheck.1.5
-				--Description: vrCommands - lower and upper bound					
+				--Description: vrCommands - lower and upper bound
 					function Test:AddCommand_vrCommandsLowerUpperBound()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 123,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command123"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"L",
 								"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 							},
-							cmdIcon = 	
-							{ 
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 123,
 							-- Verification is done below
-							-- cmdIcon = 
+							-- cmdIcon =
 							-- {
 							-- 	value = storagePath.."icon.png",
 							-- 	imageType = "DYNAMIC",
 							-- },
-							menuParams = 
-							{ 					
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command123"
@@ -2063,7 +2063,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -2082,14 +2082,14 @@ end
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 123,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 123,
 							type = "Command",
-							vrCommands = 
-							{ 
+							vrCommands =
+							{
 								"L",
 								"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 							}
@@ -2097,51 +2097,51 @@ end
 						:Do(function(_,data)
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-						end)	
-						
+						end)
+
 						EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 						EXPECT_NOTIFICATION("OnHashChange")
 					end
 				--End Test case PositiveRequestCheck.1.5
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case PositiveRequestCheck.1.6
-				--Description: vrCommands - array lower bound					
+				--Description: vrCommands - array lower bound
 					function Test:AddCommand_vrCommandsArrayLowerBound()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 124,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command124"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandOneTwoFour"
 							},
-							cmdIcon = 	
-							{ 
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 124,
 							-- Verification is done below
-							-- cmdIcon = 
+							-- cmdIcon =
 							-- {
 							-- 	value = storagePath.."icon.png",
 							-- 	imageType = "DYNAMIC",
 							-- },
-							menuParams = 
-							{ 					
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command124"
@@ -2150,7 +2150,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -2169,69 +2169,69 @@ end
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 124,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 124,
 							type = "Command",
-							vrCommands = 
-							{ 
+							vrCommands =
+							{
 								"CommandOneTwoFour"
 							}
 						})
 						:Do(function(_,data)
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-						end)	
-						
+						end)
+
 						EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 						EXPECT_NOTIFICATION("OnHashChange")
-					end		
+					end
 				--End Test case PositiveRequestCheck.1.6
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case PositiveRequestCheck.1.7
-				--Description: Lower bound of all parameters					
+				--Description: Lower bound of all parameters
 					function Test: DeleteCommand_ID0()
 						DeleteCommand(self, 0)
-					end					
-					
+					end
+
 					function Test:AddCommand_LowerBound()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 0,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="a"
 							},
-							vrCommands = 
-							{ 
+							vrCommands =
+							{
 								"V"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 0,
 							-- Verification is done below
-							-- cmdIcon = 
+							-- cmdIcon =
 							-- {
 							-- 	value = storagePath.."icon.png",
 							-- 	imageType = "DYNAMIC",
 							-- },
-							menuParams = 
-							{ 					
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="a"
@@ -2240,7 +2240,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -2259,13 +2259,13 @@ end
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 0,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 0,
 							type = "Command",
-							vrCommands = 
+							vrCommands =
 							{
 								"V"
 							}
@@ -2273,13 +2273,13 @@ end
 						:Do(function(_,data)
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-						end)	
-						
+						end)
+
 						EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
-						EXPECT_NOTIFICATION("OnHashChange")				
-					end		
+						EXPECT_NOTIFICATION("OnHashChange")
+					end
 				--End Test case PositiveRequestCheck.1.7
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case PositiveRequestCheck.1.8
@@ -2296,14 +2296,14 @@ end
 
 				--Begin Test case PositiveRequestCheck.1.9
 				--Description: menuParams - position in bound
-					local positionValues = {10,500,999}	
+					local positionValues = {10,500,999}
 						for i=1,#positionValues do
 						Test["AddCommand_PositionInBound"..tostring(positionValues[i])] = function(self)
 							AddCommand_Position(self, tonumber("118"..(tostring(i))), positionValues[i], true, "SUCCESS")
 						end
 					end
 				--End Test case PositiveRequestCheck.1.9
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case PositiveRequestCheck.1.10
@@ -2315,7 +2315,7 @@ end
 						end
 					end
 				--End Test case PositiveRequestCheck.1.10
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case PositiveRequestCheck.1.11
@@ -2332,46 +2332,46 @@ end
 						end
 					end
 				--End Test case PositiveRequestCheck.1.11
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case PositiveRequestCheck.1.12
-				--Description: cmdID upper bound					
-					function Test:AddCommand_cmdIDUpperBound()	
+				--Description: cmdID upper bound
+					function Test:AddCommand_cmdIDUpperBound()
 						--/* AddCommand upper bound */--
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 2000000000,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Upper"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"Upper"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 2000000000,
 							-- Verification is done below
-							-- cmdIcon = 
+							-- cmdIcon =
 							-- {
 							-- 	value = storagePath.."icon.png",
 							-- 	imageType = "DYNAMIC",
 							-- },
-							menuParams = 
-							{ 					
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Upper"
@@ -2380,7 +2380,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -2399,13 +2399,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 2000000000,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 2000000000,
 							type = "Command",
-							vrCommands = 
+							vrCommands =
 							{
 								"Upper"
 							}
@@ -2413,13 +2413,13 @@ end
 						:Do(function(_,data)
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-						end)	
-						
+						end)
+
 						EXPECT_RESPONSE(cid, {  success = true, resultCode = "SUCCESS"  })
 						EXPECT_NOTIFICATION("OnHashChange")
 					end
 				--End Test case PositiveRequestCheck.1.12
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case PositiveRequestCheck.1.13
@@ -2429,35 +2429,35 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 114,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 2000000000,
 								position = 0,
 								menuName ="Command114"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandOneOneFour"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 114,
 							-- Verification is done below
-							-- cmdIcon = 
+							-- cmdIcon =
 							-- {
 							-- 	value = storagePath.."icon.png",
 							-- 	imageType = "DYNAMIC",
 							-- },
-							menuParams = 
-							{ 					
+							menuParams =
+							{
 								parentID = 2000000000,
 								position = 0,
 								menuName ="Command114"
@@ -2466,7 +2466,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -2485,13 +2485,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 114,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 114,
 							type = "Command",
-							vrCommands = 
+							vrCommands =
 							{
 								"CommandOneOneFour"
 							}
@@ -2499,13 +2499,13 @@ end
 						:Do(function(_,data)
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-						end)	
-						
+						end)
+
 						EXPECT_RESPONSE(cid, {  success = true, resultCode = "SUCCESS"  })
 						EXPECT_NOTIFICATION("OnHashChange")
 					end
 				--End Test case PositiveRequestCheck.1.13
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case PositiveRequestCheck.1.14
@@ -2515,35 +2515,35 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 117,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 1000,
 								menuName ="Command117"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandOneOneSeven"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 117,
 							-- Verification is done below
-							-- cmdIcon = 
+							-- cmdIcon =
 							-- {
 							-- 	value = storagePath.."icon.png",
 							-- 	imageType = "DYNAMIC",
 							-- },
-							menuParams = 
-							{ 					
+							menuParams =
+							{
 								parentID = 1,
 								position = 1000,
 								menuName ="Command117"
@@ -2552,7 +2552,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -2571,13 +2571,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 117,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 117,
 							type = "Command",
-							vrCommands = 
+							vrCommands =
 							{
 								"CommandOneOneSeven"
 							}
@@ -2585,15 +2585,15 @@ end
 						:Do(function(_,data)
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-						end)	
-						
+						end)
+
 						EXPECT_RESPONSE(cid, {  success = true, resultCode = "SUCCESS"  })
 						EXPECT_NOTIFICATION("OnHashChange")
 					end
 				--End Test case PositiveRequestCheck.1.14
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case PositiveRequestCheck.1.15
 				--Description: menuParams - menuName upper bound
 					function Test:AddCommand_MenuParamNameUpperBound()
@@ -2601,35 +2601,35 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 121,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="aaaa\\{\\b\\r\\}\\u\\f01234\\890/abc'defghijklmnopqrstuvwx01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN!@"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"Commandnameupper"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 121,
 							-- Verification is done below
-							-- cmdIcon = 
+							-- cmdIcon =
 							-- {
 							-- 	value = storagePath.."icon.png",
 							-- 	imageType = "DYNAMIC",
 							-- },
-							menuParams = 
-							{ 					
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="aaaa\\{\\b\\r\\}\\u\\f01234\\890/abc'defghijklmnopqrstuvwx01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN!@"
@@ -2638,7 +2638,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -2657,13 +2657,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 121,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 121,
 							type = "Command",
-							vrCommands = 
+							vrCommands =
 							{
 								"Commandnameupper"
 							}
@@ -2671,15 +2671,15 @@ end
 						:Do(function(_,data)
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-						end)	
-						
+						end)
+
 						EXPECT_RESPONSE(cid, {  success = true, resultCode = "SUCCESS"  })
 						EXPECT_NOTIFICATION("OnHashChange")
 					end
 				--End Test case PositiveRequestCheck.1.15
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case PositiveRequestCheck.1.16
 				--Description: vrCommands - array upper bound
 					function Test:AddCommand_vrCommandsArrayUpperBound()
@@ -2687,14 +2687,14 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 125,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command125"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"1CommandOneTwoFive",
 								"2CommandOneTwoFive",
 								"3CommandOneTwoFive",
@@ -2796,25 +2796,25 @@ end
 								"99CommandOneTwoFive",
 								"100CommandOneTwoFive"
 							},
-							cmdIcon = 	
-							{ 
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 125,
 							-- Verification is done below
-							-- cmdIcon = 
+							-- cmdIcon =
 							-- {
 							-- 	value = storagePath.."icon.png",
 							-- 	imageType = "DYNAMIC",
 							-- },
-							menuParams = 
-							{ 					
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command125"
@@ -2823,7 +2823,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -2842,14 +2842,14 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 125,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 125,
 							type = "Command",
-							vrCommands = 
-							{ 
+							vrCommands =
+							{
 								"1CommandOneTwoFive",
 								"2CommandOneTwoFive",
 								"3CommandOneTwoFive",
@@ -2955,34 +2955,34 @@ end
 						:Do(function(_,data)
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-						end)	
-						
+						end)
+
 						EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 						EXPECT_NOTIFICATION("OnHashChange")
 					end
 				--End Test case PositiveRequestCheck.1.16
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case PositiveRequestCheck.1.17
 				--Description: Upper bound of all parameters
 					function Test: DeleteCommand_ID2000000000()
 						DeleteCommand(self, 2000000000)
-					end	
-					
+					end
+
 					function Test:AddCommand_UpperBound()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 2000000000,
-							menuParams = 	
+							menuParams =
 							{
 								parentID = 2000000000,
 								position = 1000,
 								menuName ="aaaa\\{\\b\\r\\}\\u\\f01234\\890/abc'defghijklmnopqrstuvwx01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN!@"
 							},
-							vrCommands = 
-							{ 
+							vrCommands =
+							{
 								"1vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
 								"2vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
 								"3vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
@@ -3083,25 +3083,25 @@ end
 								"98vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
 								"99vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
 								"100vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 2000000000,
 							-- Verification is done below
-							-- cmdIcon = 
+							-- cmdIcon =
 							-- {
 							-- 	value = storagePath.."icon.png",
 							-- 	imageType = "DYNAMIC"
 							-- },
-							menuParams = 	
+							menuParams =
 							{
 								position = 1000,
 								menuName ="aaaa\\{\\b\\r\\}\\u\\f01234\\890/abc'defghijklmnopqrstuvwx01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN!@"
@@ -3110,7 +3110,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -3124,19 +3124,19 @@ end
                   			print("\27[31m value of menuIcon is WRONG. Expected: ~".. value_Icon .. "; Real: " .. data.params.cmdIcon.value .. "\27[0m")
                   			return false
               			end
-      				end)			
+      				end)
 						:Do(function(_,data)
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-						end)			
-						
+						end)
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 2000000000,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 2000000000,
 							type = "Command",
-							vrCommands = 
-							{ 
+							vrCommands =
+							{
 								"1vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
 								"2vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
 								"3vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
@@ -3242,51 +3242,51 @@ end
 						:Do(function(_,data)
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-						end)	
-						
+						end)
+
 						EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 						EXPECT_NOTIFICATION("OnHashChange")
-					end				
+					end
 				--End Test case PositiveRequestCheck.1.17
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case PositiveRequestCheck.1.18
-				--Description: menuParams - position already existed 				
+				--Description: menuParams - position already existed
 					function Test:AddCommand_MenuParamPosAlreadyExisted()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 							{
 							cmdID = 119,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 500,
 								menuName ="Command119"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandOneOneNine"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 119,
 							-- Verification is done below
-							-- cmdIcon = 
+							-- cmdIcon =
 							-- {
 							-- 	value = storagePath.."icon.png",
 							-- 	imageType = "DYNAMIC",
 							-- },
-							menuParams = 
-							{ 					
+							menuParams =
+							{
 								parentID = 1,
 								position = 500,
 								menuName ="Command119"
@@ -3295,7 +3295,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -3314,13 +3314,13 @@ end
 							--hmi side: sending response
 								self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 119,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 119,
 							type = "Command",
-							vrCommands = 
+							vrCommands =
 							{
 								"CommandOneOneNine"
 							}
@@ -3328,15 +3328,15 @@ end
 						:Do(function(_,data)
 							--hmi side: sending response
 								self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-						end)	
-						
+						end)
+
 						EXPECT_RESPONSE(cid, {  success = true, resultCode = "SUCCESS"  })
 						EXPECT_NOTIFICATION("OnHashChange")
 					end
 				--End Test case PositiveRequestCheck.1.18
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case PositiveRequestCheck.1.19
 				--Description: menuParams - menuName with spaces before, after and in the middle
 					function Test:AddCommand_MenuParamNameSpaces()
@@ -3344,35 +3344,35 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 122,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="   With     spaces       "
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"Commandonetwotwo"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 122,
 							-- Verification is done below
-							-- cmdIcon = 
+							-- cmdIcon =
 							-- {
 							-- 	value = storagePath.."icon.png",
 							-- 	imageType = "DYNAMIC",
 							-- },
-							menuParams = 
-							{ 					
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="   With     spaces       "
@@ -3381,7 +3381,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -3400,13 +3400,13 @@ end
 							--hmi side: sending response
 								self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 122,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 122,
 							type = "Command",
-							vrCommands = 
+							vrCommands =
 							{
 								"Commandonetwotwo"
 							}
@@ -3414,51 +3414,51 @@ end
 						:Do(function(_,data)
 							--hmi side: sending response
 								self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-						end)	
-						
+						end)
+
 						EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 						EXPECT_NOTIFICATION("OnHashChange")
 					end
 				--End Test case PositiveRequestCheck.1.19
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case PositiveRequestCheck.1.20
-				--Description: vrCommands - with spaces before, after and in the middle			
+				--Description: vrCommands - with spaces before, after and in the middle
 					function Test:AddCommand_vrCommandsSpaces()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 126,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command126"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"  Command One  Two Six   "
 							},
-							cmdIcon = 	
-							{ 
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 126,
 							-- Verification is done below
-							-- cmdIcon = 
+							-- cmdIcon =
 							-- {
 							-- 	value = storagePath.."icon.png",
 							-- 	imageType = "DYNAMIC",
 							-- },
-							menuParams = 
-							{ 					
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command126"
@@ -3472,7 +3472,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -3489,20 +3489,20 @@ end
       				end)
 
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 126,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 126,
 							type = "Command",
-							vrCommands = 
-							{ 
+							vrCommands =
+							{
 								"  Command One  Two Six   "
 							}
 						})
 						:Do(function(_,data)
 							--hmi side: sending response
 								self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-						end)	
-						
+						end)
+
 						EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 						EXPECT_NOTIFICATION("OnHashChange")
 					end
@@ -3526,137 +3526,137 @@ end
 
 				--Requirement id in JAMA:
 					--SDLAQ-CRS-22
-					
+
 				--Verification criteria:
 					-- The response contains information about additional "info" if exists.
-	
+
 				--Begin PositiveResponseCheck.1.1
-				--Description: UI response info parameter lower bound	
+				--Description: UI response info parameter lower bound
 
-				--TODO: Should be uncommented when APPLINK-24450 is resolved				
-					-- function Test: AddCommand_UIResponseInfoLowerBound()
-					-- 	--mobile side: sending AddCommand request
-					-- 	local cid = self.mobileSession:SendRPC("AddCommand",
-					-- 											{
-					-- 												cmdID = 71,
-					-- 												menuParams = 	
-					-- 												{ 
-					-- 													parentID = 1,
-					-- 													position = 0,
-					-- 													menuName ="Command71"
-					-- 												}, 
-					-- 												vrCommands = 
-					-- 												{ 
-					-- 													"VRCommand71"
-					-- 												}, 
-					-- 												cmdIcon = 	
-					-- 												{ 
-					-- 													value ="icon.png",
-					-- 													imageType ="DYNAMIC"
-					-- 												}
-					-- 											})
-					-- 	--hmi side: expect UI.AddCommand request
-					-- 	EXPECT_HMICALL("UI.AddCommand", 
-					-- 					{ 
-					-- 						cmdID = 71,
-					-- 						-- Verification is done below
-					-- 						-- cmdIcon = 
-					-- 						-- {
-					-- 						-- 	value = storagePath.."icon.png",
-					-- 						-- 	imageType = "DYNAMIC"
-					-- 						-- },
-					-- 						menuParams = 
-					-- 						{ 
-					-- 							parentID = 1,	
-					-- 							position = 0,
-					-- 							menuName ="Command71"
-					-- 						}
-					-- 					})
-					-- 	:ValidIf(function(_,data)
-     --      				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
-     --      				local value_Icon = path .. "action.png"
-          
-     --      				if(data.params.cmdIcon.imageType == "DYNAMIC") then
-     --          				return true
-     --      				else
-     --          				print("\27[31m imageType of menuIcon is WRONG. Expected: DYNAMIC; Real: " .. data.params.cmdIcon.imageType .. "\27[0m")
-     --          				return false
-     --      				end
-
-     --      				if(string.find(data.params.cmdIcon.value, value_Icon) ) then
-     --              			return true
-     --          			else
-     --              			print("\27[31m value of menuIcon is WRONG. Expected: ~".. value_Icon .. "; Real: " .. data.params.cmdIcon.value .. "\27[0m")
-     --              			return false
-     --          			end
-     --  				end)
-					-- 	:Do(function(_,data)
-					-- 		--hmi side: sending UI.AddCommand response
-					-- 		self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "a")
-					-- 	end)
-							
-					-- 	--hmi side: expect VR.AddCommand request
-					-- 	EXPECT_HMICALL("VR.AddCommand", 
-					-- 					{ 
-					-- 						cmdID = 71,
-					-- 						type = "Command",
-					-- 						vrCommands = 
-					-- 						{
-					-- 							"VRCommand71"
-					-- 						}
-					-- 					})
-					-- 	:Do(function(_,data)
-					-- 		--hmi side: sending VR.AddCommand response
-					-- 		self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-					-- 	end)
-						
-					-- 	--mobile side: expect AddCommand response
-					-- 	EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "a" })
-						
-					-- 	--mobile side: expect OnHashChange notification is not send to mobile
-					-- 	EXPECT_NOTIFICATION("OnHashChange")
-					-- 	:Times(0)
-					-- end
-				--End PositiveResponseCheck.1.1
-				
-				-----------------------------------------------------------------------------------------
-
-				--Begin PositiveResponseCheck.1.2
-				--Description: VR response info parameter lower bound					
-					function Test: AddCommand_VRResponseInfoLowerBound()
+				--TODO: Should be uncommented when APPLINK-24450 is resolved
+					function Test: AddCommand_UIResponseInfoLowerBound()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
-																	cmdID = 72,
-																	menuParams = 	
-																	{ 
+																	cmdID = 71,
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
-																		menuName ="Command72"
-																	}, 
-																	vrCommands = 
-																	{ 
-																		"VRCommand72"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																		menuName ="Command71"
+																	},
+																	vrCommands =
+																	{
+																		"VRCommand71"
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
-											cmdID = 72,
+						EXPECT_HMICALL("UI.AddCommand",
+										{
+											cmdID = 71,
 											-- Verification is done below
-											-- cmdIcon = 
+											-- cmdIcon =
 											-- {
 											-- 	value = storagePath.."icon.png",
 											-- 	imageType = "DYNAMIC"
 											-- },
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
+												position = 0,
+												menuName ="Command71"
+											}
+										})
+						:ValidIf(function(_,data)
+          				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
+          				local value_Icon = path .. "action.png"
+
+          				if(data.params.cmdIcon.imageType == "DYNAMIC") then
+              				return true
+          				else
+              				print("\27[31m imageType of menuIcon is WRONG. Expected: DYNAMIC; Real: " .. data.params.cmdIcon.imageType .. "\27[0m")
+              				return false
+          				end
+
+          				if(string.find(data.params.cmdIcon.value, value_Icon) ) then
+                  			return true
+              			else
+                  			print("\27[31m value of menuIcon is WRONG. Expected: ~".. value_Icon .. "; Real: " .. data.params.cmdIcon.value .. "\27[0m")
+                  			return false
+              			end
+      				end)
+						:Do(function(_,data)
+							--hmi side: sending UI.AddCommand response
+							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "a")
+						end)
+
+						--hmi side: expect VR.AddCommand request
+						EXPECT_HMICALL("VR.AddCommand",
+										{
+											cmdID = 71,
+											type = "Command",
+											vrCommands =
+											{
+												"VRCommand71"
+											}
+										})
+						:Do(function(_,data)
+							--hmi side: sending VR.AddCommand response
+							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
+						end)
+
+						--mobile side: expect AddCommand response
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "a" })
+
+						--mobile side: expect OnHashChange notification is not send to mobile
+						EXPECT_NOTIFICATION("OnHashChange")
+						:Times(0)
+					end
+				--End PositiveResponseCheck.1.1
+
+				-----------------------------------------------------------------------------------------
+
+				--Begin PositiveResponseCheck.1.2
+				--Description: VR response info parameter lower bound
+					function Test: AddCommand_VRResponseInfoLowerBound()
+						--mobile side: sending AddCommand request
+						local cid = self.mobileSession:SendRPC("AddCommand",
+																{
+																	cmdID = 72,
+																	menuParams =
+																	{
+																		parentID = 1,
+																		position = 0,
+																		menuName ="Command72"
+																	},
+																	vrCommands =
+																	{
+																		"VRCommand72"
+																	},
+																	cmdIcon =
+																	{
+																		value ="icon.png",
+																		imageType ="DYNAMIC"
+																	}
+																})
+						--hmi side: expect UI.AddCommand request
+						EXPECT_HMICALL("UI.AddCommand",
+										{
+											cmdID = 72,
+											-- Verification is done below
+											-- cmdIcon =
+											-- {
+											-- 	value = storagePath.."icon.png",
+											-- 	imageType = "DYNAMIC"
+											-- },
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command72"
 											}
@@ -3664,7 +3664,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -3683,13 +3683,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 72,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand72"
 											}
@@ -3698,234 +3698,234 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "a")
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "a" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End PositiveResponseCheck.1.2
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin PositiveResponseCheck.1.3
 				--Description: UI & VR response info parameter lower bound
-				--TODO: Should be uncommented when APPLINK-24450 is resolved					
-					-- function Test: AddCommand_UIVRResponseInfoLowerBound()
-					-- 	--mobile side: sending AddCommand request
-					-- 	local cid = self.mobileSession:SendRPC("AddCommand",
-					-- 											{
-					-- 												cmdID = 73,
-					-- 												menuParams = 	
-					-- 												{ 
-					-- 													parentID = 1,
-					-- 													position = 0,
-					-- 													menuName ="Command73"
-					-- 												}, 
-					-- 												vrCommands = 
-					-- 												{ 
-					-- 													"VRCommand73"
-					-- 												}, 
-					-- 												cmdIcon = 	
-					-- 												{ 
-					-- 													value ="icon.png",
-					-- 													imageType ="DYNAMIC"
-					-- 												}
-					-- 											})
-					-- 	--hmi side: expect UI.AddCommand request
-					-- 	EXPECT_HMICALL("UI.AddCommand", 
-					-- 					{ 
-					-- 						cmdID = 73,
-					-- 						-- Verification is done below
-					-- 						-- cmdIcon = 
-					-- 						-- {
-					-- 						-- 	value = storagePath.."icon.png",
-					-- 						-- 	imageType = "DYNAMIC"
-					-- 						-- },
-					-- 						menuParams = 
-					-- 						{ 
-					-- 							parentID = 1,	
-					-- 							position = 0,
-					-- 							menuName ="Command73"
-					-- 						}
-					-- 					})
-					-- 	:ValidIf(function(_,data)
-     --      				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
-     --      				local value_Icon = path .. "action.png"
-          
-     --      				if(data.params.cmdIcon.imageType == "DYNAMIC") then
-     --          				return true
-     --      				else
-     --          				print("\27[31m imageType of menuIcon is WRONG. Expected: DYNAMIC; Real: " .. data.params.cmdIcon.imageType .. "\27[0m")
-     --          				return false
-     --      				end
-
-     --      				if(string.find(data.params.cmdIcon.value, value_Icon) ) then
-     --              			return true
-     --          			else
-     --              			print("\27[31m value of menuIcon is WRONG. Expected: ~".. value_Icon .. "; Real: " .. data.params.cmdIcon.value .. "\27[0m")
-     --              			return false
-     --          			end
-     --  				end)
-					-- 	:Do(function(_,data)
-					-- 		--hmi side: sending UI.AddCommand response
-					-- 		self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "a")
-					-- 	end)
-							
-					-- 	--hmi side: expect VR.AddCommand request
-					-- 	EXPECT_HMICALL("VR.AddCommand", 
-					-- 					{ 
-					-- 						cmdID = 73,
-					-- 						type = "Command",
-					-- 						vrCommands = 
-					-- 						{
-					-- 							"VRCommand73"
-					-- 						}
-					-- 					})
-					-- 	:Do(function(_,data)
-					-- 		--hmi side: sending VR.AddCommand response
-					-- 		self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "b")
-					-- 	end)
-						
-					-- 	--mobile side: expect AddCommand response
-					-- 	EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "a.b" })
-						
-					-- 	--mobile side: expect OnHashChange notification is not send to mobile
-					-- 	EXPECT_NOTIFICATION("OnHashChange")
-					-- 	:Times(0)
-					-- end
-				--End PositiveResponseCheck.1.3
-				
-				-----------------------------------------------------------------------------------------
-				
-				--Begin PositiveResponseCheck.1.4
-				--Description: UI response info parameter upper bound 
-				--TODO: Should be uncommented when APPLINK-24450 is resolved					
-					-- function Test: AddCommand_UIResponseInfoUpperBound()
-					-- 	--mobile side: sending AddCommand request
-					-- 	local cid = self.mobileSession:SendRPC("AddCommand",
-					-- 											{
-					-- 												cmdID = 74,
-					-- 												menuParams = 	
-					-- 												{ 
-					-- 													parentID = 1,
-					-- 													position = 0,
-					-- 													menuName ="Command74"
-					-- 												}, 
-					-- 												vrCommands = 
-					-- 												{ 
-					-- 													"VRCommand74"
-					-- 												}, 
-					-- 												cmdIcon = 	
-					-- 												{ 
-					-- 													value ="icon.png",
-					-- 													imageType ="DYNAMIC"
-					-- 												}
-					-- 											})
-					-- 	--hmi side: expect UI.AddCommand request
-					-- 	EXPECT_HMICALL("UI.AddCommand", 
-					-- 					{ 
-					-- 						cmdID = 74,
-					-- 						-- Verification is done below
-					-- 						-- cmdIcon = 
-					-- 						-- {
-					-- 						-- 	value = storagePath.."icon.png",
-					-- 						-- 	imageType = "DYNAMIC"
-					-- 						-- },
-					-- 						menuParams = 
-					-- 						{ 
-					-- 							parentID = 1,	
-					-- 							position = 0,
-					-- 							menuName ="Command74"
-					-- 						}
-					-- 					})
-					-- 	:ValidIf(function(_,data)
-     --      				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
-     --      				local value_Icon = path .. "action.png"
-          
-     --      				if(data.params.cmdIcon.imageType == "DYNAMIC") then
-     --          				return true
-     --      				else
-     --          				print("\27[31m imageType of menuIcon is WRONG. Expected: DYNAMIC; Real: " .. data.params.cmdIcon.imageType .. "\27[0m")
-     --          				return false
-     --      				end
-
-     --      				if(string.find(data.params.cmdIcon.value, value_Icon) ) then
-     --              			return true
-     --          			else
-     --              			print("\27[31m value of menuIcon is WRONG. Expected: ~".. value_Icon .. "; Real: " .. data.params.cmdIcon.value .. "\27[0m")
-     --              			return false
-     --          			end
-     --  				end)
-					-- 	:Do(function(_,data)
-					-- 		--hmi side: sending UI.AddCommand response
-					-- 		self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", infoMessage)
-					-- 	end)
-							
-					-- 	--hmi side: expect VR.AddCommand request
-					-- 	EXPECT_HMICALL("VR.AddCommand", 
-					-- 					{ 
-					-- 						cmdID = 74,
-					-- 						type = "Command",
-					-- 						vrCommands = 
-					-- 						{
-					-- 							"VRCommand74"
-					-- 						}
-					-- 					})
-					-- 	:Do(function(_,data)
-					-- 		--hmi side: sending VR.AddCommand response
-					-- 		self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS",{})
-					-- 	end)
-						
-					-- 	--mobile side: expect AddCommand response
-					-- 	EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = infoMessage})
-						
-					-- 	--mobile side: expect OnHashChange notification is not send to mobile
-					-- 	EXPECT_NOTIFICATION("OnHashChange")
-					-- 	:Times(0)
-					-- end
-				--End PositiveResponseCheck.1.4
-				
-				-----------------------------------------------------------------------------------------
-				
-				--Begin PositiveResponseCheck.1.5
-				--Description: VR response info parameter upper bound 					
-					function Test: AddCommand_VRResponseInfoUpperBound()
+				--TODO: Should be uncommented when APPLINK-24450 is resolved
+					function Test: AddCommand_UIVRResponseInfoLowerBound()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
-																	cmdID = 75,
-																	menuParams = 	
-																	{ 
+																	cmdID = 73,
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
-																		menuName ="Command75"
-																	}, 
-																	vrCommands = 
-																	{ 
-																		"VRCommand75"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																		menuName ="Command73"
+																	},
+																	vrCommands =
+																	{
+																		"VRCommand73"
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
-											cmdID = 75,
+						EXPECT_HMICALL("UI.AddCommand",
+										{
+											cmdID = 73,
 											-- Verification is done below
-											-- cmdIcon = 
+											-- cmdIcon =
 											-- {
 											-- 	value = storagePath.."icon.png",
 											-- 	imageType = "DYNAMIC"
 											-- },
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
+												position = 0,
+												menuName ="Command73"
+											}
+										})
+						:ValidIf(function(_,data)
+          				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
+          				local value_Icon = path .. "action.png"
+
+          				if(data.params.cmdIcon.imageType == "DYNAMIC") then
+              				return true
+          				else
+              				print("\27[31m imageType of menuIcon is WRONG. Expected: DYNAMIC; Real: " .. data.params.cmdIcon.imageType .. "\27[0m")
+              				return false
+          				end
+
+          				if(string.find(data.params.cmdIcon.value, value_Icon) ) then
+                  			return true
+              			else
+                  			print("\27[31m value of menuIcon is WRONG. Expected: ~".. value_Icon .. "; Real: " .. data.params.cmdIcon.value .. "\27[0m")
+                  			return false
+              			end
+      				end)
+						:Do(function(_,data)
+							--hmi side: sending UI.AddCommand response
+							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "a")
+						end)
+
+						--hmi side: expect VR.AddCommand request
+						EXPECT_HMICALL("VR.AddCommand",
+										{
+											cmdID = 73,
+											type = "Command",
+											vrCommands =
+											{
+												"VRCommand73"
+											}
+										})
+						:Do(function(_,data)
+							--hmi side: sending VR.AddCommand response
+							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "b")
+						end)
+
+						--mobile side: expect AddCommand response
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "b" })
+
+						--mobile side: expect OnHashChange notification is not send to mobile
+						EXPECT_NOTIFICATION("OnHashChange")
+						:Times(0)
+					end
+				--End PositiveResponseCheck.1.3
+
+				-----------------------------------------------------------------------------------------
+
+				--Begin PositiveResponseCheck.1.4
+				--Description: UI response info parameter upper bound
+				--TODO: Should be uncommented when APPLINK-24450 is resolved
+					function Test: AddCommand_UIResponseInfoUpperBound()
+						--mobile side: sending AddCommand request
+						local cid = self.mobileSession:SendRPC("AddCommand",
+																{
+																	cmdID = 74,
+																	menuParams =
+																	{
+																		parentID = 1,
+																		position = 0,
+																		menuName ="Command74"
+																	},
+																	vrCommands =
+																	{
+																		"VRCommand74"
+																	},
+																	cmdIcon =
+																	{
+																		value ="icon.png",
+																		imageType ="DYNAMIC"
+																	}
+																})
+						--hmi side: expect UI.AddCommand request
+						EXPECT_HMICALL("UI.AddCommand",
+										{
+											cmdID = 74,
+											-- Verification is done below
+											-- cmdIcon =
+											-- {
+											-- 	value = storagePath.."icon.png",
+											-- 	imageType = "DYNAMIC"
+											-- },
+											menuParams =
+											{
+												parentID = 1,
+												position = 0,
+												menuName ="Command74"
+											}
+										})
+						:ValidIf(function(_,data)
+          				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
+          				local value_Icon = path .. "action.png"
+
+          				if(data.params.cmdIcon.imageType == "DYNAMIC") then
+              				return true
+          				else
+              				print("\27[31m imageType of menuIcon is WRONG. Expected: DYNAMIC; Real: " .. data.params.cmdIcon.imageType .. "\27[0m")
+              				return false
+          				end
+
+          				if(string.find(data.params.cmdIcon.value, value_Icon) ) then
+                  			return true
+              			else
+                  			print("\27[31m value of menuIcon is WRONG. Expected: ~".. value_Icon .. "; Real: " .. data.params.cmdIcon.value .. "\27[0m")
+                  			return false
+              			end
+      				end)
+						:Do(function(_,data)
+							--hmi side: sending UI.AddCommand response
+							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", infoMessage)
+						end)
+
+						--hmi side: expect VR.AddCommand request
+						EXPECT_HMICALL("VR.AddCommand",
+										{
+											cmdID = 74,
+											type = "Command",
+											vrCommands =
+											{
+												"VRCommand74"
+											}
+										})
+						:Do(function(_,data)
+							--hmi side: sending VR.AddCommand response
+							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS",{})
+						end)
+
+						--mobile side: expect AddCommand response
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = infoMessage})
+
+						--mobile side: expect OnHashChange notification is not send to mobile
+						EXPECT_NOTIFICATION("OnHashChange")
+						:Times(0)
+					end
+				--End PositiveResponseCheck.1.4
+
+				-----------------------------------------------------------------------------------------
+
+				--Begin PositiveResponseCheck.1.5
+				--Description: VR response info parameter upper bound
+					function Test: AddCommand_VRResponseInfoUpperBound()
+						--mobile side: sending AddCommand request
+						local cid = self.mobileSession:SendRPC("AddCommand",
+																{
+																	cmdID = 75,
+																	menuParams =
+																	{
+																		parentID = 1,
+																		position = 0,
+																		menuName ="Command75"
+																	},
+																	vrCommands =
+																	{
+																		"VRCommand75"
+																	},
+																	cmdIcon =
+																	{
+																		value ="icon.png",
+																		imageType ="DYNAMIC"
+																	}
+																})
+						--hmi side: expect UI.AddCommand request
+						EXPECT_HMICALL("UI.AddCommand",
+										{
+											cmdID = 75,
+											-- Verification is done below
+											-- cmdIcon =
+											-- {
+											-- 	value = storagePath.."icon.png",
+											-- 	imageType = "DYNAMIC"
+											-- },
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command75"
 											}
@@ -3933,7 +3933,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -3952,13 +3952,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS",{})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 75,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand75"
 											}
@@ -3967,54 +3967,54 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", infoMessage)
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = infoMessage})
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End PositiveResponseCheck.1.5
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin PositiveResponseCheck.1.6
-				--Description: UI & VR response info parameter upper bound 					
+				--Description: UI & VR response info parameter upper bound
 					function Test: AddCommand_UIVRResponseInfoUpperBound()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 76,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command76"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand76"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 76,
 											-- Verification is done below
-											-- cmdIcon = 
+											-- cmdIcon =
 											-- {
 											-- 	value = storagePath.."icon.png",
 											-- 	imageType = "DYNAMIC"
 											-- },
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command76"
 											}
@@ -4022,7 +4022,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -4041,13 +4041,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", infoMessage)
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 76,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand76"
 											}
@@ -4056,10 +4056,10 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", infoMessage)
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = infoMessage})
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
@@ -4084,7 +4084,7 @@ end
 		-- invalid json
 
 		--Begin Test suit NegativeRequestCheck
-		--Description: Check processing requests with out of lower and upper bound values 
+		--Description: Check processing requests with out of lower and upper bound values
 
 			--Begin Test case NegativeRequestCheck.1
 			--Description:
@@ -4092,8 +4092,8 @@ end
 				--Requirement id in JAMA:
 					--SDLAQ-CRS-404
 					--SDLAQ-CRS-757
-					
-					
+
+
 				--Verification criteria:
 				--[[
 						- The request with "cmdID" value out of bounds is sent, the response with INVALID_DATA result code is returned.
@@ -4111,77 +4111,77 @@ end
 						- The request with empty "menuParams" structure is sent, the response with INVALID_DATA result code is returned.
 						- The request with empty "parentID" is sent, the response with INVALID_DATA result code is returned.
 						- The request with empty "cmdID" is sent, the response with INVALID_DATA result code is returned.
-						- The request with empty "menuName" is sent, the response with INVALID_DATA result code is returned.						
+						- The request with empty "menuName" is sent, the response with INVALID_DATA result code is returned.
 				]]
-				
+
 				--Begin Test case NegativeRequestCheck.1.1
-				--Description: cmdID - out lower bound 				
+				--Description: cmdID - out lower bound
 				function Test:AddCommand_cmdIDOutLowerBound()
 					--mobile side: sending AddCommand request
 					local cid = self.mobileSession:SendRPC("AddCommand",
 					{
 						cmdID = -1,
-						menuParams = 	
-						{ 
+						menuParams =
+						{
 							parentID = 1,
 							position = 0,
 							menuName ="Command1"
-						}, 
-						vrCommands = 
-						{ 
+						},
+						vrCommands =
+						{
 							"Voicerecognitioncommandone"
-						}, 
-						cmdIcon = 	
-						{ 
+						},
+						cmdIcon =
+						{
 							value ="icon.png",
 							imageType ="DYNAMIC"
 						}
 					})
-					
+
 					EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
-				end					
+				end
 				--End Test case NegativeRequestCheck.1.1
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeRequestCheck.1.2
-				--Description: cmdID - out upper bound 
+				--Description: cmdID - out upper bound
 					function Test:AddCommand_cmdIDOutUpperBound()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 2000000001,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Upper"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"Upper"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.1.2
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeRequestCheck.1.3
 				--Description: menuParams - parent id out lower bound
 					function Test:AddCommand_MenuParamParentIDOutLowerBound()
@@ -4189,33 +4189,33 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 603,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = -1,
 								position = 0,
 								menuName ="Command603"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"Commandsixzerothree"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.1.3
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeRequestCheck.1.4
 				--Description: menuParams - parent id out upper bound
 					function Test:AddCommand_MenuParamParentIDOutUpperBound()
@@ -4223,33 +4223,33 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 606,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 2000000001,
 								position = 0,
 								menuName ="Commandsixzerosix"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"Commandsixzerosix"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.1.4
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeRequestCheck.1.5
 				--Description: menuParams - position out lower bound
 					function Test:AddCommand_MenuParamPosOutLowerBound()
@@ -4257,33 +4257,33 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 213,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = -1,
 								menuName ="Command703"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"Commandsevenzerothree"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.1.5
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeRequestCheck.1.6
 				--Description: menuParams - position out upper bound
 					function Test:AddCommand_MenuParamPosOutUpperBound()
@@ -4291,33 +4291,33 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 214,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 1001,
 								menuName ="Command214"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"Commandtwoonefour"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.1.6
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeRequestCheck.1.7
 				--Description: menuParams - menuname out lower bound
 					function Test:AddCommand_MenuParamNameOutLowerBound()
@@ -4325,33 +4325,33 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 215,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName =""
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"Commandtwoonefive"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.1.7
-								
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeRequestCheck.1.8
 				--Description: menuParams - menuname out upper bound
 					function Test:AddCommand_MenuParamNameOutUpperBound()
@@ -4359,33 +4359,33 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 217,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="111111111111111111111111111111111111111111111111111111111111111111101234\\890/abc'defghijklmnopqrstuvwx01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg012"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"Voicerecognitioncommandone"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.1.8
-								
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeRequestCheck.1.9
 				--Description: vrCommands - array out lower bound (empty)
 					function Test:AddCommand_vrCommandsEmptyArray()
@@ -4393,32 +4393,32 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 218,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command218"
-							}, 
-							vrCommands = 
+							},
+							vrCommands =
 							{
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.1.9
-								
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeRequestCheck.1.10
 				--Description: vrCommands - empty value (out lower bound)
 					function Test:AddCommand_vrCommandsEmptyValue()
@@ -4426,33 +4426,33 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 219,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command219"
-							}, 
-							vrCommands = 
+							},
+							vrCommands =
 							{
 								""
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.1.10
-								
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeRequestCheck.1.11
 				--Description: vrCommands - out upper bound
 					function Test:AddCommand_vrCommandsOutUpperBound()
@@ -4460,31 +4460,31 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 222,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command222"
-							}, 
-							vrCommands = 
+							},
+							vrCommands =
 							{
 								"1100012\\345/678'90abc!def@ghi#jkl$mno%pqr^stu*vwx:yz()ABC-DEF_GHIJKL+MNO|PQR~STU{}WXY[]Z,012345678900"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.1.11
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case NegativeRequestCheck.1.12
@@ -4494,14 +4494,14 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 223,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command223"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"1CommandTwoTwoThree",
 								"2CommandTwoTwoThree",
 								"3CommandTwoTwoThree",
@@ -4604,21 +4604,21 @@ end
 								"100CommandTwoTwoThree",
 								"101CommandTwoTwoThree"
 							},
-							cmdIcon = 	
-							{ 
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.1.12
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case NegativeRequestCheck.1.13
@@ -4628,31 +4628,31 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 226,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command226"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandTwoTwoSix"
 							},
-							cmdIcon = 	
+							cmdIcon =
 							{
 								value ="",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.1.13
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case NegativeRequestCheck.1.14
@@ -4662,31 +4662,31 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 227,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command227"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandTwoTwoSeven"
 							},
-							cmdIcon = 	
+							cmdIcon =
 							{
 								value ="icon.png",
 								imageType =""
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.1.14
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case NegativeRequestCheck.1.15
@@ -4696,31 +4696,31 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 229,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command229"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandTwoTwoNine"
 							},
-							cmdIcon = 	
+							cmdIcon =
 							{
 								value ="111111001234\\890/abc'defghijklmnopqrstuvwx01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg01234567890asdfg01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfgWXYZ!@#$%^*()-_+|~{}[]:,01234567890asdfg)-_+|~{}[]:,01234567890asdfgaa.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.1.15
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case NegativeRequestCheck.1.16
@@ -4730,33 +4730,33 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 230,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command230"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"VRCommand230"
 							},
-							cmdIcon = 	
+							cmdIcon =
 							{
 								value ="icon.png",
 								imageType ="ANY"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.1.16
-									
+
 			--End Test case NegativeRequestCheck.1
-			
+
 			-----------------------------------------------------------------------------------------
 
 			--Begin Test case NegativeRequestCheck.2
@@ -4770,7 +4770,7 @@ end
 					- In case the app sends the AddCommnad RPC with the same 'menuName' value as the already requested one (that is, SDL has already received AddCommand with 'menuName' of such value from this mobile app), SDL must respond with "resultCode "DUPLICATE_NAME" and general result succcess=false" and not transfer this RPC to HMI. This rule excludes commands with the same names but which relates to different menus/submenus.
 					- In case the app sends the AddCommnad RPC with the same 'vrSynonym' value as the already requested one (that is, SDL has already received AddCommand with 'menuName' of such value from this mobile app), SDL must respond with "resultCode "DUPLICATE_NAME" and general result succcess=false" and not transfer this RPC to HMI.
 				]]
-						
+
 				--Begin Test case NegativeRequestCheck.2.1
 				--Description: menuParams - menuName is already existed
 					function Test:AddCommand_MenuParamNameDuplicate()
@@ -4778,35 +4778,35 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 411,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Duplicate"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandDuplicate01"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 411,
 							-- Verification is done below
-							-- cmdIcon = 
+							-- cmdIcon =
 							-- {
 							-- 	value = storagePath.."icon.png",
 							-- 	imageType = "DYNAMIC",
 							-- },
-							menuParams = 
-							{ 					
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Duplicate"
@@ -4815,7 +4815,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -4834,13 +4834,13 @@ end
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 411,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 411,
 							type = "Command",
-							vrCommands = 
+							vrCommands =
 							{
 								"CommandDuplicate01"
 							}
@@ -4848,40 +4848,40 @@ end
 						:Do(function(_,data)
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-						end)	
-						
+						end)
+
 						EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(1)
-						
+
 						--/* Add Duplicate command */--
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 412,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Duplicate"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandDuplicate02"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
-						EXPECT_RESPONSE(cid, { success = false, resultCode = "DUPLICATE_NAME" })		
+
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "DUPLICATE_NAME" })
 					end
 				--End Test case NegativeRequestCheck.2.1
-				
+
 				-----------------------------------------------------------------------------------------
-						
+
 				--Begin Test case NegativeRequestCheck.2.2
 				--Description: vrCommand is already existed
 					function Test:AddCommand_vrCommandsDuplicate()
@@ -4889,35 +4889,35 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 421,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command421"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandFourTwo"
 							},
-							cmdIcon = 	
-							{ 
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 421,
 							-- Verification is done below
-							-- cmdIcon = 
+							-- cmdIcon =
 							-- {
 							-- 	value = storagePath.."icon.png",
 							-- 	imageType = "DYNAMIC",
 							-- },
-							menuParams = 
-							{ 					
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command421"
@@ -4926,7 +4926,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -4945,52 +4945,52 @@ end
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 421,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 421,
 							type = "Command",
-							vrCommands = 
-							{ 
+							vrCommands =
+							{
 								"CommandFourTwo"
 							}
 						})
 						:Do(function(_,data)
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-						end)	
-						
+						end)
+
 						EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(1)
-						
+
 						--/*AddCommand duplicate vrCommand */--
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 422,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command422"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandFourTwo"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-										
-						EXPECT_RESPONSE(cid, { success = false, resultCode = "DUPLICATE_NAME" })		
+
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "DUPLICATE_NAME" })
 					end
 				--End Test case NegativeRequestCheck.2.2
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case NegativeRequestCheck.2.3
@@ -5000,31 +5000,31 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 43,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command43"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandFourTwo",
 								"ABC"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
-						})										
-						EXPECT_RESPONSE(cid, { success = false, resultCode = "DUPLICATE_NAME" })	
-						
+						})
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "DUPLICATE_NAME" })
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
-						:Times(0)	
+						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.2.3
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case NegativeRequestCheck.2.4
@@ -5034,31 +5034,31 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 44,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command44"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"commandfourtwo"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-										
-						EXPECT_RESPONSE(cid, { success = false, resultCode = "DUPLICATE_NAME" })	
-						
+
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "DUPLICATE_NAME" })
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
-						:Times(0)	
+						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.2.4
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case NegativeRequestCheck.2.5
@@ -5068,56 +5068,56 @@ end
 						local cid1= self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 451,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command45"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandFourFiveOne"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--mobile side: sending AddCommand request
 						local cid2 = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 452,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command45"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandFourFiveTwo"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
-						})		
-						
+						})
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 451,
 							-- Verification is done below
-							-- cmdIcon = 
+							-- cmdIcon =
 							-- {
 							-- 	value = storagePath.."icon.png",
 							-- 	imageType = "DYNAMIC",
 							-- },
-							menuParams = 
-							{ 					
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command45"
@@ -5126,7 +5126,7 @@ end
 						:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -5145,14 +5145,14 @@ end
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 451,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 451,
 							type = "Command",
-							vrCommands = 
-							{ 
+							vrCommands =
+							{
 								"CommandFourFiveOne"
 							}
 						})
@@ -5160,16 +5160,16 @@ end
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
-						EXPECT_RESPONSE(cid1, { success = true, resultCode = "SUCCESS" })			
+
+						EXPECT_RESPONSE(cid1, { success = true, resultCode = "SUCCESS" })
 						EXPECT_RESPONSE(cid2, { success = false, resultCode = "DUPLICATE_NAME" })
-						
+
 						--mobile side: expect OnHashChange notification
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(1)
 					end
 				--End Test case NegativeRequestCheck.2.5
-								
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case NegativeRequestCheck.2.6
@@ -5178,41 +5178,41 @@ end
 						--mobile side: sending AddCommand request
 						local cid1= self.mobileSession:SendRPC("AddCommand",
 						{
-							cmdID = 471,			
-							vrCommands = 
-							{ 
+							cmdID = 471,
+							vrCommands =
+							{
 								"CommandFourSevenOne"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						--/*Add second command that has same vrCommands*/
 						--mobile side: sending AddCommand request
 						local cid2 = self.mobileSession:SendRPC("AddCommand",
 						{
-							cmdID = 472,			
-							vrCommands = 
-							{ 
+							cmdID = 472,
+							vrCommands =
+							{
 								"CommandFourSevenOne"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
-						})		
-						
+						})
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 471,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 471,
 							type = "Command",
-							vrCommands = 
-							{ 
+							vrCommands =
+							{
 								"CommandFourSevenOne"
 							}
 						})
@@ -5220,16 +5220,16 @@ end
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
-						EXPECT_RESPONSE(cid1, { success = true, resultCode = "SUCCESS" })			
+
+						EXPECT_RESPONSE(cid1, { success = true, resultCode = "SUCCESS" })
 						EXPECT_RESPONSE(cid2, { success = false, resultCode = "DUPLICATE_NAME" })
-						
+
 						--mobile side: expect OnHashChange notification
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(1)
 					end
 				--End Test case NegativeRequestCheck.2.6
-								
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case NegativeRequestCheck.2.7
@@ -5240,11 +5240,11 @@ end
 						{
 							cmdID = 481,
 							menuParams = {menuName = "Command481"},
-							vrCommands = {"CommandFourEightOne"}, 			
+							vrCommands = {"CommandFourEightOne"},
 						})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 481,
 							menuParams = {menuName = "Command481"}
 						})
@@ -5252,11 +5252,11 @@ end
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 481,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 481,
 							type = "Command",
 							vrCommands = { "CommandFourEightOne"}
 						})
@@ -5264,29 +5264,29 @@ end
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
-						
+
+
 						EXPECT_RESPONSE(cid1, { success = true, resultCode = "SUCCESS" })
 						:Do(function(_,data)
-						
+
 							--/*Add second command that has same menuParams, vrCommands*/
 							--mobile side: sending AddCommand request
 							local cid2= self.mobileSession:SendRPC("AddCommand",
 							{
 								cmdID = 482,
 								menuParams = {menuName = "Command481"},
-								vrCommands = {"CommandFourEightOne"}, 			
+								vrCommands = {"CommandFourEightOne"},
 							})
-							
-							EXPECT_RESPONSE(cid2, { success = false, resultCode = "DUPLICATE_NAME" })							
+
+							EXPECT_RESPONSE(cid2, { success = false, resultCode = "DUPLICATE_NAME" })
 						end)
-						
+
 						--mobile side: expect OnHashChange notification
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(1)
 					end
 				--End Test case NegativeRequestCheck.2.7
-								
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case NegativeRequestCheck.2.8
@@ -5297,21 +5297,21 @@ end
 						{
 							cmdID = 491,
 							menuParams = {menuName = "Command491"},
-							vrCommands = {"CommandFourNineOne"}, 			
+							vrCommands = {"CommandFourNineOne"},
 						})
-						
+
 						--/*Add second command that has same menuParams, vrCommands*/
 						--mobile side: sending AddCommand request
 						local cid2= self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 492,
 							menuParams = {menuName = "Command491"},
-							vrCommands = {"CommandFourNineOne"}, 			
+							vrCommands = {"CommandFourNineOne"},
 						})
-						
+
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-						{ 
+						EXPECT_HMICALL("UI.AddCommand",
+						{
 							cmdID = 491,
 							menuParams = {menuName = "Command491"}
 						})
@@ -5319,11 +5319,11 @@ end
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-						{ 
-							cmdID = 491,							
+						EXPECT_HMICALL("VR.AddCommand",
+						{
+							cmdID = 491,
 							type = "Command",
 							vrCommands = { "CommandFourNineOne"}
 						})
@@ -5331,18 +5331,18 @@ end
 							--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
-						EXPECT_RESPONSE(cid1, { success = true, resultCode = "SUCCESS" })			
-						EXPECT_RESPONSE(cid2, { success = false, resultCode = "DUPLICATE_NAME" })						
-						
+
+						EXPECT_RESPONSE(cid1, { success = true, resultCode = "SUCCESS" })
+						EXPECT_RESPONSE(cid2, { success = false, resultCode = "DUPLICATE_NAME" })
+
 						--mobile side: expect OnHashChange notification
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(1)
 					end
 				--End Test case NegativeRequestCheck.2.8
-				
+
 			--End Test case NegativeRequestCheck.2
-			
+
 			-----------------------------------------------------------------------------------------
 
 			--Begin Test case NegativeRequestCheck.3
@@ -5353,7 +5353,7 @@ end
 				--Verification criteria:
 					--In case of adding a command with cmdID which is already registered for the current application, the response with INVALID_ID resultCode is sent.
 					--In case of adding a command with ParentID that doesn't exist for the current application, the response with INVALID_ID resultCode is sent.
-				
+
 				--Begin Test case NegativeRequestCheck.3.1
 				--Description: cmdID is not valid (already existed), submenu is the same
 					function Test:AddCommand_cmdIDNotValid()
@@ -5361,33 +5361,33 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 11,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="CommandDifferent"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandDifferent"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_ID" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.3.1
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeRequestCheck.3.2
 				--Description: cmdID is valid, parentID is not valid
 					function Test:AddCommand_cmdIDNotValidSubmenuDifferent()
@@ -5395,33 +5395,33 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 32,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 320,
 								position = 0,
 								menuName ="CommandDifferent"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandDifferent"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_ID" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.3.2
-				
+
 			--End Test case NegativeRequestCheck.3
-			
+
 			-----------------------------------------------------------------------------------------
 
 			--Begin Test case NegativeRequestCheck.4
@@ -5430,14 +5430,14 @@ end
 				--Requirement id in JAMA:
 					--SDLAQ-CRS-404
 					--SDLAQ-CRS-757
-					
+
 				--Verification criteria:
 				--[[
 					- SDL responds with INVALID_DATA resultCode in case AddCommand request comes with '\n' and-or '\t' and-or 'whitespace'-as-the-only-symbol(s) in "value" parameter of "Image" struct of cmdIcon param.
 					- SDL responds with INVALID_DATA resultCode in case AddCommand request comes with '\n' and-or '\t' and-or 'whitespace'-as-the-only-symbol(s) in "menuName" parameter of "menuParams" struct
 					- SDL responds with INVALID_DATA resultCode in case AddCommand request comes with '\n' and-or '\t' and-or 'whitespace'-as-the-only-symbol(s) in "vrCommands" parameter
 				]]
-				
+
 				--Begin Test case NegativeRequestCheck.4.1
 				--Description: vrCommands whitespace only
 					function Test:AddCommand_vrCommandsWhitespace()
@@ -5445,33 +5445,33 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 220,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command220"
-							}, 
-							vrCommands = 
+							},
+							vrCommands =
 							{
 								"      "
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.4.1
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeRequestCheck.4.2
 				--Description: vrCommands - Escape sequence \n in vrCommands
 					function Test:AddCommand_vrCommandsNewLineChar()
@@ -5479,22 +5479,22 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 235,
-							vrCommands = 
-							{ 
+							vrCommands =
+							{
 								"VRCommandonepositive\n",
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.4.2
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeRequestCheck.4.3
 				--Description: vrCommands - Escape sequence \n in vrCommands
 					function Test:AddCommand_vrCommandsTabChar()
@@ -5502,22 +5502,22 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 236,
-							vrCommands = 
-							{ 
+							vrCommands =
+							{
 								"VRCommandonepositive\t",
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.4.3
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeRequestCheck.4.4
 				--Description: cmdIcon - whitespace only in cmdIcon image value
 					function Test:AddCommand_cmdIconValueWhiteSpace()
@@ -5525,31 +5525,31 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 232,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command232"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandTwoThreeTwo"
 							},
-							cmdIcon = 	
+							cmdIcon =
 							{
 								value ="      ",
 								imageType ="STATIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.4.4
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case NegativeRequestCheck.4.5
@@ -5559,31 +5559,31 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 231,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command231"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandTwoThreeOne"
 							},
-							cmdIcon = 	
+							cmdIcon =
 							{
 								value ="ico\n.png",
 								imageType ="STATIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.4.5
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case NegativeRequestCheck.4.6
@@ -5593,31 +5593,31 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 232,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command232"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandTwoThreeTwo"
 							},
-							cmdIcon = 	
+							cmdIcon =
 							{
 								value ="ico\tn.png",
 								imageType ="STATIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.4.6
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case NegativeRequestCheck.4.7
@@ -5627,16 +5627,16 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 234,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="     ",
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
@@ -5644,7 +5644,7 @@ end
 				--End Test case NegativeRequestCheck.4.7
 
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeRequestCheck.4.8
 				--Description: menuName - Escape sequence \n in menuName
 					function Test:AddCommand_menuNameNewLineChar()
@@ -5652,22 +5652,22 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 233,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Commandpositive\n",
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.4.8
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case NegativeRequestCheck.4.9
@@ -5677,24 +5677,24 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 234,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Commandpositive\t",
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
-				--End Test case NegativeRequestCheck.4.9				
-				
-			--End Test case NegativeRequestCheck.4		
-			
+				--End Test case NegativeRequestCheck.4.9
+
+			--End Test case NegativeRequestCheck.4
+
 			-----------------------------------------------------------------------------------------
 
 			--Begin Test case NegativeRequestCheck.5
@@ -5711,7 +5711,7 @@ end
 					- The request with wrong type of "vrCommand" parameter (e.g. Integer type) is sent, the response with INVALID_DATA result code is returned.
 					- The request with wrong type of "cmdIcon" parameter (e.g. Integer type) is sent, the response with INVALID_DATA result code is returned.
 				]]
-				
+
 				--Begin Test case NegativeRequestCheck.5.1
 				--Description: cmdID Wrong Type
 					function Test:AddCommand_cmdIDWrongType()
@@ -5719,33 +5719,33 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = "123",
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command1"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"Voicerecognitioncommandone"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.5.1
-				
+
 				-----------------------------------------------------------------------------------------
-			
+
 				--Begin Test case NegativeRequestCheck.5.2
 				--Description: menuParams parent id Wrong Type
 					function Test:AddCommand_MenuParamParentIDWrongType()
@@ -5753,33 +5753,33 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 602,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = "1",
 								position = 0,
 								menuName ="Command602"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"Commandsixzerotwo"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.5.2
-				
+
 				-----------------------------------------------------------------------------------------
-			
+
 				--Begin Test case NegativeRequestCheck.5.3
 				--Description: menuParams position wrong type
 					function Test:AddCommand_MenuParamPosWrongType()
@@ -5787,33 +5787,33 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 212,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = "1",
 								menuName ="Command702"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"Commandsevenzerotwo"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.5.3
-				
+
 				-----------------------------------------------------------------------------------------
-			
+
 				--Begin Test case NegativeRequestCheck.5.4
 				--Description: menuParams menuName wrong type
 					function Test:AddCommand_MenuParamNameWrongType()
@@ -5821,33 +5821,33 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 216,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName = 802
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"Commandtwoonesix"
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.5.4
-				
+
 				-----------------------------------------------------------------------------------------
-			
+
 				--Begin Test case NegativeRequestCheck.5.5
 					--Description: menuParams wrong type
 						function Test:AddCommand_MenuParamsWrongType()
@@ -5855,28 +5855,28 @@ end
 							local cid = self.mobileSession:SendRPC("AddCommand",
 							{
 								cmdID = 216,
-								menuParams = "menu Param", 
-								vrCommands = 
-								{ 
+								menuParams = "menu Param",
+								vrCommands =
+								{
 									"Commandtwoonesix"
-								}, 
-								cmdIcon = 	
-								{ 
+								},
+								cmdIcon =
+								{
 									value ="icon.png",
 									imageType ="DYNAMIC"
 								}
 							})
-							
+
 							EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 							--mobile side: expect OnHashChange notification is not send to mobile
 							EXPECT_NOTIFICATION("OnHashChange")
 							:Times(0)
 						end
 				--End Test case NegativeRequestCheck.5.5
-					
+
 				-----------------------------------------------------------------------------------------
-			
+
 				--Begin Test case NegativeRequestCheck.5.6
 				--Description: vrCommands wrong type of parameter
 					function Test:AddCommand_vrCommandsValueWrongType()
@@ -5884,33 +5884,33 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 221,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command221"
-							}, 
-							vrCommands = 
+							},
+							vrCommands =
 							{
 								12300123
-							}, 
-							cmdIcon = 	
-							{ 
+							},
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.5.6
-					
+
 				-----------------------------------------------------------------------------------------
-			
+
 				--Begin Test case NegativeRequestCheck.5.7
 				--Description: vrCommands wrong type
 					function Test:AddCommand_vrCommandsWrongType()
@@ -5918,30 +5918,30 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 221,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command221"
-							}, 
+							},
 							vrCommands = "vrCommand",
-							cmdIcon = 	
-							{ 
+							cmdIcon =
+							{
 								value ="icon.png",
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.5.7
-				
+
 				-----------------------------------------------------------------------------------------
-			
+
 				--Begin Test case NegativeRequestCheck.5.8
 				--Description: cmdIcon - value wrong type
 					function Test:AddCommand_cmdIconValueWrongType()
@@ -5949,33 +5949,33 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 228,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command228"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandTwoTwoEight"
 							},
-							cmdIcon = 	
+							cmdIcon =
 							{
 								value =123,
 								imageType ="DYNAMIC"
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.5.8
-				
+
 				-----------------------------------------------------------------------------------------
-			
+
 				--Begin Test case NegativeRequestCheck.5.9
 				--Description: cmdIcon wrong type
 					function Test:AddCommand_cmdIconWrongType()
@@ -5983,29 +5983,29 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 228,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command228"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandTwoTwoEight"
 							},
 							cmdIcon = "icon.png"
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.5.9
-				
+
 				-----------------------------------------------------------------------------------------
-			
+
 				--Begin Test case NegativeRequestCheck.5.10
 				--Description: cmdIcon - imageType wrong type
 					function Test:AddCommand_cmdIconImageTypeWrongType()
@@ -6013,31 +6013,31 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 						{
 							cmdID = 228,
-							menuParams = 	
-							{ 
+							menuParams =
+							{
 								parentID = 1,
 								position = 0,
 								menuName ="Command228"
-							}, 
-							vrCommands = 
-							{ 
+							},
+							vrCommands =
+							{
 								"CommandTwoTwoEight"
 							},
-							cmdIcon = 	
+							cmdIcon =
 							{
 								value ="icon.png",
 								imageType =123
 							}
 						})
-						
+
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeRequestCheck.5.10
-			--End Test case NegativeRequestCheck.5			
+			--End Test case NegativeRequestCheck.5
 		--End Test suit NegativeRequestCheck
 
 
@@ -6049,7 +6049,7 @@ end
 		-- invalid values(empty, missing, nonexistent, invalid characters)
 		-- parameters with wrong type
 		-- invalid json
-		
+
 		--Begin Test suit NegativeResponseCheck
 		--Description: Check of each response parameter value out of bound, missing, with wrong type, empty, duplicate etc.
 --[[TODO update after resolving APPLINK-14765
@@ -6062,40 +6062,40 @@ end
 					-- The response contains 2 mandatory parameters "success" and "resultCode", "info" is sent if there is any additional information about the resultCode.
 
 				--Begin Test case NegativeResponseCheck.1.1
-				--Description: Check UI response with nonexistent resultCode 
+				--Description: Check UI response with nonexistent resultCode
 					function Test:AddCommand_UIResponseResultCodeNotExist()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 77,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command77"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand77"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 77,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command77"
 											}
@@ -6104,13 +6104,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"code":111, "method":"UI.AddCommand"}}')
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 77,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand77"
 											}
@@ -6119,53 +6119,53 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--mobile side: expect AddCommand response
-						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})	
-						
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
-						:Times(0)	
+						:Times(0)
 					end
 				--End Test case NegativeResponseCheck.1.1
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeResponseCheck.1.2
-				--Description: Check VR response with nonexistent resultCode 
+				--Description: Check VR response with nonexistent resultCode
 					function Test:AddCommand_VRResponseResultCodeNotExist()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 77,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command77"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand77"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 77,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command77"
 											}
@@ -6174,13 +6174,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 77,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand77"
 											}
@@ -6189,53 +6189,53 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"code":111, "method":"VR.AddCommand"}}')
 						end)
-						
+
 						--mobile side: expect AddCommand response
-						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})	
-						
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
-						:Times(0)	
+						:Times(0)
 					end
 				--End Test case NegativeResponseCheck.1.2
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeResponseCheck.1.3
-				--Description: Check UI & VR response with nonexistent resultCode 
+				--Description: Check UI & VR response with nonexistent resultCode
 					function Test:AddCommand_UIVRResponseResultCodeNotExist()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 77,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command77"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand77"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 77,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command77"
 											}
@@ -6244,13 +6244,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"code":111, "method":"UI.AddCommand"}}')
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 77,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand77"
 											}
@@ -6259,16 +6259,16 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"code":111, "method":"VR.AddCommand"}}')
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
-						:Times(0)		
+						:Times(0)
 					end
 				--End Test case NegativeResponseCheck.1.3
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case NegativeResponseCheck.1.4
@@ -6278,34 +6278,34 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 78,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command78"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand78"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 78,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command78"
 											}
@@ -6314,13 +6314,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, "", "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 78,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand78"
 											}
@@ -6329,17 +6329,17 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
 						:Timeout(12000)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeResponseCheck.1.4
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case NegativeResponseCheck.1.5
@@ -6349,34 +6349,34 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 78,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command78"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand78"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 78,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command78"
 											}
@@ -6385,13 +6385,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 78,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand78"
 											}
@@ -6400,17 +6400,17 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendResponse(data.id, "", "SUCCESS", {})
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
 						:Timeout(12000)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeResponseCheck.1.5
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin Test case NegativeResponseCheck.1.6
@@ -6420,34 +6420,34 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 78,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command78"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand78"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 78,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command78"
 											}
@@ -6456,13 +6456,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, "", "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 78,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand78"
 											}
@@ -6471,18 +6471,18 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendResponse(data.id, "", "SUCCESS", {})
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
 						:Timeout(12000)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test case NegativeResponseCheck.1.6
 			--End Test case NegativeResponseCheck.1
-			
+
 			-----------------------------------------------------------------------------------------
 
 			--Begin Test case NegativeResponseCheck.2
@@ -6492,42 +6492,42 @@ end
 					--SDLAQ-CRS-22
 				--Verification criteria:
 					-- The response contains 2 mandatory parameters "success" and "resultCode", "info" is sent if there is any additional information about the resultCode.
-				
+
 				--Begin NegativeResponseCheck.2.1
-				--Description: Check UI response without all parameters				
-					function Test:AddCommand_UIResponseMissingAllPArameters()					
+				--Description: Check UI response without all parameters
+					function Test:AddCommand_UIResponseMissingAllPArameters()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -6536,13 +6536,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:Send('{}')
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -6551,53 +6551,53 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
-						:Times(0)			
+						:Times(0)
 					end
 				--End NegativeResponseCheck.2.1
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin NegativeResponseCheck.2.2
-				--Description: Check VR response without all parameters				
-					function Test:AddCommand_VRResponseMissingAllPArameters()					
+				--Description: Check VR response without all parameters
+					function Test:AddCommand_VRResponseMissingAllPArameters()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -6606,13 +6606,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -6621,53 +6621,53 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:Send('{}')
 						end)
-						
+
 						--mobile side: expect AddCommand response
-						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})	
-						
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
-						:Times(0)		
+						:Times(0)
 					end
 				--End NegativeResponseCheck.2.2
-				
+
 				-----------------------------------------------------------------------------------------
 
 				--Begin NegativeResponseCheck.2.3
-				--Description: Check UI & VR response without all parameters				
-					function Test: AddCommand_UIVRResponseMissingAllParameters()					
+				--Description: Check UI & VR response without all parameters
+					function Test: AddCommand_UIVRResponseMissingAllParameters()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -6676,13 +6676,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:Send({})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -6691,53 +6691,53 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:Send('{}')
 						end)
-						
+
 						--mobile side: expect AddCommand response
-						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})	
-						
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
-						:Times(0)		
+						:Times(0)
 					end
 				--End NegativeResponseCheck.2.3
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin NegativeResponseCheck.2.4
-				--Description: Check UI response without method parameter			
-					function Test: AddCommand_UIResponseMethodMissing()					
+				--Description: Check UI response without method parameter
+					function Test: AddCommand_UIResponseMethodMissing()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -6746,13 +6746,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"code":0}}')
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -6761,54 +6761,54 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
 						:Timeout(12000)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End NegativeResponseCheck.2.4
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin NegativeResponseCheck.2.5
-				--Description: Check VR response without method parameter			
-					function Test: AddCommand_VRResponseMethodMissing()					
+				--Description: Check VR response without method parameter
+					function Test: AddCommand_VRResponseMethodMissing()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -6817,13 +6817,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -6832,54 +6832,54 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"code":0}}')
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
 						:Timeout(12000)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End NegativeResponseCheck.2.5
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin NegativeResponseCheck.2.6
-				--Description: Check UI & VR response without method parameter			
-					function Test:AddCommand_UIVRResponseMethodMissing()					
+				--Description: Check UI & VR response without method parameter
+					function Test:AddCommand_UIVRResponseMethodMissing()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -6888,13 +6888,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"code":0}}')
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -6903,19 +6903,19 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"code":0}}')
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
 						:Timeout(12000)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End NegativeResponseCheck.2.6
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin NegativeResponseCheck.2.7
 				--Description: Check UI response without resultCode parameter
 					function Test: AddCommand_UIResponseResultCodeMissing()
@@ -6923,34 +6923,34 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -6959,13 +6959,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"method":"UI.AddCommand"}}')
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -6974,18 +6974,18 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--mobile side: expect AddCommand response
-						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})	
-						
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End NegativeResponseCheck.2.7
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin NegativeResponseCheck.2.8
 				--Description: Check VR response without resultCode parameter
 					function Test: AddCommand_VRResponseResultCodeMissing()
@@ -6993,34 +6993,34 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -7029,13 +7029,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -7044,18 +7044,18 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"method":"VR.AddCommand"}}')
 						end)
-						
+
 						--mobile side: expect AddCommand response
-						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})	
-						
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End NegativeResponseCheck.2.8
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin NegativeResponseCheck.2.9
 				--Description: Check UI & VR response without resultCode parameter
 					function Test: AddCommand_UIVRResponseResultCodeMissing()
@@ -7063,34 +7063,34 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -7099,13 +7099,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"method":"UI.AddCommand"}}')
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -7114,62 +7114,62 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"method":"VR.AddCommand"}}')
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
-						:Times(0)	
+						:Times(0)
 					end
-				--End NegativeResponseCheck.2.9				
+				--End NegativeResponseCheck.2.9
 			--End Test case NegativeResponseCheck.2
 
 			-----------------------------------------------------------------------------------------
-			
+
 			--Begin Test case NegativeResponseCheck.3
-			--Description: Check processing response with parameters with wrong data type 
+			--Description: Check processing response with parameters with wrong data type
 
 				--Requirement id in JAMA:
 					--SDLAQ-CRS-29
 				--Verification criteria:
 					--The response contains 2 mandatory parameters "success" and "resultCode", "info" is sent if there is any additional information about the resultCode.
-				
+
 				--Begin Test case NegativeResponseCheck.3.1
 				--Description: Check UI response with wrong type of method
-					function Test:AddCommand_UIResponseMethodWrongtype() 
+					function Test:AddCommand_UIResponseMethodWrongtype()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -7178,13 +7178,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, 1234, "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -7193,54 +7193,54 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
 						:Timeout(12000)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
-					end				
+					end
 				--End Test case NegativeResponseCheck.3.1
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeResponseCheck.3.2
 				--Description: Check VR response with wrong type of method
-					function Test:AddCommand_VRResponseMethodWrongtype() 
+					function Test:AddCommand_VRResponseMethodWrongtype()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -7249,13 +7249,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -7264,54 +7264,54 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendResponse(data.id, 1234, "SUCCESS", {})
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
 						:Timeout(12000)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
-					end				
+					end
 				--End Test case NegativeResponseCheck.3.2
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeResponseCheck.3.3
 				--Description: Check UI & VR response with wrong type of method
-					function Test:AddCommand_UIVRResponseMethodWrongtype() 
+					function Test:AddCommand_UIVRResponseMethodWrongtype()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -7320,13 +7320,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, 1234, "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -7335,54 +7335,54 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendResponse(data.id, 1234, "SUCCESS", {})
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
 						:Timeout(12000)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
-					end				
+					end
 				--End Test case NegativeResponseCheck.3.3
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeResponseCheck.3.4
 				--Description: Check UI response with wrong type of resultCode
-					function Test:AddCommand_UIResponseResultCodeWrongtype() 
+					function Test:AddCommand_UIResponseResultCodeWrongtype()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -7391,13 +7391,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"method":"UI.AddCommand", "code":true}}')
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -7406,53 +7406,53 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--mobile side: expect AddCommand response
-						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})	
-						
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
-						:Times(0)				
-					end				
+						:Times(0)
+					end
 				--End Test case NegativeResponseCheck.3.4
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeResponseCheck.3.5
 				--Description: Check VR response with wrong type of resultCode
-					function Test:AddCommand_VRResponseResultCodeWrongtype() 
+					function Test:AddCommand_VRResponseResultCodeWrongtype()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -7461,13 +7461,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -7476,53 +7476,53 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"method":"VR.AddCommand", "code":true}}')
 						end)
-						
+
 						--mobile side: expect AddCommand response
-						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})	
-						
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
-						:Times(0)				
-					end				
+						:Times(0)
+					end
 				--End Test case NegativeResponseCheck.3.5
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeResponseCheck.3.6
 				--Description: Check UI & VR response with wrong type of resultCode
-					function Test:AddCommand_VRResponseResultCodeWrongtype() 
+					function Test:AddCommand_VRResponseResultCodeWrongtype()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -7531,13 +7531,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"method":"UI.AddCommand", "code":true}}')
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -7546,19 +7546,19 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"method":"VR.AddCommand", "code":true}}')
 						end)
-						
+
 						--mobile side: expect AddCommand response
-						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})	
-						
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
-						:Times(0)				
-					end				
+						:Times(0)
+					end
 				--End Test case NegativeResponseCheck.3.6
 			--End Test case NegativeResponseCheck.3
 ]]
 			-----------------------------------------------------------------------------------------
-			
+
 			--Begin Test case NegativeResponseCheck.4
 			--Description: Invalid JSON
 
@@ -7566,42 +7566,42 @@ end
 					--SDLAQ-CRS-22
 				--Verification criteria:
 					--The response contains 2 mandatory parameters "success" and "resultCode", "info" is sent if there is any additional information about the resultCode.
-	--[[TODO: update after resolving APPLINK-13418
+	--TODO: update after resolving APPLINK-13418
 				--Begin Test case NegativeResponseCheck.4.1
-				--Description: Check UI response with invalid json				
-					function Test: AddCommand_UIResponseInvalidJson()	
+				--Description: Check UI response with invalid json
+					function Test: AddCommand_UIResponseInvalidJson()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -7611,13 +7611,13 @@ end
 							--<<!-- missing ':'
 							self.hmiConnection:Send('{"id"'..tostring(data.id)..',"jsonrpc":"2.0","result":{"method":"UI.AddCommand", "code":0}}')
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -7626,53 +7626,53 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--mobile side: expect AddCommand response
-						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})	
-						
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
-					end				
+					end
 				--End Test case NegativeResponseCheck.4.1
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeResponseCheck.4.2
-				--Description: Check VR response with invalid json				
-					function Test: AddCommand_VRResponseInvalidJson()	
+				--Description: Check VR response with invalid json
+					function Test: AddCommand_VRResponseInvalidJson()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -7681,13 +7681,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -7697,53 +7697,53 @@ end
 							--<<!-- missing ':'
 							self.hmiConnection:Send('{"id"'..tostring(data.id)..',"jsonrpc":"2.0","result":{"method":"VR.AddCommand", "code":0}}')
 						end)
-						
+
 						--mobile side: expect AddCommand response
-						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})	
-						
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
-					end				
+					end
 				--End Test case NegativeResponseCheck.4.2
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test case NegativeResponseCheck.4.3
-				--Description: Check UI & VR response with invalid json				
-					function Test: AddCommand_UIVRResponseInvalidJson()	
+				--Description: Check UI & VR response with invalid json
+					function Test: AddCommand_UIVRResponseInvalidJson()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -7753,13 +7753,13 @@ end
 							--<<!-- missing ':'
 							self.hmiConnection:Send('{"id"'..tostring(data.id)..',"jsonrpc":"2.0","result":{"method":"UI.AddCommand", "code":0}}')
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -7769,68 +7769,68 @@ end
 							--<<!-- missing ':'
 							self.hmiConnection:Send('{"id"'..tostring(data.id)..',"jsonrpc":"2.0","result":{"method":"VR.AddCommand", "code":0}}')
 						end)
-						
+
 						--mobile side: expect AddCommand response
-						EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
-						
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
-						:Times(0)	
-					end				
-				--End Test case NegativeResponseCheck.4.3				
+						:Times(0)
+					end
+				--End Test case NegativeResponseCheck.4.3
 			--End Test case NegativeResponseCheck.4
-			]]
+
 			-----------------------------------------------------------------------------------------
 	--[[TODO: uodate after resolving APPLINK-14551
 			--Begin Test case NegativeResponseCheck.5
 			--Description: SDL behaviour: cases when SDL must transfer "info" parameter via corresponding RPC to mobile app
 
-				--Requirement id in JAMA/or Jira ID: 
+				--Requirement id in JAMA/or Jira ID:
 					--SDLAQ-CRS-22
 					--APPLINK-13276
 					--APPLINK-14551
-					
+
 				--Description:
 					-- In case "message" is empty - SDL should not transfer it as "info" to the app ("info" needs to be omitted)
 					-- In case info out of upper bound it should truncate to 1000 symbols
 					-- SDL should not send "info" to app if received "message" is invalid
 					-- SDL should not send "info" to app if received "message" contains newline "\n" or tab "\t" symbols.
-					
+
 				--Begin Test Case NegativeResponseCheck5.1
 				--Description: UI response with empty info
-					function Test: AddCommand_UIResponseInfoOutLowerBound()	
+					function Test: AddCommand_UIResponseInfoOutLowerBound()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -7839,13 +7839,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "")
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -7854,61 +7854,61 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
 						:ValidIf (function(_,data)
 							if data.payload.info then
 								print(" SDL resend invalid info to mobile app ")
 								return false
-							else 
+							else
 								return true
 							end
 						end)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test Case NegativeResponseCheck5.1
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test Case NegativeResponseCheck5.2
 				--Description: VR response with empty info
-					function Test: AddCommand_VRResponseInfoOutLowerBound()	
+					function Test: AddCommand_VRResponseInfoOutLowerBound()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -7917,13 +7917,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -7932,61 +7932,61 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "")
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
 						:ValidIf (function(_,data)
 							if data.payload.info then
 								print(" SDL resend invalid info to mobile app ")
 								return false
-							else 
+							else
 								return true
 							end
 						end)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test Case NegativeResponseCheck5.2
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test Case NegativeResponseCheck5.3
 				--Description: UI & VR response with empty info
-					function Test: AddCommand_UIVRResponseInfoOutLowerBound()	
+					function Test: AddCommand_UIVRResponseInfoOutLowerBound()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -7995,13 +7995,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "")
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -8010,61 +8010,61 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "")
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
 						:ValidIf (function(_,data)
 							if data.payload.info then
 								print(" SDL resend invalid info to mobile app ")
 								return false
-							else 
+							else
 								return true
 							end
 						end)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test Case NegativeResponseCheck5.3
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test Case NegativeResponseCheck5.4
 				--Description: UI response with empty info, VR response with inbound info
-					function Test: AddCommand_UIInfoOutLowerBoundVRInfoInBound()	
+					function Test: AddCommand_UIInfoOutLowerBoundVRInfoInBound()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -8073,13 +8073,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "")
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -8088,53 +8088,53 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "abc")
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "abc" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test Case NegativeResponseCheck5.4
-				
+
 				-----------------------------------------------------------------------------------------
-				
+
 				--Begin Test Case NegativeResponseCheck5.5
 				--Description: VR response with empty info, UI response with inbound info
-					function Test: AddCommand_VRInfoOutLowerBoundUIInfoInBound()	
+					function Test: AddCommand_VRInfoOutLowerBoundUIInfoInBound()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -8143,13 +8143,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "abc")
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -8158,55 +8158,55 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "")
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "abc" })
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test Case NegativeResponseCheck5.5
-				
+
 				-----------------------------------------------------------------------------------------
-								
+
 				--Begin Test Case NegativeResponseCheck5.6
 				--Description: UI response info out of upper bound
-					function Test: AddCommand_UIResponseInfoOutUpperBound()						
+					function Test: AddCommand_UIResponseInfoOutUpperBound()
 						local infoOutUpperBound = infoMessage.."b"
-						
+
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -8215,13 +8215,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", infoOutUpperBound)
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -8230,55 +8230,55 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--mobile side: expect AddCommand response
-						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = infoMessage })	
-						
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = infoMessage })
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
-						:Times(0)					
+						:Times(0)
 					end
 				--End Test Case NegativeResponseCheck5.6
-				
+
 				-----------------------------------------------------------------------------------------
-								
+
 				--Begin Test Case NegativeResponseCheck5.7
 				--Description: VR response info out of upper bound
-					function Test: AddCommand_VRResponseInfoOutUpperBound()						
+					function Test: AddCommand_VRResponseInfoOutUpperBound()
 						local infoOutUpperBound = infoMessage.."b"
-						
+
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -8287,13 +8287,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -8302,55 +8302,55 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", infoOutUpperBound)
 						end)
-						
+
 						--mobile side: expect AddCommand response
-						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = infoMessage })	
-						
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = infoMessage })
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
-						:Times(0)					
+						:Times(0)
 					end
 				--End Test Case NegativeResponseCheck5.7
-				
+
 				-----------------------------------------------------------------------------------------
-								
+
 				--Begin Test Case NegativeResponseCheck5.8
 				--Description: UI & VR response info out of upper bound
-					function Test: AddCommand_UIVRResponseInfoOutUpperBound()						
+					function Test: AddCommand_UIVRResponseInfoOutUpperBound()
 						local infoOutUpperBound = infoMessage.."b"
-						
+
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -8359,13 +8359,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", infoOutUpperBound)
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -8374,53 +8374,53 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", infoOutUpperBound)
 						end)
-						
+
 						--mobile side: expect AddCommand response
-						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = infoMessage })	
-						
+						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = infoMessage })
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
-						:Times(0)					
+						:Times(0)
 					end
 				--End Test Case NegativeResponseCheck5.8
-								
+
 				-----------------------------------------------------------------------------------------
-								
+
 				--Begin Test Case NegativeResponseCheck5.9
 				--Description: UI response with wrong type of info parameter
-					function Test: AddCommand_UIResponseInfoWrongType()												
+					function Test: AddCommand_UIResponseInfoWrongType()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -8429,13 +8429,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", 1234)
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -8444,61 +8444,61 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
 						:ValidIf (function(_,data)
 							if data.payload.info then
 								print(" SDL resend invalid info to mobile app ")
 								return false
-							else 
+							else
 								return true
 							end
 						end)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test Case NegativeResponseCheck5.9
-								
+
 				-----------------------------------------------------------------------------------------
-								
+
 				--Begin Test Case NegativeResponseCheck5.10
 				--Description: VR response with wrong type of info parameter
-					function Test: AddCommand_VRResponseInfoWrongType()												
+					function Test: AddCommand_VRResponseInfoWrongType()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -8507,13 +8507,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -8522,61 +8522,61 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", 1234)
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
 						:ValidIf (function(_,data)
 							if data.payload.info then
 								print(" SDL resend invalid info to mobile app ")
 								return false
-							else 
+							else
 								return true
 							end
 						end)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test Case NegativeResponseCheck5.10
-								
+
 				-----------------------------------------------------------------------------------------
-								
+
 				--Begin Test Case NegativeResponseCheck5.10
 				--Description: UI & VR response with wrong type of info parameter
-					function Test: AddCommand_UIVRResponseInfoWrongType()												
+					function Test: AddCommand_UIVRResponseInfoWrongType()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -8585,13 +8585,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", 1234)
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -8600,61 +8600,61 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", 1234)
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
 						:ValidIf (function(_,data)
 							if data.payload.info then
 								print(" SDL resend invalid info to mobile app ")
 								return false
-							else 
+							else
 								return true
 							end
 						end)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test Case NegativeResponseCheck5.10
-								
+
 				-----------------------------------------------------------------------------------------
-								
+
 				--Begin Test Case NegativeResponseCheck5.11
 				--Description: UI response with escape sequence \n in info parameter
-					function Test: AddCommand_UIResponseInfoWithNewlineChar()						
+					function Test: AddCommand_UIResponseInfoWithNewlineChar()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -8663,13 +8663,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "Error \n")
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -8678,61 +8678,61 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
 						:ValidIf (function(_,data)
 							if data.payload.info then
 								print(" SDL resend invalid info to mobile app ")
 								return false
-							else 
+							else
 								return true
 							end
 						end)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test Case NegativeResponseCheck5.11
-								
+
 				-----------------------------------------------------------------------------------------
-								
+
 				--Begin Test Case NegativeResponseCheck5.12
 				--Description: VR response with escape sequence \n in info parameter
-					function Test: AddCommand_VRResponseInfoWithNewlineChar()						
+					function Test: AddCommand_VRResponseInfoWithNewlineChar()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -8741,13 +8741,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -8756,61 +8756,61 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "Error \n")
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
 						:ValidIf (function(_,data)
 							if data.payload.info then
 								print(" SDL resend invalid info to mobile app ")
 								return false
-							else 
+							else
 								return true
 							end
 						end)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test Case NegativeResponseCheck5.12
-								
+
 				-----------------------------------------------------------------------------------------
-								
+
 				--Begin Test Case NegativeResponseCheck5.13
 				--Description: UI & VR response with escape sequence \n in info parameter
-					function Test: AddCommand_UIVRResponseInfoWithNewlineChar()						
+					function Test: AddCommand_UIVRResponseInfoWithNewlineChar()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -8819,13 +8819,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "Error \n")
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -8834,61 +8834,61 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "Error \n")
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
 						:ValidIf (function(_,data)
 							if data.payload.info then
 								print(" SDL resend invalid info to mobile app ")
 								return false
-							else 
+							else
 								return true
 							end
 						end)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test Case NegativeResponseCheck5.13
-								
+
 				-----------------------------------------------------------------------------------------
-								
+
 				--Begin Test Case NegativeResponseCheck5.14
 				--Description: UI response with escape sequence \t in info parameter
-					function Test: AddCommand_UIResponseInfoWithNewTabChar()						
+					function Test: AddCommand_UIResponseInfoWithNewTabChar()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -8897,13 +8897,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "Error \t")
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -8912,61 +8912,61 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
 						:ValidIf (function(_,data)
 							if data.payload.info then
 								print(" SDL resend invalid info to mobile app ")
 								return false
-							else 
+							else
 								return true
 							end
 						end)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test Case NegativeResponseCheck5.14
-								
+
 				-----------------------------------------------------------------------------------------
-								
+
 				--Begin Test Case NegativeResponseCheck5.15
 				--Description: VR response with escape sequence \t in info parameter
-					function Test: AddCommand_VRResponseInfoWithNewTabChar()						
+					function Test: AddCommand_VRResponseInfoWithNewTabChar()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -8975,13 +8975,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -8990,61 +8990,61 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "Error \t")
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
 						:ValidIf (function(_,data)
 							if data.payload.info then
 								print(" SDL resend invalid info to mobile app ")
 								return false
-							else 
+							else
 								return true
 							end
 						end)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
 				--End Test Case NegativeResponseCheck5.15
-								
+
 				-----------------------------------------------------------------------------------------
-								
+
 				--Begin Test Case NegativeResponseCheck5.16
 				--Description: UI & VR response with escape sequence \t in info parameter
-					function Test: AddCommand_UIVRResponseInfoWithNewTabChar()						
+					function Test: AddCommand_UIVRResponseInfoWithNewTabChar()
 						--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 79,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		parentID = 1,
 																		position = 0,
 																		menuName ="Command79"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand79"
-																	}, 
-																	cmdIcon = 	
-																	{ 
+																	},
+																	cmdIcon =
+																	{
 																		value ="icon.png",
 																		imageType ="DYNAMIC"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 79,
-											cmdIcon = 
+											cmdIcon =
 											{
 												value = storagePath.."icon.png",
 												imageType = "DYNAMIC"
 											},
-											menuParams = 
-											{ 
-												parentID = 1,	
+											menuParams =
+											{
+												parentID = 1,
 												position = 0,
 												menuName ="Command79"
 											}
@@ -9053,13 +9053,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "Error \t")
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
+						EXPECT_HMICALL("VR.AddCommand",
+										{
 											cmdID = 79,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand79"
 											}
@@ -9068,23 +9068,23 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendError(data.id, data.method, "GENERIC_ERROR", "Error \t")
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
 						:ValidIf (function(_,data)
 							if data.payload.info then
 								print(" SDL resend invalid info to mobile app ")
 								return false
-							else 
+							else
 								return true
 							end
 						end)
-						
+
 						--mobile side: expect OnHashChange notification is not send to mobile
 						EXPECT_NOTIFICATION("OnHashChange")
 						:Times(0)
 					end
-				--End Test Case NegativeResponseCheck5.16						
+				--End Test Case NegativeResponseCheck5.16
 			--End Test case NegativeResponseCheck.5
 		--End Test suit NegativeResponseCheck
 ]]
@@ -9106,12 +9106,12 @@ end
 				--SDLAQ-CRS-405
 				--SDLAQ-CRS-410
 				--SDLAQ-CRS-412
-				
+
 			--Verification criteria:
-				-- The request AddCommand is sent under conditions of RAM deficite for executing it. The response code OUT_OF_MEMORY is returned. 
+				-- The request AddCommand is sent under conditions of RAM deficite for executing it. The response code OUT_OF_MEMORY is returned.
 				-- In case SDL receives REJECTED result code for the RPC from HMI, SDL must transfer REJECTED resultCode with adding "success:false" to mobile app.
 				-- GENERIC_ERROR comes as a result code on response when all other codes aren't applicable or the unknown issue occured.
-				
+
 			local resultCodes = {{code = "INVALID_DATA", name = "InvalidData"}, {code = "OUT_OF_MEMORY", name = "OutOfMemory"}, {code = "GENERIC_ERROR", name = "GenericError"}, { code = "REJECTED", name  = "Rejected"}}
 			for i=1,#resultCodes do
 				Test["AddCommand_" .. tostring(resultCodes[i].name) .. tostring("SuccessFalse")] = function(self)
@@ -9119,54 +9119,54 @@ end
 					local cid = self.mobileSession:SendRPC("AddCommand",
 															{
 																cmdID = tonumber("6"..tostring(i)),
-																menuParams = 	
-																{ 
+																menuParams =
+																{
 																	menuName ="Command6"..tostring(i)
-																}, 
-																vrCommands = 
-																{ 
+																},
+																vrCommands =
+																{
 																	"VRCommand6"..tostring(i)
 																}
 															})
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-									{ 
+					EXPECT_HMICALL("UI.AddCommand",
+									{
 										cmdID = tonumber("6"..tostring(i)),
-										menuParams = 	
-										{ 
+										menuParams =
+										{
 											menuName ="Command6"..tostring(i)
-										}, 
+										},
 									})
 					:Do(function(_,data)
 						--hmi side: sending UI.AddCommand response
 						self.hmiConnection:SendError(data.id, data.method, resultCodes[i].code, "Error Messages")
 					end)
-						
+
 					--hmi side: expect VR.AddCommand request
-					EXPECT_HMICALL("VR.AddCommand", 
-									{ 
-										cmdID = tonumber("6"..tostring(i)),							
+					EXPECT_HMICALL("VR.AddCommand",
+									{
+										cmdID = tonumber("6"..tostring(i)),
 										type = "Command",
-										vrCommands = 
-										{ 
+										vrCommands =
+										{
 											"VRCommand6"..tostring(i)
 										}
 									})
 					:Do(function(_,data)
-						--hmi side: sending VR.AddCommand response						
+						--hmi side: sending VR.AddCommand response
 						self.hmiConnection:SendError(data.id, data.method, resultCodes[i].code, "Error Messages")
 					end)
-					
+
 					--mobile side: expect AddCommand response
 					EXPECT_RESPONSE(cid, { success = false, resultCode = resultCodes[i].code, info = "Error Messages" })
-											
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
 				end
-			end			
+			end
 		--End Test case ResultCodeCheck.1
-		
+
 		-----------------------------------------------------------------------------------------
 
 		--Begin Test case ResultCodeCheck.2
@@ -9177,39 +9177,39 @@ end
 
 			--Verification criteria:
 				--In case the limit of position items in UI list is exhausted while adding commands to Command Menu, HMi rejects the request with the resultCode REJECTED.
-			function Test: AddCommand_REJECTED()				
+			function Test: AddCommand_REJECTED()
 				--mobile side: sending AddCommand request
 				local cid = self.mobileSession:SendRPC("AddCommand",
 				{
 					cmdID = 1812,
-					menuParams = 	
-					{ 
+					menuParams =
+					{
 						position = 0,
 						menuName ="Command1812"
-					}, 
-					vrCommands = 
-					{ 
+					},
+					vrCommands =
+					{
 						"VRCommand1812"
-					}, 
-					cmdIcon = 	
-					{ 
+					},
+					cmdIcon =
+					{
 						value ="icon.png",
 						imageType ="DYNAMIC"
 					}
-				})		
-				
+				})
+
 				--hmi side: expect UI.AddCommand request
-				EXPECT_HMICALL("UI.AddCommand", 
-				{ 
+				EXPECT_HMICALL("UI.AddCommand",
+				{
 					cmdID = 1812,
 					-- Verification is done below
-					-- cmdIcon = 
+					-- cmdIcon =
 					-- {
 					-- 	value = storagePath.."icon.png",
 					-- 	imageType = "DYNAMIC"
 					-- },
-					menuParams = 
-					{ 	
+					menuParams =
+					{
 						position = 0,
 						menuName ="Command1812"
 					}
@@ -9217,7 +9217,7 @@ end
 				:ValidIf(function(_,data)
           				local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
           				local value_Icon = path .. "action.png"
-          
+
           				if(data.params.cmdIcon.imageType == "DYNAMIC") then
               				return true
           				else
@@ -9236,34 +9236,34 @@ end
 					--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "REJECTED", {})
 				end)
-				
+
 				--hmi side: expect VR.AddCommand request
-				EXPECT_HMICALL("VR.AddCommand", 
-				{ 
-					cmdID = 1812,							
+				EXPECT_HMICALL("VR.AddCommand",
+				{
+					cmdID = 1812,
 					type = "Command",
-					vrCommands = 
-					{ 
+					vrCommands =
+					{
 						"VRCommand1812"
 					}
 				})
 				:Do(function(_,data)
 					--hmi side: sending response
 							self.hmiConnection:SendResponse(data.id, data.method, "REJECTED", {})
-				end)	
-				
+				end)
+
 				EXPECT_RESPONSE(cid, { success = false, resultCode = "REJECTED" })
-						
+
 				--mobile side: expect OnHashChange notification is not send to mobile
 				EXPECT_NOTIFICATION("OnHashChange")
 				:Times(0)
 			end
 		--End Test case ResultCodeCheck.2
-		
+
 		-----------------------------------------------------------------------------------------
-		
+
 		--Begin Test case ResultCodeCheck.3
-		--Description: 
+		--Description:
 			-- Used if VR isn't avaliable now (not supported).
 			-- If images or image type(DYNAMIC, STATIC) aren't supported on HMI
 
@@ -9272,50 +9272,50 @@ end
 
 			--Verification criteria:
 				--[[
-					1.1. When "vrCommands" is sent and VR isn't supported on current HMI, UNSUPPORTED_RESOURCE is returned as a result of request. Info parameter provides additional information about the case. General request result success=true in case of no errors from other components. 
-					1.2. When "vrCommands" is sent and VR isn't avaliable at the moment on current HMI, UNSUPPORTED_RESOURCE is returned as a result of request. Info parameter provides additional information about the case. General request result success=true in case of no errors from other components. 
+					1.1. When "vrCommands" is sent and VR isn't supported on current HMI, UNSUPPORTED_RESOURCE is returned as a result of request. Info parameter provides additional information about the case. General request result success=true in case of no errors from other components.
+					1.2. When "vrCommands" is sent and VR isn't avaliable at the moment on current HMI, UNSUPPORTED_RESOURCE is returned as a result of request. Info parameter provides additional information about the case. General request result success=true in case of no errors from other components.
 
 					2.1. When images aren't supported on HMI at all, UNSUPPORTED_RESOURCE is returned by HMI to SDL and then by SDL to mobile as a result of request. Info parameter provides additional information about the case. General request result success=true in case of no errors from other components.
 					2.2. When "STATIC" image type isn't supported on HMI, UNSUPPORTED_RESOURCE is returned by HMI to SDL and then by SDL to mobile as a result of request. Info parameter provides additional information about the case. General request result success=true in case of no errors from other components.
-					2.3. When "DYNAMIC" image type isn't supported on HMI, UNSUPPORTED_RESOURCE is returned by HMI to SDL and then by SDL to mobile as a result of request. Info parameter provides additional information about the case. General request result success=true in case of no errors from other components. 
-				]] 
-			
+					2.3. When "DYNAMIC" image type isn't supported on HMI, UNSUPPORTED_RESOURCE is returned by HMI to SDL and then by SDL to mobile as a result of request. Info parameter provides additional information about the case. General request result success=true in case of no errors from other components.
+				]]
+
 			--Begin Test case ResultCodeCheck.3.1
 			--Description: VR isn't supported
 				function Test:AddCommand_VrCommandsNotSupported()
 					--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 															{
-																cmdID = 1813,																
-																vrCommands = 
-																{ 
+																cmdID = 1813,
+																vrCommands =
+																{
 																	"VRCommand1813"
 																}
 															})
-										
+
 					--hmi side: expect VR.AddCommand request
-					EXPECT_HMICALL("VR.AddCommand", 
-									{ 
-										cmdID = 1813,							
+					EXPECT_HMICALL("VR.AddCommand",
+									{
+										cmdID = 1813,
 										type = "Command",
-										vrCommands = 
+										vrCommands =
 										{
 											"VRCommand1813"
 										}
 									})
 					:Do(function(exp,data)
 						self.hmiConnection:SendResponse(data.id, data.method, "UNSUPPORTED_RESOURCE", {})
-					end)					
-					
+					end)
+
 					--mobile side: expect response
 					EXPECT_RESPONSE(cid, { success = false, resultCode = "UNSUPPORTED_RESOURCE" })
-						
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
 				end
 			--End Test case ResultCodeCheck.3.1
-			
+
 			-----------------------------------------------------------------------------------------
 
 			--Begin Test case ResultCodeCheck.3.2
@@ -9325,26 +9325,26 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 															{
 																cmdID = 1814,
-																menuParams = 	
-																{ 																
+																menuParams =
+																{
 																	menuName ="Command1814"
 																},
-																cmdIcon = 	
+																cmdIcon =
 																{
 																	value ="icon.png",
 																	imageType ="STATIC"
 																}
 															})
-										
+
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-									{ 
-										cmdID = 1814,							
-										menuParams = 	
-										{ 																
+					EXPECT_HMICALL("UI.AddCommand",
+									{
+										cmdID = 1814,
+										menuParams =
+										{
 											menuName ="Command1814"
 										},
-										cmdIcon = 	
+										cmdIcon =
 										{
 											value ="icon.png",
 											imageType ="STATIC"
@@ -9352,29 +9352,29 @@ end
 									})
 					:Do(function(exp,data)
 						self.hmiConnection:SendResponse(data.id, data.method, "UNSUPPORTED_RESOURCE", {})
-					end)					
-					
+					end)
+
 					--mobile side: expect response
 					EXPECT_RESPONSE(cid, { success = false, resultCode = "UNSUPPORTED_RESOURCE" })
-						
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
 				end
-			--End Test case ResultCodeCheck.3.2			
-		--End Test case ResultCodeCheck.3		
-		
+			--End Test case ResultCodeCheck.3.2
+		--End Test case ResultCodeCheck.3
+
 		-----------------------------------------------------------------------------------------
 
 		--Begin Test case ResultCodeCheck.4
-		--Description: A command can not be executed because no application has been registered with RegisterApplication. 
+		--Description: A command can not be executed because no application has been registered with RegisterApplication.
 
 			--Requirement id in JAMA:
 				--SDLAQ-CRS-409
 
 			--Verification criteria:
 				-- SDL sends APPLICATION_NOT_REGISTERED code when the app sends a request within the same connection before RegisterAppInterface has been performed yet.
-			
+
 			--Description: Unregister application
 			function Test:Precondition_CreationNewSession()
 				-- Connected expectation
@@ -9391,53 +9391,53 @@ end
 				local cid = self.mobileSession1:SendRPC("AddCommand",
 					{
 						cmdID = 61,
-						menuParams = 	
-						{ 
+						menuParams =
+						{
 							parentID = 1,
 							position = 0,
 							menuName ="Command61"
-						}, 
-						vrCommands = 
-						{ 
+						},
+						vrCommands =
+						{
 							"CommandSixOne"
-						}, 
-						cmdIcon = 	
-						{ 
+						},
+						cmdIcon =
+						{
 							value ="icon.png",
 							imageType ="DYNAMIC"
 						}
 					})
-					
+
 				self.mobileSession1:ExpectResponse(cid, { success = false, resultCode = "APPLICATION_NOT_REGISTERED" })
-					
+
 				--mobile side: expect OnHashChange notification is not send to mobile
 				self.mobileSession1:ExpectNotification("OnHashChange",{})
 				:Times(0)
 			end
 		--End Test case ResultCodeCheck.4
-		
+
 		-----------------------------------------------------------------------------------------
 
 		--Begin Test case ResultCodeCheck.5
-		--Description: 
+		--Description:
 				--SDL must return "resultCode: DISALLOWED, success:false" to the RPC in case this RPC is omitted in the PolicyTable group(s) assigned to the app that requests this RPC.
 				--SDL must return "resultCode: DISALLOWED, success:false" to the RPC in case this RPC is included to the PolicyTable group(s) assigned to the app that requests this RPC and the group has not yet received user's consents.
-				
+
 			--Requirement id in JAMA:
 				--SDLAQ-CRS-413
 				--SDLAQ-CRS-752
-				
+
 			--Verification criteria:
 				--[[1. Pre-conditions:
 						a) app is running on the consented device
 						b) app has received the updated policies from Ford's backend (record in PT: "app_policies" -> "<appID>" -> "groups": group_1)
 						c) AddCommand is omitted in "group_1"
-						
+
 						1) Send AddCommand from mobile app.
 						2) SDL->app: AddCommand_response (DISALLOWED)
 					2. SDL disallowed AddCommand request with DISALLOWED resultCode when current HMI level is NONE.
 				]]
-				
+
 			--Begin Test case ResultCodeCheck.5.1
 			--Description: SDL send DISALLOWED when HMI level is NONE
 				function Test:Precondition_DeactivateApp()
@@ -9447,51 +9447,51 @@ end
 					EXPECT_NOTIFICATION("OnHMIStatus",
 						{ systemContext = "MAIN", hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE"})
 				end
-				
+
 				function Test:AddCommand_DisallowedHMINone()
 					--mobile side: sending AddCommand request
 					local cid = self.mobileSession:SendRPC("AddCommand",
 					{
 						cmdID = 110,
-						menuParams = 	
-						{ 			
+						menuParams =
+						{
 							position = 0,
 							menuName ="Command110"
-						}, 
-						vrCommands = 
-						{ 
+						},
+						vrCommands =
+						{
 							"CommandOneOneZero"
-						}, 
-						cmdIcon = 	
-						{ 
+						},
+						cmdIcon =
+						{
 							value ="icon.png",
 							imageType ="DYNAMIC"
 						}
-					})	
-						
+					})
+
 					EXPECT_RESPONSE(cid, { success = false, resultCode = "DISALLOWED" })
-						
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
-					
+
 					DelayedExp()
-				end	
-			
+				end
+
 			--Begin Test case ResultCodeCheck.5.1
-			
+
 			-----------------------------------------------------------------------------------------
-			
+
 			--Begin Test case ResultCodeCheck.5.2
 			--Description: AddCommand is omitted in the PolicyTable group(s)
-			
+
 			commonSteps:ActivationApp()
-			--TODO: Should be uncommented when APPLINK-25363 is resolved 
+			--TODO: Should be uncommented when APPLINK-25363 is resolved
 				--Description: Update Policy with AddCommand is DISALLOWED by user
 				function Test:Precondition_OmittedAddCommandPolicyUpdate()
 					--hmi side: sending SDL.GetURLS request
 					local RequestIdGetURLS = self.hmiConnection:SendRequest("SDL.GetURLS", { service = 7 })
-					
+
 					-- --hmi side: expect SDL.GetURLS response from HMI
 					-- EXPECT_HMIRESPONSE(RequestIdGetURLS,{result = {code = 0, method = "SDL.GetURLS", urls = {{url = "https://policies.telematics.ford.com/api/policies"}}}})
 					-- :Do(function(_,data)
@@ -9503,25 +9503,25 @@ end
 					-- 			fileName = "filename"
 					-- 		}
 					-- 	)
-						--mobile side: expect OnSystemRequest notification 
+						--mobile side: expect OnSystemRequest notification
 					-- 	EXPECT_NOTIFICATION("OnSystemRequest", { requestType = "PROPRIETARY" })
 					-- 	:Do(function(_,data)
 					-- 		--print("OnSystemRequest notification is received")
-					-- 		--mobile side: sending SystemRequest request 
+					-- 		--mobile side: sending SystemRequest request
 					-- 		local CorIdSystemRequest = self.mobileSession:SendRPC("SystemRequest",
 					-- 			{
 					-- 				fileName = "PolicyTableUpdate",
 					-- 				requestType = "PROPRIETARY"
 					-- 			},
 					-- 		"files/PTU_OmittedAddCommand.json")
-							
+
 					-- 		local systemRequestId
 					-- 		--hmi side: expect SystemRequest request
 					-- 		EXPECT_HMICALL("BasicCommunication.SystemRequest")
 					-- 		:Do(function(_,data)
 					-- 			systemRequestId = data.id
 					-- 			--print("BasicCommunication.SystemRequest is received")
-								
+
 					-- 			--hmi side: sending BasicCommunication.OnSystemRequest request to SDL
 					-- 			self.hmiConnection:SendNotification("SDL.OnReceivedPolicyUpdate",
 					-- 				{
@@ -9532,14 +9532,14 @@ end
 					-- 				--hmi side: sending SystemRequest response
 					-- 				self.hmiConnection:SendResponse(systemRequestId,"BasicCommunication.SystemRequest", "SUCCESS", {})
 					-- 			end
-								
+
 					-- 			RUN_AFTER(to_run, 500)
 					-- 		end)
-							
+
 					-- 		--hmi side: expect SDL.OnStatusUpdate
 					-- 		EXPECT_HMINOTIFICATION("SDL.OnStatusUpdate")
 					-- 		:ValidIf(function(exp,data)
-					-- 			if 
+					-- 			if
 					-- 				exp.occurences == 1 and
 					-- 				data.params.status == "UP_TO_DATE" then
 					-- 					return true
@@ -9551,8 +9551,8 @@ end
 					-- 				exp.occurences == 2 and
 					-- 				data.params.status == "UP_TO_DATE" then
 					-- 					return true
-					-- 			else 
-					-- 				if 
+					-- 			else
+					-- 				if
 					-- 					exp.occurences == 1 then
 					-- 						print ("\27[31m SDL.OnStatusUpdate came with wrong values. Expected in first occurrences status 'UP_TO_DATE' or 'UPDATING', got '" .. tostring(data.params.status) .. "' \27[0m")
 					-- 				elseif exp.occurences == 2 then
@@ -9562,58 +9562,58 @@ end
 					-- 			end
 					-- 		end)
 					-- 		:Times(Between(1,2))
-							
+
 					-- 		--mobile side: expect SystemRequest response
 					-- 		EXPECT_RESPONSE(CorIdSystemRequest, { success = true, resultCode = "SUCCESS"})
 					-- 		:Do(function(_,data)
 					-- 			--print("SystemRequest is received")
 					-- 			--hmi side: sending SDL.GetUserFriendlyMessage request to SDL
 					-- 			local RequestIdGetUserFriendlyMessage = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", {language = "EN-US", messageCodes = {"StatusUpToDate"}})
-								
+
 					-- 			--hmi side: expect SDL.GetUserFriendlyMessage response
 					-- 			-- TODO: update after resolving APPLINK-16094 EXPECT_HMIRESPONSE(RequestIdGetUserFriendlyMessage,{result = {code = 0, method = "SDL.GetUserFriendlyMessage", messages = {{line1 = "Up-To-Date", messageCode = "StatusUpToDate", textBody = "Up-To-Date"}}}})
 					-- 			EXPECT_HMIRESPONSE(RequestIdGetUserFriendlyMessage)
 					-- 			:Do(function(_,data)
-					-- 				print("SDL.GetUserFriendlyMessage is received")			
+					-- 				print("SDL.GetUserFriendlyMessage is received")
 					-- 			end)
 					-- 		end)
-							
+
 					-- 	end)
 					-- end)
 				end
-				--TODO: Should be uncommented when APPLINK-25363 is resolved 		
+				--TODO: Should be uncommented when APPLINK-25363 is resolved
 				-- --Check of DISALLOWED response code
 				-- function Test:AddCommand_UserDisallowed()
 				-- 	--mobile side: sending AddCommand request
 				-- 	local cid = self.mobileSession:SendRPC("AddCommand",
 				-- 	{
 				-- 		cmdID = 112,
-				-- 		menuParams = 	
-				-- 		{ 			
+				-- 		menuParams =
+				-- 		{
 				-- 			position = 0,
 				-- 			menuName ="Command112"
-				-- 		}, 
-				-- 		vrCommands = 
-				-- 		{ 
+				-- 		},
+				-- 		vrCommands =
+				-- 		{
 				-- 			"CommandOneOneTwo"
-				-- 		}, 
-				-- 		cmdIcon = 	
-				-- 		{ 
+				-- 		},
+				-- 		cmdIcon =
+				-- 		{
 				-- 			value ="icon.png",
 				-- 			imageType ="DYNAMIC"
 				-- 		}
-				-- 	})	
-						
+				-- 	})
+
 				-- 	EXPECT_RESPONSE(cid, { success = false, resultCode = "DISALLOWED" })
 				-- 	:Timeout(20000)
-						
+
 				-- 	--mobile side: expect OnHashChange notification is not send to mobile
 				-- 	EXPECT_NOTIFICATION("OnHashChange")
 				-- 	:Times(0)
 				-- end
-			--Begin Test case ResultCodeCheck.5.2			
+			--Begin Test case ResultCodeCheck.5.2
 		--End Test case ResultCodeCheck.5
-		
+
 		-----------------------------------------------------------------------------------------
 
 		--Begin Test case ResultCodeCheck.6
@@ -9625,12 +9625,12 @@ end
 			--Verification criteria:
 				-- SDL sends USER-DISALLOWED code when the request isn't allowed by user.
 				--Description: Update Policy with AddCommand is DISALLOWED by user
-		--TODO: Should be uncommented when APPLINK-25363 is resolved 
+		--TODO: Should be uncommented when APPLINK-25363 is resolved
 		-- 		local idGroup
 		-- 		function Test:Precondition_UserDisallowedPolicyUpdate()
 		-- 			--hmi side: sending SDL.GetURLS request
 		-- 			local RequestIdGetURLS = self.hmiConnection:SendRequest("SDL.GetURLS", { service = 7 })
-		
+
 		-- 			--hmi side: expect SDL.GetURLS response from HMI
 		-- 			EXPECT_HMIRESPONSE(RequestIdGetURLS,{result = {code = 0, method = "SDL.GetURLS", urls = {{url = "https://policies.telematics.ford.com/api/policies"}}}})
 		-- 			:Do(function(_,data)
@@ -9642,25 +9642,25 @@ end
 		-- 						fileName = "filename"
 		-- 					}
 		-- 				)
-		-- 				--mobile side: expect OnSystemRequest notification 
+		-- 				--mobile side: expect OnSystemRequest notification
 		-- 				EXPECT_NOTIFICATION("OnSystemRequest", { requestType = "PROPRIETARY" })
 		-- 				:Do(function(_,data)
 		-- 					--print("OnSystemRequest notificfation is received")
-		-- 					--mobile side: sending SystemRequest request 
+		-- 					--mobile side: sending SystemRequest request
 		-- 					local CorIdSystemRequest = self.mobileSession:SendRPC("SystemRequest",
 		-- 						{
 		-- 							fileName = "PolicyTableUpdate",
 		-- 							requestType = "PROPRIETARY"
 		-- 						},
 		-- 					"files/PTU_ForAddCommand.json")
-							
+
 		-- 					local systemRequestId
 		-- 					--hmi side: expect SystemRequest request
 		-- 					EXPECT_HMICALL("BasicCommunication.SystemRequest")
 		-- 					:Do(function(_,data)
 		-- 						systemRequestId = data.id
 		-- 						--print("BasicCommunication.SystemRequest is received")
-								
+
 		-- 						--hmi side: sending BasicCommunication.OnSystemRequest request to SDL
 		-- 						self.hmiConnection:SendNotification("SDL.OnReceivedPolicyUpdate",
 		-- 							{
@@ -9671,14 +9671,14 @@ end
 		-- 							--hmi side: sending SystemRequest response
 		-- 							self.hmiConnection:SendResponse(systemRequestId,"BasicCommunication.SystemRequest", "SUCCESS", {})
 		-- 						end
-								
+
 		-- 						RUN_AFTER(to_run, 500)
 		-- 					end)
-							
+
 		-- 					--hmi side: expect SDL.OnStatusUpdate
 		-- 					EXPECT_HMINOTIFICATION("SDL.OnStatusUpdate")
 		-- 					:ValidIf(function(exp,data)
-		-- 						if 
+		-- 						if
 		-- 							exp.occurences == 1 and
 		-- 							data.params.status == "UP_TO_DATE" then
 		-- 								return true
@@ -9690,8 +9690,8 @@ end
 		-- 							exp.occurences == 2 and
 		-- 							data.params.status == "UP_TO_DATE" then
 		-- 								return true
-		-- 						else 
-		-- 							if 
+		-- 						else
+		-- 							if
 		-- 								exp.occurences == 1 then
 		-- 									print ("\27[31m SDL.OnStatusUpdate came with wrong values. Expected in first occurrences status 'UP_TO_DATE' or 'UPDATING', got '" .. tostring(data.params.status) .. "' \27[0m")
 		-- 							elseif exp.occurences == 2 then
@@ -9701,65 +9701,65 @@ end
 		-- 						end
 		-- 					end)
 		-- 					:Times(Between(1,2))
-							
+
 		-- 					--mobile side: expect SystemRequest response
 		-- 					EXPECT_RESPONSE(CorIdSystemRequest, { success = true, resultCode = "SUCCESS"})
 		-- 					:Do(function(_,data)
 		-- 						--print("SystemRequest is received")
 		-- 						--hmi side: sending SDL.GetUserFriendlyMessage request to SDL
 		-- 						local RequestIdGetUserFriendlyMessage = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", {language = "EN-US", messageCodes = {"StatusUpToDate"}})
-								
+
 		-- 						--hmi side: expect SDL.GetUserFriendlyMessage response
 		-- 						EXPECT_HMIRESPONSE(RequestIdGetUserFriendlyMessage,{result = {code = 0, method = "SDL.GetUserFriendlyMessage", messages = {{line1 = "Up-To-Date", messageCode = "StatusUpToDate", textBody = "Up-To-Date"}}}})
 		-- 						:Do(function(_,data)
 		-- 							print("SDL.GetUserFriendlyMessage is received")
 		-- 							--hmi side: sending SDL.GetListOfPermissions request to SDL
 		-- 								local RequestIdGetListOfPermissions = self.hmiConnection:SendRequest("SDL.GetListOfPermissions", {appID = self.applications["Test Application"]})
-										
+
 		-- 								-- hmi side: expect SDL.GetListOfPermissions response
 		-- 								-- -- TODO: update after resolving APPLINK-16094 EXPECT_HMIRESPONSE(RequestIdGetListOfPermissions,{result = {code = 0, method = "SDL.GetListOfPermissions"}})
 		-- 								EXPECT_HMIRESPONSE(RequestIdGetListOfPermissions)
 		-- 								:Do(function(_,data)
 		-- 									print("SDL.GetListOfPermissions response is received")
 
-		-- 									idGroup = data.result.allowedFunctions[1].id								
+		-- 									idGroup = data.result.allowedFunctions[1].id
 		-- 									--hmi side: sending SDL.OnAppPermissionConsent
 		-- 									self.hmiConnection:SendNotification("SDL.OnAppPermissionConsent", { appID =  self.applications["Test Application"], consentedFunctions = {{ allowed = false, id = idGroup, name = "New"}}, source = "GUI"})
-		-- 									end)				
+		-- 									end)
 		-- 						end)
 		-- 					end)
 		-- 					:Timeout(2000)
 
-							
+
 		-- 				end)
 		-- 			end)
 		-- 		end
-		
+
 		-- 		--Check of USER_DISALLOWED response code
 		-- 		function Test:AddCommand_UserDisallowed()
 		-- 			--mobile side: sending AddCommand request
 		-- 			local cid = self.mobileSession:SendRPC("AddCommand",
 		-- 			{
 		-- 				cmdID = 11333,
-		-- 				menuParams = 	
-		-- 				{ 			
+		-- 				menuParams =
+		-- 				{
 		-- 					position = 0,
 		-- 					menuName ="Command113"
-		-- 				}, 
-		-- 				vrCommands = 
-		-- 				{ 
+		-- 				},
+		-- 				vrCommands =
+		-- 				{
 		-- 					"CommandOneOneThree"
-		-- 				}, 
-		-- 				cmdIcon = 	
-		-- 				{ 
+		-- 				},
+		-- 				cmdIcon =
+		-- 				{
 		-- 					value ="icon.png",
 		-- 					imageType ="DYNAMIC"
 		-- 				}
-		-- 			})	
-						
+		-- 			})
+
 		-- 			EXPECT_RESPONSE(cid, { success = false, resultCode = "USER_DISALLOWED" })
 		-- 			:Timeout(20000)
-						
+
 		-- 			--mobile side: expect OnHashChange notification is not send to mobile
 		-- 			EXPECT_NOTIFICATION("OnHashChange")
 		-- 			:Times(0)
@@ -9768,13 +9768,13 @@ end
 		-- 		--Description: Update Policy with AddCommand is Allowed by user
 		-- 		function Test:AllowedAddCommand()
 		-- 			DelayedExp()
-		-- 			self.hmiConnection:SendNotification("SDL.OnAppPermissionConsent", { appID =  self.applications["Test Application"], consentedFunctions = {{ allowed = true, id = idGroup, name = "New"}}, source = "GUI"})		  
-		-- 		end			
+		-- 			self.hmiConnection:SendNotification("SDL.OnAppPermissionConsent", { appID =  self.applications["Test Application"], consentedFunctions = {{ allowed = true, id = idGroup, name = "New"}}, source = "GUI"})
+		-- 		end
 		-- --End Test case ResultCodeCheck.6
-		
+
 	--End Test suit ResultCodeCheck
 
-	
+
 ----------------------------------------------------------------------------------------------
 -----------------------------------------V TEST BLOCK-----------------------------------------
 ---------------------------------------HMI negative cases-------------------------------------
@@ -9785,14 +9785,14 @@ end
 	-- invalid structure os response
 	-- several responses from HMI to one request
 	-- fake parameters
-	-- HMI correlation id check 
+	-- HMI correlation id check
 	-- wrong response with correct HMI id
 
 	--Begin Test suit HMINegativeCheck
 	--Description: Check processing responses with invalid structure, fake parameters, HMI correlation id check, wrong response with correct HMI correlation id, check sdl behavior in case of absence the response from HMI
 
 		--Begin Test case HMINegativeCheck.1
-		--Description: 
+		--Description:
 			-- Check SDL behaviour in case of absence of responses from HMI
 
 			--Requirement id in JAMA:
@@ -9801,13 +9801,13 @@ end
 				--APPLINK-8585
 				--SDLAQ-CRS-2928
 				--SDLAQ-CRS-2929
-				
+
 			--Verification criteria:
 				-- no UI response during SDL`s watchdog.
 				-- In case SDL sends both UI.AddCommand and VR.AddCommand with one and the same cmdID to HMI AND UI.AddCommand gets successful response from HMI in return AND VR.AddCommand gets no response from HMI during SDL's default timeout - SDL must send UI.DeleteCommand for the successfully added cmdID to HMI.
 				-- In case SDL sends both UI.AddCommand and VR.AddCommand with one and the same cmdID to HMI AND VR.AddCommand gets successful response from HMI in return AND UI.AddCommand gets no response from HMI during SDL's default timeout - SDL must send VR.DeleteCommand for the successfully added cmdID to HMI.
 				-- SDL must return (GENERIC_ERROR, success:false) to mobile app in case app's request was split into several HMI interfaces by SDL and HMI does not respond at least one of them.
-				
+
 			--Begin HMINegativeCheck.1.1
 			--Description: No response from UI
 				function Test:AddCommand_NoResponseFromUI()
@@ -9815,55 +9815,55 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 301,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		menuName ="Command301"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 301,
-											menuParams = 	
-											{ 
+											menuParams =
+											{
 												menuName ="Command301"
 											}
 										})
-										
-					--mobile side: expect response 
+
+					--mobile side: expect response
 					EXPECT_RESPONSE(cid, {  success = false, resultCode = "GENERIC_ERROR"})
 					:Timeout(12000)
-						
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
 				end
 			--End HMINegativeCheck.1.1
-			
+
 			-----------------------------------------------------------------------------------------
-	
+
 			--Begin HMINegativeCheck.1.2
 			--Description: Response from UI but no response from VR
-				function Test:AddCommand_ResponseFromUINoResponseFromVR()					
+				function Test:AddCommand_ResponseFromUINoResponseFromVR()
 					--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 															{
 																cmdID = 302,
-																menuParams = 	
-																{ 																
+																menuParams =
+																{
 																	menuName ="Command302"
-																}, 
-																vrCommands = 
-																{ 
+																},
+																vrCommands =
+																{
 																	"VRCommand302"
 																}
 															})
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-									{ 
+					EXPECT_HMICALL("UI.AddCommand",
+									{
 										cmdID = 302,
-										menuParams = 
-										{ 											
+										menuParams =
+										{
 											menuName ="Command302"
 										}
 									})
@@ -9871,76 +9871,76 @@ end
 						--hmi side: sending UI.AddCommand response
 						self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 					end)
-						
+
 					--hmi side: expect VR.AddCommand request
-					EXPECT_HMICALL("VR.AddCommand", 
-									{ 
-										cmdID = 302,							
+					EXPECT_HMICALL("VR.AddCommand",
+									{
+										cmdID = 302,
 										type = "Command",
-										vrCommands = 
+										vrCommands =
 										{
 											"VRCommand302"
 										}
-									})					
+									})
 					:Do(function(_,data)
 						--Do nothing
 					end)
-					
+
 					--hmi side: expect UI.DeleteCommand request
 					EXPECT_HMICALL("UI.DeleteCommand",
-					{cmdID = 302})				
+					{cmdID = 302})
 					:Timeout(12000)
 					:Do(function(exp,data)
 						self.hmiConnection:SendResponse(data.id,"UI.DeleteCommand", "SUCCESS", {})
 					end)
-					
+
 					--mobile side: expect response
-					EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })	
+					EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
 					:Timeout(12000)
-						
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
 				end
 			--End HMINegativeCheck.1.2
-			
+
 			-----------------------------------------------------------------------------------------
 
 			--Begin HMINegativeCheck.1.3
 			--Description: Response from VR but no response from UI
-				function Test:AddCommand_ResponseFromVRNoResponseFromUI()					
+				function Test:AddCommand_ResponseFromVRNoResponseFromUI()
 					--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 							{
 																cmdID = 303,
-																menuParams = 	
-																{ 																
+																menuParams =
+																{
 																	menuName ="Command303"
-																}, 
-																vrCommands = 
-																{ 
+																},
+																vrCommands =
+																{
 																	"VRCommand303"
 																}
 															})
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-									{ 
+					EXPECT_HMICALL("UI.AddCommand",
+									{
 										cmdID = 303,
-										menuParams = 
-										{ 											
+										menuParams =
+										{
 											menuName ="Command303"
 										}
 									})
 					:Do(function(_,data)
 						--Do nothing
 					end)
-					
+
 					--hmi side: expect VR.AddCommand request
-					EXPECT_HMICALL("VR.AddCommand", 
-									{ 
-										cmdID = 303,							
+					EXPECT_HMICALL("VR.AddCommand",
+									{
+										cmdID = 303,
 										type = "Command",
-										vrCommands = 
+										vrCommands =
 										{
 											"VRCommand303"
 										}
@@ -9948,62 +9948,62 @@ end
 					:Do(function(exp,data)
 						self.hmiConnection:SendResponse(data.id,"VR.AddCommand", "SUCCESS", {})
 					end)
-					
+
 					--hmi side: expect VR.DeleteCommand request
 					EXPECT_HMICALL("VR.DeleteCommand",
-					{cmdID = 303})				
+					{cmdID = 303})
 					:Timeout(12000)
 					:Do(function(exp,data)
 						self.hmiConnection:SendResponse(data.id,"VR.DeleteCommand", "SUCCESS", {})
 					end)
-					
+
 					--mobile side: expect response
-					EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })	
+					EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
 					:Timeout(12000)
-						
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
 				end
 			--End HMINegativeCheck.1.3
-			
+
 			-----------------------------------------------------------------------------------------
 
 			--Begin HMINegativeCheck.1.4
 			--Description: No Response from UI and VR
-				function Test:AddCommand_NoResponseFromUIVR()					
+				function Test:AddCommand_NoResponseFromUIVR()
 					--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 							{
 																cmdID = 303,
-																menuParams = 	
-																{ 																
+																menuParams =
+																{
 																	menuName ="Command303"
-																}, 
-																vrCommands = 
-																{ 
+																},
+																vrCommands =
+																{
 																	"VRCommand303"
 																}
 															})
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-									{ 
+					EXPECT_HMICALL("UI.AddCommand",
+									{
 										cmdID = 303,
-										menuParams = 
-										{ 											
+										menuParams =
+										{
 											menuName ="Command303"
 										}
 									})
 					:Do(function(_,data)
 						--Do nothing
 					end)
-					
+
 					--hmi side: expect VR.AddCommand request
-					EXPECT_HMICALL("VR.AddCommand", 
-									{ 
-										cmdID = 303,							
+					EXPECT_HMICALL("VR.AddCommand",
+									{
+										cmdID = 303,
 										type = "Command",
-										vrCommands = 
+										vrCommands =
 										{
 											"VRCommand303"
 										}
@@ -10011,65 +10011,65 @@ end
 					:Do(function(exp,data)
 						--Do nothing
 					end)
-					
+
 					--mobile side: expect response
-					EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })	
+					EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
 					:Timeout(12000)
-						
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
 				end
-			--End HMINegativeCheck.1.4			
-		--End Test case HMINegativeCheck.1	
-		
+			--End HMINegativeCheck.1.4
+		--End Test case HMINegativeCheck.1
+
 		-----------------------------------------------------------------------------------------
 
 		--Begin Test case HMINegativeCheck.2
-		--Description: 
+		--Description:
 			-- Invalid structure of response
 
 			--Requirement id in JAMA:
 				--SDLAQ-CRS-22
-				
+
 			--Verification criteria:
 				--The response contains 2 mandatory parameters "success" and "resultCode", "info" is sent if there is any additional information about the resultCode and "tryAgainTime" if provided by SDL.
-			
+
 			--Begin Test case HMINegativeCheck.2.1
 			--Description: UI&VR.AddCommand response with invalid structure
 				function Test: AddCommand_ResponseInvalidStructure()
 					local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 303,
-																	menuParams = 	
-																	{ 																
+																	menuParams =
+																	{
 																		menuName ="Command303"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand303"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 303,
-											menuParams = 
-											{ 											
+											menuParams =
+											{
 												menuName ="Command303"
 											}
 										})
 						:Do(function(_,data)
 							--hmi side: sending UI.AddCommand response
-							self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","code":0,"result":{"method":"UI.AddCommand"}}')						
+							self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","code":0,"result":{"method":"UI.AddCommand"}}')
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
-											cmdID = 303,							
+						EXPECT_HMICALL("VR.AddCommand",
+										{
+											cmdID = 303,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand303"
 											}
@@ -10078,18 +10078,18 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","code":0,"result":{"method":"VR.AddCommand"}}')
 						end)
-					
-					--mobile side: expect response 
-					EXPECT_RESPONSE(cid, {  success = false, resultCode = "INVALID_DATA"})
-						
+
+					--mobile side: expect response
+					EXPECT_RESPONSE(cid, {  success = false, resultCode = "GENERIC_ERROR"})
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
 				end
-			--End Test case HMINegativeCheck.2.1								
-			
+			--End Test case HMINegativeCheck.2.1
+
 			-----------------------------------------------------------------------------------------
-			
+
 			--Begin Test case HMINegativeCheck.2.2
 			--Description: UI.AddCommand response with invalid structure
 				function Test: AddCommand_InvalidResponseUI()
@@ -10097,21 +10097,21 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 304,
-																	menuParams = 	
-																	{ 																
+																	menuParams =
+																	{
 																		menuName ="Command304"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand304"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 304,
-											menuParams = 
-											{ 											
+											menuParams =
+											{
 												menuName ="Command304"
 											}
 										})
@@ -10119,13 +10119,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:Send('{"error":{"code":4,"message":"UI.AddCommand is REJECTED"},"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"code":0,"method":"UI.AddCommand"}}')
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
-											cmdID = 304,							
+						EXPECT_HMICALL("VR.AddCommand",
+										{
+											cmdID = 304,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand304"
 											}
@@ -10134,19 +10134,19 @@ end
 							--hmi side: sending VR.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-					
-					--mobile side: expect response 
+
+					--mobile side: expect response
 					EXPECT_RESPONSE(cid, {  success = false, resultCode = "GENERIC_ERROR"})
 					:Timeout(12000)
-						
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
 				end
-			--End Test case HMINegativeCheck.2.2							
-			
+			--End Test case HMINegativeCheck.2.2
+
 			-----------------------------------------------------------------------------------------
-			
+
 			--Begin Test case HMINegativeCheck.2.3
 			--Description: VR.AddCommand response with invalid structure
 				function Test: AddCommand_InvalidResponseVR()
@@ -10154,21 +10154,21 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 304,
-																	menuParams = 	
-																	{ 																
+																	menuParams =
+																	{
 																		menuName ="Command304"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand304"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 304,
-											menuParams = 
-											{ 											
+											menuParams =
+											{
 												menuName ="Command304"
 											}
 										})
@@ -10176,94 +10176,94 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
-											cmdID = 304,							
+						EXPECT_HMICALL("VR.AddCommand",
+										{
+											cmdID = 304,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand304"
 											}
 										})
 						:Do(function(_,data)
 							--hmi side: sending VR.AddCommand response
-							self.hmiConnection:Send('{"error":{"code":4,"message":"UI.AddCommand is REJECTED"},"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"code":0,"method":"VR.AddCommand"}}')						
+							self.hmiConnection:Send('{"error":{"code":4,"message":"UI.AddCommand is REJECTED"},"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"code":0,"method":"VR.AddCommand"}}')
 						end)
-					
-					--mobile side: expect response 
+
+					--mobile side: expect response
 					EXPECT_RESPONSE(cid, {  success = false, resultCode = "GENERIC_ERROR"})
 					:Timeout(12000)
-						
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
 				end
-			--End Test case HMINegativeCheck.2.3						
-			
+			--End Test case HMINegativeCheck.2.3
+
 		--End Test case HMINegativeCheck.2
-		
+
 		-----------------------------------------------------------------------------------------
-		
+
 		--Begin Test case HMINegativeCheck.3
-		--Description: 
+		--Description:
 			-- Several response to one request
 
 			--Requirement id in JAMA:
 				--SDLAQ-CRS-22
-				
+
 			--Verification criteria:
 				--The response contains 2 mandatory parameters "success" and "resultCode", "info" is sent if there is any additional information about the resultCode.
-			
+
 			function Test:AddCommand_SeveralResponseToOneRequest()
 				--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 222,
-																	menuParams = 	
-																	{ 
+																	menuParams =
+																	{
 																		menuName ="Command222"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
 											cmdID = 222,
-											menuParams = 	
-											{ 
+											menuParams =
+											{
 												menuName ="Command222"
 											}
 										})
 				:Do(function(_,data)
-					--hmi side: sending response					
+					--hmi side: sending response
 					self.hmiConnection:SendResponse( data.id , "UI.AddCommand" , "INVALID_DATA", {})
-					self.hmiConnection:SendResponse( data.id , "UI.AddCommand" , "SUCCESS", {})					
+					self.hmiConnection:SendResponse( data.id , "UI.AddCommand" , "SUCCESS", {})
 					self.hmiConnection:SendResponse( data.id , "UI.AddCommand" , "INVALID_ID", {})
 				end)
-				
-				--mobile side: expect response 
+
+				--mobile side: expect response
 				EXPECT_RESPONSE(cid, {  success = false, resultCode = "INVALID_DATA"})
-						
+
 				--mobile side: expect OnHashChange notification is not send to mobile
 				EXPECT_NOTIFICATION("OnHashChange")
 				:Times(0)
-			end									
-			
+			end
+
 		--End Test case HMINegativeCheck.3
-				
+
 		-----------------------------------------------------------------------------------------
 
 		--Begin Test case HMINegativeCheck.4
-		--Description: 
+		--Description:
 			-- Check processing response with fake parameters
 
 			--Requirement id in JAMA:
 				--SDLAQ-CRS-22
-				
+
 			--Verification criteria:
-				-- When expected HMI function is received, send responses from HMI with fake parameter			
-			
+				-- When expected HMI function is received, send responses from HMI with fake parameter
+
 			--Begin Test case HMINegativeCheck.4.1
 			--Description: Parameter not from API
 				function Test:AddCommand_FakeParamsInResponse()
@@ -10271,17 +10271,17 @@ end
 					local cid = self.mobileSession:SendRPC("AddCommand",
 															{
 																cmdID = 305,
-																menuParams = 	
-																{ 
+																menuParams =
+																{
 																	menuName ="Command305"
 																}
 															})
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-									{ 
+					EXPECT_HMICALL("UI.AddCommand",
+									{
 										cmdID = 305,
-										menuParams = 	
-										{ 
+										menuParams =
+										{
 											menuName ="Command305"
 										}
 									})
@@ -10289,22 +10289,22 @@ end
 						--hmi side: sending UI.AddCommand response
 						self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {fake = "fake"})
 					end)
-					
+
 					EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 					:ValidIf (function(_,data)
 			    		if data.payload.fake then
 			    			print(" SDL resend fake parameter to mobile app ")
 			    			return false
-			    		else 
+			    		else
 			    			return true
 			    		end
 			    	end)
-					
+
 					--mobile side: expect OnHashChange notification
-					EXPECT_NOTIFICATION("OnHashChange")		
-				end								
+					EXPECT_NOTIFICATION("OnHashChange")
+				end
 			--End Test case HMINegativeCheck.4.1
-			
+
 			-----------------------------------------------------------------------------------------
 
 			--Begin Test case HMINegativeCheck.4.2
@@ -10314,17 +10314,17 @@ end
 					local cid = self.mobileSession:SendRPC("AddCommand",
 															{
 																cmdID = 306,
-																menuParams = 	
-																{ 
+																menuParams =
+																{
 																	menuName ="Command306"
 																}
 															})
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-									{ 
+					EXPECT_HMICALL("UI.AddCommand",
+									{
 										cmdID = 306,
-										menuParams = 	
-										{ 
+										menuParams =
+										{
 											menuName ="Command306"
 										}
 									})
@@ -10332,40 +10332,40 @@ end
 						--hmi side: sending UI.AddCommand response
 						self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {sliderPosition = 5})
 					end)
-					
-					--mobile side: expect response 
-					EXPECT_RESPONSE(cid, {  success = true, resultCode = "SUCCESS"})		
+
+					--mobile side: expect response
+					EXPECT_RESPONSE(cid, {  success = true, resultCode = "SUCCESS"})
 					:ValidIf (function(_,data)
 							if data.payload.sliderPosition then
 								print(" SDL resend fake parameter to mobile app ")
 								return false
-							else 
+							else
 								return true
 							end
 					end)
-						
+
 					--mobile side: expect OnHashChange notification
 					EXPECT_NOTIFICATION("OnHashChange")
-				end								
+				end
 			--End Test case HMINegativeCheck.4.2
 		--End Test case HMINegativeCheck.4
 
 		-----------------------------------------------------------------------------------------
 
 		--Begin Test case HMINegativeCheck.5
-		--Description: 
+		--Description:
 			-- Wrong response with correct HMI correlation id
 
 			--Requirement id in JAMA:
 				--SDLAQ-CRS-22
-				
+
 			--Verification criteria:
 				--The response contains 2 mandatory parameters "success" and "resultCode", "info" is sent if there is any additional information about the resultCode.
-			
+
 			--Begin Test case HMINegativeCheck.5.1
-			--Description: Send response to VR.AddCommand instead of UI.AddCommand			
+			--Description: Send response to VR.AddCommand instead of UI.AddCommand
 				function Test:AddCommand_WrongResponseToUI()
-					--mobile side: sending request 
+					--mobile side: sending request
 					local cid = self.mobileSession:SendRPC("AddCommand",
 															{
 																cmdID = 2004,
@@ -10374,10 +10374,10 @@ end
 																	menuName ="Command2004"
 																}
 															})
-					
+
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-									{ 
+					EXPECT_HMICALL("UI.AddCommand",
+									{
 										cmdID = 2004,
 										menuParams =
 										{
@@ -10385,26 +10385,26 @@ end
 										}
 									})
 					:Do(function(_,data)
-						--hmi side: sending response					
+						--hmi side: sending response
 						self.hmiConnection:SendResponse( data.id , "VR.AddCommand" , "SUCCESS", {})
 					end)
-					
-					--mobile side: expect response 
-					EXPECT_RESPONSE(cid, {  success = false, resultCode = "GENERIC_ERROR"})		
+
+					--mobile side: expect response
+					EXPECT_RESPONSE(cid, {  success = false, resultCode = "GENERIC_ERROR"})
 					:Timeout(12000)
-						
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
 				end
 			--End Test case HMINegativeCheck.5.1
-			
+
 			-----------------------------------------------------------------------------------------
-			
+
 			--Begin Test case HMINegativeCheck.5.2
-			--Description: Send response to UI.AddCommand instead of VR.AddCommand			
+			--Description: Send response to UI.AddCommand instead of VR.AddCommand
 				function Test:AddCommand_WrongResponseToVR()
-					--mobile side: sending request 
+					--mobile side: sending request
 					local cid = self.mobileSession:SendRPC("AddCommand",
 															{
 																cmdID = 2005,
@@ -10412,15 +10412,15 @@ end
 																{
 																	menuName ="Command2005"
 																},
-																vrCommands = 
+																vrCommands =
 																{
 																	"VRCommand2005"
 																}
 															})
-					
+
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-									{ 
+					EXPECT_HMICALL("UI.AddCommand",
+									{
 										cmdID = 2005,
 										menuParams =
 										{
@@ -10428,16 +10428,16 @@ end
 										}
 									})
 					:Do(function(_,data)
-						--hmi side: sending response					
+						--hmi side: sending response
 						self.hmiConnection:SendResponse( data.id , "UI.AddCommand" , "SUCCESS", {})
 					end)
-					
+
 					--hmi side: expect VR.AddCommand request
-					EXPECT_HMICALL("VR.AddCommand", 
-									{ 
-										cmdID = 2005,							
+					EXPECT_HMICALL("VR.AddCommand",
+									{
+										cmdID = 2005,
 										type = "Command",
-										vrCommands = 
+										vrCommands =
 										{
 											"VRCommand2005"
 										}
@@ -10449,27 +10449,27 @@ end
 
 					--hmi side: expect UI.DeleteCommand request
 					EXPECT_HMICALL("UI.DeleteCommand",
-					{cmdID = 2005})				
+					{cmdID = 2005})
 					:Timeout(15000)
 					:Do(function(exp,data)
 						self.hmiConnection:SendResponse(data.id,"UI.DeleteCommand", "SUCCESS", {})
 					end)
-					
-					--mobile side: expect response 
-					EXPECT_RESPONSE(cid, {  success = false, resultCode = "GENERIC_ERROR"})		
+
+					--mobile side: expect response
+					EXPECT_RESPONSE(cid, {  success = false, resultCode = "GENERIC_ERROR"})
 					:Timeout(12000)
-						
+
 					--mobile side: expect OnHashChange notification is not send to mobile
 					EXPECT_NOTIFICATION("OnHashChange")
 					:Times(0)
 				end
-			--End Test case HMINegativeCheck.5.2			
+			--End Test case HMINegativeCheck.5.2
 		--End Test case HMINegativeCheck.5
 
 		-----------------------------------------------------------------------------------------
 
 		--Begin Test case HMINegativeCheck.6
-		--Description: 
+		--Description:
 			-- Checking in case UI & VR gets any erroneous response from HMI
 
 			--Requirement id in JAMA:
@@ -10478,13 +10478,13 @@ end
 				--SDLAQ-CRS-2931
 				--SDLAQ-CRS-2932
 				--SDLAQ-CRS-2933
-				
+
 			--Verification criteria:
 				--In case SDL sends both UI.AddCommand and VR.AddCommand with one and the same cmdID to HMI AND UI.AddCommand gets successful response from HMI in return AND VR.AddCommand gets any erroneous response (except REJECTED) from HMI - SDL must send UI.AddCommand for the successfully added cmdID to HMI.
 				--In case SDL sends both UI.AddCommand and VR.AddCommand with one and the same cmdID to HMI AND UI.AddCommand gets successful response from HMI in return AND VR.AddCommand gets any REJECTED from HMI - SDL must send AddCommand_response(REJECTED) to mobile app.
 				--In case SDL sends both UI.AddCommand and VR.AddCommand with one and the same cmdID to HMI AND VR.AddCommand gets successful response from HMI in return AND UI.AddCommand gets erroneous response except of WARNINGS and UNSUPPORTED_RESOURCE and REJECTED from HMI - SDL must send AddCommand_response(GENERIC_ERROR) to mobile app.
 				--In case SDL sends both UI.AddCommand and VR.AddCommand with one and the same cmdID to HMI AND VR.AddCommand gets successful response from HMI in return AND UI.AddCommand gets REJECTED from HMI - SDL must send AddCommand_response(REJECTED) to mobile app.
-			
+
 			--Begin Test case HMINegativeCheck.6.1
 			--Description: UI.AddCommand gets successful response AND VR.AddCommand gets any erroneous response
 				local erroneousValues = {"INVALID_DATA", "OUT_OF_MEMORY", "TOO_MANY_PENDING_REQUESTS", "INVALID_ID", "DUPLICATE_NAME", "APPLICATION_NOT_REGISTERED", "GENERIC_ERROR", "REJECTED", "DISALLOWED", "UNSUPPORTED_RESOURCE", "WARNINGS"}
@@ -10494,7 +10494,7 @@ end
 					end
 				end
 			--End Test case HMINegativeCheck.6.1
-			
+
 			-----------------------------------------------------------------------------------------
 
 			--Begin Test case HMINegativeCheck.6.2
@@ -10502,7 +10502,7 @@ end
 				for i = 1, #erroneousValues do
 					Test["AddCommand_UIErroneousResponse" .. tostring(erroneousValues[i])] = function(self)
 						self:addCommand_UIErroneousResponse(erroneousValues[i], 2010+i)
-					end				
+					end
 				end
 			--End Test case HMINegativeCheck.6.2
 		--End Test case HMINegativeCheck.6
@@ -10516,7 +10516,7 @@ end
 	--Description: TC's checks SDL behaviour by processing
 		-- different request sequence with timeout
 		-- with emulating of user's actions
-	
+
 		--Begin Test case SequenceCheck.1
 		--Description: Checking execution of command
 
@@ -10525,28 +10525,28 @@ end
 			--Verification criteria:
 				-- When the user triggers any command on persistent display command menu, OnCommand notification is returned to the app with corresponding command identifier and MENU trigger source.
 				-- When the user triggers any command via VR, OnCommand notification is returned to the app with corresponding command identifier and VR trigger source.
-			
+
 			--Description: Add command for execution
 				function Test:AddCommand_PositiveCase()
 					--mobile side: sending AddCommand request
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = 4001,
-																	menuParams = 	
-																	{ 	
+																	menuParams =
+																	{
 																		position = 0,
 																		menuName ="Command4001"
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand4001"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
-											cmdID = 4001,										
-											menuParams = 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
+											cmdID = 4001,
+											menuParams =
 											{
 												menuName ="Command4001"
 											}
@@ -10555,13 +10555,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
-											cmdID = 4001,							
+						EXPECT_HMICALL("VR.AddCommand",
+										{
+											cmdID = 4001,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand4001"
 											}
@@ -10571,44 +10571,44 @@ end
 							grammarIDValue = data.params.grammarID
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 
 						--mobile side: expect OnHashChange notification
 						EXPECT_NOTIFICATION("OnHashChange")
 					end
-					
+
 			--Begin Test case SequenceCheck.1.1
 			--Description: Execution command via HMI
 				function Test:AddCommand_ExecutionCommandViaHMI()
-					--hmi side: sending UI.OnSystemContext notification 
-					SendOnSystemContext(self,"MENU")				
-					
-					--hmi side: sending UI.OnCommand notification			
+					--hmi side: sending UI.OnSystemContext notification
+					SendOnSystemContext(self,"MENU")
+
+					--hmi side: sending UI.OnCommand notification
 					self.hmiConnection:SendNotification("UI.OnCommand",
 					{
 						cmdID = 4001,
 						appID = self.applications["Test Application"],
 						grammarID = grammarIDValue
 					})
-					
-					--hmi side: sending UI.OnSystemContext notification 
-					SendOnSystemContext(self,"MAIN")		
-					
-					
+
+					--hmi side: sending UI.OnSystemContext notification
+					SendOnSystemContext(self,"MAIN")
+
+
 					--mobile side: expected OnHMIStatus notification
-					if 
+					if
 						self.isMediaApplication == true or
 						self.appHMITypes["NAVIGATION"] == true then
-							EXPECT_NOTIFICATION("OnHMIStatus", 
+							EXPECT_NOTIFICATION("OnHMIStatus",
 								{ systemContext = "MENU", hmiLevel = "FULL", audioStreamingState = "AUDIBLE" },
 								{ systemContext = "MAIN", hmiLevel = "FULL", audioStreamingState = "AUDIBLE" })
 							:Times(2)
 					elseif
 						self.isMediaApplication == true then
 
-							EXPECT_NOTIFICATION("OnHMIStatus", 
+							EXPECT_NOTIFICATION("OnHMIStatus",
 								{ systemContext = "MENU", hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE" },
 								{ systemContext = "MAIN", hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE" })
 							:Times(2)
@@ -10618,31 +10618,31 @@ end
 					EXPECT_NOTIFICATION("OnCommand", {cmdID = 4001, triggerSource= "MENU"})
 				end
 			--End Test case SequenceCheck.1.1
-			
+
 			-----------------------------------------------------------------------------------------
 
 			--Begin Test case SequenceCheck.1.2
 			--Description: Execution command via VR
 				function Test:AddCommand_ExecutionCommandViaVR()
-					--hmi side: Start VR and sending UI.OnSystemContext notification 
+					--hmi side: Start VR and sending UI.OnSystemContext notification
 					self.hmiConnection:SendNotification("VR.Started",{})
 					SendOnSystemContext(self,"VRSESSION")
-					
-					--hmi side: sending UI.OnCommand notification			
+
+					--hmi side: sending UI.OnCommand notification
 					self.hmiConnection:SendNotification("VR.OnCommand",
 					{
 						cmdID = 4001,
 						appID = self.applications["Test Application"],
 						grammarID = grammarIDValue
 					})
-					
-					--hmi side: Stop VR and sending UI.OnSystemContext notification 
+
+					--hmi side: Stop VR and sending UI.OnSystemContext notification
 					self.hmiConnection:SendNotification("VR.Stopped",{})
-					SendOnSystemContext(self,"MAIN")		
+					SendOnSystemContext(self,"MAIN")
 
 					--mobile side: expected OnHMIStatus notification
-					if 
-						self.isMediaApplication == true or 
+					if
+						self.isMediaApplication == true or
 						self.appHMITypes["NAVIGATION"] == true then
 							EXPECT_NOTIFICATION("OnHMIStatus",
 								{ systemContext = "MAIN", 		hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE"    	  },
@@ -10657,25 +10657,25 @@ end
 								{ systemContext = "MAIN", 	hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE"    	  })
 							:Times(2)
 					end
-					
-					--mobile side: expect OnCommand notification 
+
+					--mobile side: expect OnCommand notification
 					EXPECT_NOTIFICATION("OnCommand", {cmdID = 4001, triggerSource= "VR"})
 				end
 			--End Test case SequenceCheck.1.2
 		--End Test case SequenceCheck.1
-		
+
 		-----------------------------------------------------------------------------------------
 
 		--Begin Test case SequenceCheck.2
-		--Description: 
+		--Description:
 				-- GrammarID should be generated by SDL for every application.
 				-- All top-level commands added by the application (via AddCommand) must have the same GrammarID value.
 				-- GrammarID values should be unique across all the applications top-level Commands and ChoiceSet GrammarIDs.
-			
+
 			--Requirement id in JAMA:
 				--SDLAQ-CRS-2797
 				--APPLINK-6474
-				
+
 			--Verification criteria:
 				-- SDL generates GrammarID for all VR application commands.
 				-- All top-level commands have the same GrammarID values.
@@ -10687,23 +10687,23 @@ end
 						local cid = self.mobileSession:SendRPC("AddCommand",
 																{
 																	cmdID = idValue,
-																	menuParams = 	
-																	{ 																	
+																	menuParams =
+																	{
 																		position = 0,
 																		menuName ="Command"..tostring(idValue)
-																	}, 
-																	vrCommands = 
-																	{ 
+																	},
+																	vrCommands =
+																	{
 																		"VRCommand"..tostring(idValue).."1",
 																		"VRCommand"..tostring(idValue).."2",
 																		"VRCommand"..tostring(idValue).."3"
 																	}
 																})
 						--hmi side: expect UI.AddCommand request
-						EXPECT_HMICALL("UI.AddCommand", 
-										{ 
-											cmdID = idValue,										
-											menuParams = 
+						EXPECT_HMICALL("UI.AddCommand",
+										{
+											cmdID = idValue,
+											menuParams =
 											{
 												menuName ="Command"..tostring(idValue)
 											}
@@ -10712,13 +10712,13 @@ end
 							--hmi side: sending UI.AddCommand response
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-							
+
 						--hmi side: expect VR.AddCommand request
-						EXPECT_HMICALL("VR.AddCommand", 
-										{ 
-											cmdID = idValue,							
+						EXPECT_HMICALL("VR.AddCommand",
+										{
+											cmdID = idValue,
 											type = "Command",
-											vrCommands = 
+											vrCommands =
 											{
 												"VRCommand"..tostring(idValue).."1",
 												"VRCommand"..tostring(idValue).."2",
@@ -10728,11 +10728,11 @@ end
 						:Do(function(_,data)
 							--hmi side: sending VR.AddCommand response
 							if data.params.grammarID ~= grammarIDValue then
-								print("GrammarID is generated not the same")							
-							end						
+								print("GrammarID is generated not the same")
+							end
 							self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 						end)
-						
+
 						--mobile side: expect AddCommand response
 						EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 
@@ -10741,7 +10741,7 @@ end
 					end
 				end
 		--End Test case SequenceCheck.2
-		
+
 		-----------------------------------------------------------------------------------------
 
 		--Begin Test case SequenceCheck.3
@@ -10757,57 +10757,57 @@ end
 				self.mobileSession2 = mobile_session.MobileSession(
 				self,
 				self.mobileConnection)
-				
+
 				self.mobileSession2:StartService(7)
 			end
-					
+
 			function Test:RegisterAppInterface_MediaApp2()
-				--mobile side: RegisterAppInterface request 
+				--mobile side: RegisterAppInterface request
 				local CorIdRAI = self.mobileSession2:SendRPC("RegisterAppInterface",
 															{
-																syncMsgVersion = 
-																{ 
+																syncMsgVersion =
+																{
 																	majorVersion = 2,
 																	minorVersion = 2,
-																}, 
+																},
 																appName ="MediaApp2",
 																isMediaApplication = true,
 																languageDesired ="EN-US",
 																hmiDisplayLanguageDesired ="EN-US",
 																appHMIType = {"COMMUNICATION","NAVIGATION"},
 																appID ="6",
-																ttsName = 
-																{ 
-																	{ 
+																ttsName =
+																{
+																	{
 																		text ="MediaApp2",
 																		type ="TEXT",
-																	}, 
-																}, 
-																vrSynonyms = 
-																{ 
+																	},
+																},
+																vrSynonyms =
+																{
 																	"vrMediaApp2",
 																}
-															}) 
-			 
+															})
+
 				--hmi side: expect BasicCommunication.OnAppRegistered request
-				EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", 
+				EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered",
 				{
-					application = 
+					application =
 					{
 						appName = "MediaApp2"
 					}
 				})
 				:Do(function(_,data)
-					self.applications["MediaApp2"] = data.params.application.appID					
+					self.applications["MediaApp2"] = data.params.application.appID
 				end)
-				
-				--mobile side: RegisterAppInterface response 
+
+				--mobile side: RegisterAppInterface response
 				self.mobileSession2:ExpectResponse(CorIdRAI, { success = true, resultCode = "SUCCESS"})
 				:Timeout(2000)
 
 				self.mobileSession2:ExpectNotification("OnHMIStatus", {hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
 			end
-			
+
 			function Test:Activate_App2()
 				--hmi side: sending SDL.ActivateApp request
 				local RequestId = self.hmiConnection:SendRequest("SDL.ActivateApp", { appID = self.applications["MediaApp2"]})
@@ -10820,7 +10820,7 @@ end
 							data.result.isSDLAllowed ~= true then
 
 								--hmi side: sending SDL.GetUserFriendlyMessage request
-								local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", 
+								local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage",
 													{language = "EN-US", messageCodes = {"DataConsent"}})
 
 								--hmi side: expect SDL.GetUserFriendlyMessage response
@@ -10828,7 +10828,7 @@ end
 									:Do(function(_,data)
 
 										--hmi side: send request SDL.OnAllowSDLFunctionality
-										self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality", 
+										self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality",
 											{allowed = true, source = "GUI", device = {id = config.deviceMAC, name = "127.0.0.1"}})
 
 										--hmi side: expect BasicCommunication.ActivateApp request
@@ -10844,31 +10844,31 @@ end
 
 						end
 					end)
-				
-				self.mobileSession2:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"}) 
-				:Timeout(12000)				
+
+				self.mobileSession2:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
+				:Timeout(12000)
 			end
-			
+
 			function Test:AddCommand_FirstCommandApp2()
 				--mobile side: sending AddCommand request
 				local cid = self.mobileSession2:SendRPC("AddCommand",
 														{
 															cmdID = 2001,
-															menuParams = 	
-															{ 	
+															menuParams =
+															{
 																position = 1000,
 																menuName ="Item to add"
-															}, 
-															vrCommands = 
-															{ 
+															},
+															vrCommands =
+															{
 																"synonym1","synonym2"
 															}
 														})
 				--hmi side: expect UI.AddCommand request
-				EXPECT_HMICALL("UI.AddCommand", 
-								{ 
-									cmdID = 2001,										
-									menuParams = 
+				EXPECT_HMICALL("UI.AddCommand",
+								{
+									cmdID = 2001,
+									menuParams =
 									{
 										menuName ="Item to add"
 									}
@@ -10877,13 +10877,13 @@ end
 					--hmi side: sending UI.AddCommand response
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
-					
+
 				--hmi side: expect VR.AddCommand request
-				EXPECT_HMICALL("VR.AddCommand", 
-								{ 
-									cmdID = 2001,							
+				EXPECT_HMICALL("VR.AddCommand",
+								{
+									cmdID = 2001,
 									type = "Command",
-									vrCommands = 
+									vrCommands =
 									{
 										"synonym1","synonym2"
 									}
@@ -10907,27 +10907,27 @@ end
 				--mobile side: expect OnHashChange notification
 				self.mobileSession2:ExpectNotification("OnHashChange",{})
 			end
-			
+
 			function Test:AddCommand_SecondCommandApp2()
 				--mobile side: sending AddCommand request
 				local cid = self.mobileSession2:SendRPC("AddCommand",
 														{
 															cmdID = 2002,
-															menuParams = 	
-															{ 	
+															menuParams =
+															{
 																position = 1000,
 																menuName ="Item"
-															}, 
-															vrCommands = 
-															{ 
+															},
+															vrCommands =
+															{
 																"Synonym"
 															}
 														})
 				--hmi side: expect UI.AddCommand request
-				EXPECT_HMICALL("UI.AddCommand", 
-								{ 
-									cmdID = 2002,										
-									menuParams = 
+				EXPECT_HMICALL("UI.AddCommand",
+								{
+									cmdID = 2002,
+									menuParams =
 									{
 										menuName ="Item"
 									}
@@ -10936,19 +10936,19 @@ end
 					--hmi side: sending UI.AddCommand response
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
-					
+
 				--hmi side: expect VR.AddCommand request
-				EXPECT_HMICALL("VR.AddCommand", 
-								{ 
-									cmdID = 2002,							
+				EXPECT_HMICALL("VR.AddCommand",
+								{
+									cmdID = 2002,
 									type = "Command",
-									vrCommands = 
+									vrCommands =
 									{
 										"Synonym"
 									}
 								})
 				:Do(function(_,data)
-					--hmi side: sending VR.AddCommand response					
+					--hmi side: sending VR.AddCommand response
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
 				:ValidIf(function(_,data)
@@ -10964,9 +10964,9 @@ end
 
 				--mobile side: expect OnHashChange notification
 				self.mobileSession2:ExpectNotification("OnHashChange",{})
-			end			
+			end
 		--End Test case SequenceCheck.3
-		
+
 		-----------------------------------------------------------------------------------------
 
 		--Begin Test case SequenceCheck.4
@@ -10976,175 +10976,175 @@ end
 				--SDLAQ-TC-1247
 			--Verification criteria:
 				--The goal is to test that SDL calculates appID depending on proper grammarID provided by HMI in case multiple apps are registered
-			
+
 			-- Precondition 1: Register new media app
 			commonFunctions:newTestCasesGroup("Test case: Precondition TC_GrammarID_04")
-			
+
 			function Test:AddNewSession()
 				-- Connected expectation
 				self.mobileSession3 = mobile_session.MobileSession(
 				self,
 				self.mobileConnection)
-				
+
 				self.mobileSession3:StartService(7)
 			end
-					
+
 			function Test:RegisterAppInterface_MediaApp3()
-				--mobile side: RegisterAppInterface request 
+				--mobile side: RegisterAppInterface request
 				local CorIdRAI = self.mobileSession3:SendRPC("RegisterAppInterface",
 															{
-																syncMsgVersion = 
-																{ 
+																syncMsgVersion =
+																{
 																	majorVersion = 2,
 																	minorVersion = 2,
-																}, 
+																},
 																appName ="MediaApp3",
 																isMediaApplication = true,
 																languageDesired ="EN-US",
 																hmiDisplayLanguageDesired ="EN-US",
 																appID ="3",
-																ttsName = 
-																{ 
-																	{ 
+																ttsName =
+																{
+																	{
 																		text ="MediaApp3",
 																		type ="TEXT",
-																	}, 
-																}, 
-																vrSynonyms = 
-																{ 
+																	},
+																},
+																vrSynonyms =
+																{
 																	"vrMediaApp3",
 																}
-															}) 
-			 
+															})
+
 				--hmi side: expect BasicCommunication.OnAppRegistered request
-				EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", 
+				EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered",
 				{
-					application = 
+					application =
 					{
 						appName = "MediaApp3"
 					}
 				})
 				:Do(function(_,data)
-					self.applications["MediaApp3"] = data.params.application.appID					
+					self.applications["MediaApp3"] = data.params.application.appID
 				end)
-				
-				--mobile side: RegisterAppInterface response 
+
+				--mobile side: RegisterAppInterface response
 				self.mobileSession3:ExpectResponse(CorIdRAI, { success = true, resultCode = "SUCCESS"})
 				:Timeout(2000)
 
 				self.mobileSession3:ExpectNotification("OnHMIStatus", {hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
 			end
-			
+
 			function Test:AddNewSession()
 				-- Connected expectation
 				self.mobileSession4 = mobile_session.MobileSession(
 				self,
 				self.mobileConnection)
-				
+
 				self.mobileSession4:StartService(7)
 			end
-					
+
 			function Test:RegisterAppInterface_MediaApp4()
-				--mobile side: RegisterAppInterface request 
+				--mobile side: RegisterAppInterface request
 				local CorIdRAI = self.mobileSession4:SendRPC("RegisterAppInterface",
 															{
-																syncMsgVersion = 
-																{ 
+																syncMsgVersion =
+																{
 																	majorVersion = 2,
 																	minorVersion = 2,
-																}, 
+																},
 																appName ="MediaApp4",
 																isMediaApplication = true,
 																languageDesired ="EN-US",
 																hmiDisplayLanguageDesired ="EN-US",
 																appID ="4",
-																ttsName = 
-																{ 
-																	{ 
+																ttsName =
+																{
+																	{
 																		text ="MediaApp4",
 																		type ="TEXT",
-																	}, 
-																}, 
-																vrSynonyms = 
-																{ 
+																	},
+																},
+																vrSynonyms =
+																{
 																	"vrMediaApp4",
 																}
-															}) 
-			 
+															})
+
 				--hmi side: expect BasicCommunication.OnAppRegistered request
-				EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", 
+				EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered",
 				{
-					application = 
+					application =
 					{
 						appName = "MediaApp4"
 					}
 				})
 				:Do(function(_,data)
-					self.applications["MediaApp4"] = data.params.application.appID					
+					self.applications["MediaApp4"] = data.params.application.appID
 				end)
-				
-				--mobile side: RegisterAppInterface response 
+
+				--mobile side: RegisterAppInterface response
 				self.mobileSession4:ExpectResponse(CorIdRAI, { success = true, resultCode = "SUCCESS"})
 				:Timeout(2000)
 
 				self.mobileSession4:ExpectNotification("OnHMIStatus", {hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
 			end
-			
+
 			function Test:AddNewSession()
 				-- Connected expectation
 				self.mobileSession5 = mobile_session.MobileSession(
 				self,
 				self.mobileConnection)
-				
+
 				self.mobileSession5:StartService(7)
 			end
-					
+
 			function Test:RegisterAppInterface_MediaApp5()
-				--mobile side: RegisterAppInterface request 
+				--mobile side: RegisterAppInterface request
 				local CorIdRAI = self.mobileSession5:SendRPC("RegisterAppInterface",
 															{
-																syncMsgVersion = 
-																{ 
+																syncMsgVersion =
+																{
 																	majorVersion = 2,
 																	minorVersion = 2,
-																}, 
+																},
 																appName ="MediaApp5",
 																isMediaApplication = true,
 																languageDesired ="EN-US",
 																hmiDisplayLanguageDesired ="EN-US",
 																appID ="5",
-																ttsName = 
-																{ 
-																	{ 
+																ttsName =
+																{
+																	{
 																		text ="MediaApp5",
 																		type ="TEXT",
-																	}, 
-																}, 
-																vrSynonyms = 
-																{ 
+																	},
+																},
+																vrSynonyms =
+																{
 																	"vrMediaApp5",
 																}
-															}) 
-			 
+															})
+
 				--hmi side: expect BasicCommunication.OnAppRegistered request
-				EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", 
+				EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered",
 				{
-					application = 
+					application =
 					{
 						appName = "MediaApp5"
 					}
 				})
 				:Do(function(_,data)
-					self.applications["MediaApp5"] = data.params.application.appID					
+					self.applications["MediaApp5"] = data.params.application.appID
 				end)
-				
-				--mobile side: RegisterAppInterface response 
+
+				--mobile side: RegisterAppInterface response
 				self.mobileSession5:ExpectResponse(CorIdRAI, { success = true, resultCode = "SUCCESS"})
 				:Timeout(2000)
 
 				self.mobileSession5:ExpectNotification("OnHMIStatus", {hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
 			end
-			
+
 			function Test:Activate_App3()
 				--hmi side: sending SDL.ActivateApp request
 				local RequestId = self.hmiConnection:SendRequest("SDL.ActivateApp", { appID = self.applications["MediaApp3"]})
@@ -11157,7 +11157,7 @@ end
 							data.result.isSDLAllowed ~= true then
 
 								--hmi side: sending SDL.GetUserFriendlyMessage request
-								local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", 
+								local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage",
 													{language = "EN-US", messageCodes = {"DataConsent"}})
 
 								--hmi side: expect SDL.GetUserFriendlyMessage response
@@ -11165,7 +11165,7 @@ end
 									:Do(function(_,data)
 
 										--hmi side: send request SDL.OnAllowSDLFunctionality
-										self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality", 
+										self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality",
 											{allowed = true, source = "GUI", device = {id = config.deviceMAC, name = "127.0.0.1"}})
 
 										--hmi side: expect BasicCommunication.ActivateApp request
@@ -11182,31 +11182,31 @@ end
 
 						end
 					end)
-				
-				self.mobileSession3:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"}) 
-				:Timeout(12000)				
+
+				self.mobileSession3:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
+				:Timeout(12000)
 			end
-			
+
 			function Test:AddCommand_App3()
 				--mobile side: sending AddCommand request
 				local cid = self.mobileSession3:SendRPC("AddCommand",
 														{
 															cmdID = 2003,
-															menuParams = 	
-															{ 	
+															menuParams =
+															{
 																position = 1000,
 																menuName ="Item to add App3"
-															}, 
-															vrCommands = 
-															{ 
+															},
+															vrCommands =
+															{
 																"synonym  App3"
 															}
 														})
 				--hmi side: expect UI.AddCommand request
-				EXPECT_HMICALL("UI.AddCommand", 
-								{ 
-									cmdID = 2003,										
-									menuParams = 
+				EXPECT_HMICALL("UI.AddCommand",
+								{
+									cmdID = 2003,
+									menuParams =
 									{
 										menuName ="Item to add App3"
 									}
@@ -11215,13 +11215,13 @@ end
 					--hmi side: sending UI.AddCommand response
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
-					
+
 				--hmi side: expect VR.AddCommand request
-				EXPECT_HMICALL("VR.AddCommand", 
-								{ 
-									cmdID = 2003,							
+				EXPECT_HMICALL("VR.AddCommand",
+								{
+									cmdID = 2003,
 									type = "Command",
-									vrCommands = 
+									vrCommands =
 									{
 										"synonym  App3"
 									}
@@ -11231,14 +11231,14 @@ end
 					grammarIDApp3 = data.params.grammarID
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
-				
+
 				--mobile side: expect AddCommand response
 				self.mobileSession3:ExpectResponse(cid, { success = true, resultCode = "SUCCESS" })
 
 				--mobile side: expect OnHashChange notification
 				self.mobileSession3:ExpectNotification("OnHashChange",{})
 			end
-			
+
 			function Test:Activate_App4()
 				--hmi side: sending SDL.ActivateApp request
 				local RequestId = self.hmiConnection:SendRequest("SDL.ActivateApp", { appID = self.applications["MediaApp4"]})
@@ -11251,7 +11251,7 @@ end
 							data.result.isSDLAllowed ~= true then
 
 								--hmi side: sending SDL.GetUserFriendlyMessage request
-								local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", 
+								local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage",
 													{language = "EN-US", messageCodes = {"DataConsent"}})
 
 								--hmi side: expect SDL.GetUserFriendlyMessage response
@@ -11259,7 +11259,7 @@ end
 									:Do(function(_,data)
 
 										--hmi side: send request SDL.OnAllowSDLFunctionality
-										self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality", 
+										self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality",
 											{allowed = true, source = "GUI", device = {id = config.deviceMAC, name = "127.0.0.1"}})
 
 										--hmi side: expect BasicCommunication.ActivateApp request
@@ -11276,31 +11276,31 @@ end
 
 						end
 					end)
-				
-				self.mobileSession4:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"}) 
-				:Timeout(12000)				
+
+				self.mobileSession4:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
+				:Timeout(12000)
 			end
-			
+
 			function Test:AddCommand_App4()
 				--mobile side: sending AddCommand request
 				local cid = self.mobileSession4:SendRPC("AddCommand",
 														{
 															cmdID = 2004,
-															menuParams = 	
-															{ 	
+															menuParams =
+															{
 																position = 1000,
 																menuName ="Item to add App4"
-															}, 
-															vrCommands = 
-															{ 
+															},
+															vrCommands =
+															{
 																"synonym  App4"
 															}
 														})
 				--hmi side: expect UI.AddCommand request
-				EXPECT_HMICALL("UI.AddCommand", 
-								{ 
-									cmdID = 2004,										
-									menuParams = 
+				EXPECT_HMICALL("UI.AddCommand",
+								{
+									cmdID = 2004,
+									menuParams =
 									{
 										menuName ="Item to add App4"
 									}
@@ -11309,13 +11309,13 @@ end
 					--hmi side: sending UI.AddCommand response
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
-					
+
 				--hmi side: expect VR.AddCommand request
-				EXPECT_HMICALL("VR.AddCommand", 
-								{ 
-									cmdID = 2004,							
+				EXPECT_HMICALL("VR.AddCommand",
+								{
+									cmdID = 2004,
 									type = "Command",
-									vrCommands = 
+									vrCommands =
 									{
 										"synonym  App4"
 									}
@@ -11325,14 +11325,14 @@ end
 					grammarIDApp4 = data.params.grammarID
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
-				
+
 				--mobile side: expect AddCommand response
 				self.mobileSession4:ExpectResponse(cid, { success = true, resultCode = "SUCCESS" })
 
 				--mobile side: expect OnHashChange notification
 				self.mobileSession4:ExpectNotification("OnHashChange",{})
 			end
-			
+
 			function Test:Activate_App5()
 				--hmi side: sending SDL.ActivateApp request
 				local RequestId = self.hmiConnection:SendRequest("SDL.ActivateApp", { appID = self.applications["MediaApp5"]})
@@ -11345,7 +11345,7 @@ end
 							data.result.isSDLAllowed ~= true then
 
 								--hmi side: sending SDL.GetUserFriendlyMessage request
-								local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", 
+								local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage",
 													{language = "EN-US", messageCodes = {"DataConsent"}})
 
 								--hmi side: expect SDL.GetUserFriendlyMessage response
@@ -11353,7 +11353,7 @@ end
 									:Do(function(_,data)
 
 										--hmi side: send request SDL.OnAllowSDLFunctionality
-										self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality", 
+										self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality",
 											{allowed = true, source = "GUI", device = {id = config.deviceMAC, name = "127.0.0.1"}})
 
 										--hmi side: expect BasicCommunication.ActivateApp request
@@ -11370,31 +11370,31 @@ end
 
 						end
 					end)
-				
-				self.mobileSession5:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"}) 
-				:Timeout(12000)				
+
+				self.mobileSession5:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
+				:Timeout(12000)
 			end
-			
+
 			function Test:AddCommand_App5()
 				--mobile side: sending AddCommand request
 				local cid = self.mobileSession5:SendRPC("AddCommand",
 														{
 															cmdID = 2005,
-															menuParams = 	
-															{ 	
+															menuParams =
+															{
 																position = 1000,
 																menuName ="Item to add App5"
-															}, 
-															vrCommands = 
-															{ 
+															},
+															vrCommands =
+															{
 																"synonym  App5"
 															}
 														})
 				--hmi side: expect UI.AddCommand request
-				EXPECT_HMICALL("UI.AddCommand", 
-								{ 
-									cmdID = 2005,										
-									menuParams = 
+				EXPECT_HMICALL("UI.AddCommand",
+								{
+									cmdID = 2005,
+									menuParams =
 									{
 										menuName ="Item to add App5"
 									}
@@ -11403,13 +11403,13 @@ end
 					--hmi side: sending UI.AddCommand response
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
-					
+
 				--hmi side: expect VR.AddCommand request
-				EXPECT_HMICALL("VR.AddCommand", 
-								{ 
-									cmdID = 2005,							
+				EXPECT_HMICALL("VR.AddCommand",
+								{
+									cmdID = 2005,
 									type = "Command",
-									vrCommands = 
+									vrCommands =
 									{
 										"synonym  App5"
 									}
@@ -11419,16 +11419,16 @@ end
 					grammarIDApp5 = data.params.grammarID
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
-				
+
 				--mobile side: expect AddCommand response
 				self.mobileSession5:ExpectResponse(cid, { success = true, resultCode = "SUCCESS" })
 
 				--mobile side: expect OnHashChange notification
 				self.mobileSession5:ExpectNotification("OnHashChange",{})
 			end
-			
-			commonFunctions:newTestCasesGroup("Test case: TC_GrammarID_04")    
-			
+
+			commonFunctions:newTestCasesGroup("Test case: TC_GrammarID_04")
+
 			function Test:Activate_App1()
 				--hmi side: sending SDL.ActivateApp request
 				local RequestId = self.hmiConnection:SendRequest("SDL.ActivateApp", { appID = self.applications["Test Application"]})
@@ -11441,7 +11441,7 @@ end
 							data.result.isSDLAllowed ~= true then
 
 								--hmi side: sending SDL.GetUserFriendlyMessage request
-								local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", 
+								local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage",
 													{language = "EN-US", messageCodes = {"DataConsent"}})
 
 								--hmi side: expect SDL.GetUserFriendlyMessage response
@@ -11449,7 +11449,7 @@ end
 									:Do(function(_,data)
 
 										--hmi side: send request SDL.OnAllowSDLFunctionality
-										self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality", 
+										self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality",
 											{allowed = true, source = "GUI", device = {id = config.deviceMAC, name = "127.0.0.1"}})
 
 										--hmi side: expect BasicCommunication.ActivateApp request
@@ -11466,30 +11466,30 @@ end
 
 						end
 					end)
-				
-				self.mobileSession:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"}) 				
+
+				self.mobileSession:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
 			end
-			
-			function Test:AddCommand_ExecutionCommandViaVR_App1()				
-				--hmi side: Start VR and sending UI.OnSystemContext notification 
+
+			function Test:AddCommand_ExecutionCommandViaVR_App1()
+				--hmi side: Start VR and sending UI.OnSystemContext notification
 				self.hmiConnection:SendNotification("VR.Started",{})
 				SendOnSystemContext(self,"VRSESSION")
-				
-				--hmi side: sending UI.OnCommand notification			
+
+				--hmi side: sending UI.OnCommand notification
 				self.hmiConnection:SendNotification("VR.OnCommand",
 				{
 					cmdID = 4001,
 					appID = self.applications["Test Application"],
 					grammarID = grammarIDValue
 				})
-				
-				--hmi side: Stop VR and sending UI.OnSystemContext notification 
+
+				--hmi side: Stop VR and sending UI.OnSystemContext notification
 				self.hmiConnection:SendNotification("VR.Stopped",{})
-				SendOnSystemContext(self,"MAIN")		
+				SendOnSystemContext(self,"MAIN")
 
 				--mobile side: expected OnHMIStatus notification
-				if 
-					self.isMediaApplication == true or 
+				if
+					self.isMediaApplication == true or
 					self.appHMITypes["NAVIGATION"] == true then
 						EXPECT_NOTIFICATION("OnHMIStatus",
 							{ systemContext = "MAIN", 		hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE"    	  },
@@ -11504,11 +11504,11 @@ end
 							{ systemContext = "MAIN", 	hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE"    	  })
 						:Times(2)
 				end
-				
-				--mobile side: expect OnCommand notification 
+
+				--mobile side: expect OnCommand notification
 				EXPECT_NOTIFICATION("OnCommand", {cmdID = 4001, triggerSource= "VR"})
 			end
-			
+
 			function Test:Activate_App2()
 				--hmi side: sending SDL.ActivateApp request
 				local RequestId = self.hmiConnection:SendRequest("SDL.ActivateApp", { appID = self.applications["MediaApp2"]})
@@ -11521,7 +11521,7 @@ end
 							data.result.isSDLAllowed ~= true then
 
 								--hmi side: sending SDL.GetUserFriendlyMessage request
-								local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", 
+								local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage",
 													{language = "EN-US", messageCodes = {"DataConsent"}})
 
 								--hmi side: expect SDL.GetUserFriendlyMessage response
@@ -11529,7 +11529,7 @@ end
 									:Do(function(_,data)
 
 										--hmi side: send request SDL.OnAllowSDLFunctionality
-										self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality", 
+										self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality",
 											{allowed = true, source = "GUI", device = {id = config.deviceMAC, name = "127.0.0.1"}})
 
 										--hmi side: expect BasicCommunication.ActivateApp request
@@ -11546,38 +11546,38 @@ end
 
 						end
 					end)
-				
-				self.mobileSession2:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"}) 
+
+				self.mobileSession2:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
 			end
-			
-			function Test:AddCommand_ExecutionCommandViaVR_App2()				
-				--hmi side: Start VR and sending UI.OnSystemContext notification 
+
+			function Test:AddCommand_ExecutionCommandViaVR_App2()
+				--hmi side: Start VR and sending UI.OnSystemContext notification
 				self.hmiConnection:SendNotification("VR.Started",{})
 				SendOnSystemContext(self,"VRSESSION", self.applications["MediaApp2"])
-				
-				--hmi side: sending UI.OnCommand notification			
+
+				--hmi side: sending UI.OnCommand notification
 				self.hmiConnection:SendNotification("VR.OnCommand",
 				{
 					cmdID = 2001,
 					appID = self.applications["MediaApp2"],
 					grammarID = grammarIDApp2
 				})
-				
-				--hmi side: Stop VR and sending UI.OnSystemContext notification 
+
+				--hmi side: Stop VR and sending UI.OnSystemContext notification
 				self.hmiConnection:SendNotification("VR.Stopped",{})
 				SendOnSystemContext(self,"MAIN", self.applications["MediaApp2"])
-				
+
 				self.mobileSession2:ExpectNotification("OnHMIStatus",
 					{ systemContext = "MAIN", 		hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE"    	  },
 					{ systemContext = "VRSESSION",  hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE"        },
 					{ systemContext = "VRSESSION", 	hmiLevel = "FULL", audioStreamingState = "AUDIBLE"    	  },
 					{ systemContext = "MAIN",  		hmiLevel = "FULL", audioStreamingState = "AUDIBLE"        })
 				:Times(4)
-				
-				--mobile side: expect OnCommand notification 
+
+				--mobile side: expect OnCommand notification
 				self.mobileSession2:ExpectNotification("OnCommand", {cmdID = 2001, triggerSource= "VR"})
 			end
-					
+
 			function Test:Activate_App3()
 				--hmi side: sending SDL.ActivateApp request
 				local RequestId = self.hmiConnection:SendRequest("SDL.ActivateApp", { appID = self.applications["MediaApp3"]})
@@ -11590,7 +11590,7 @@ end
 							data.result.isSDLAllowed ~= true then
 
 								--hmi side: sending SDL.GetUserFriendlyMessage request
-								local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", 
+								local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage",
 													{language = "EN-US", messageCodes = {"DataConsent"}})
 
 								--hmi side: expect SDL.GetUserFriendlyMessage response
@@ -11598,7 +11598,7 @@ end
 									:Do(function(_,data)
 
 										--hmi side: send request SDL.OnAllowSDLFunctionality
-										self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality", 
+										self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality",
 											{allowed = true, source = "GUI", device = {id = config.deviceMAC, name = "127.0.0.1"}})
 
 										--hmi side: expect BasicCommunication.ActivateApp request
@@ -11615,38 +11615,38 @@ end
 
 						end
 					end)
-				
-				self.mobileSession3:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"}) 				
+
+				self.mobileSession3:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
 			end
-			
+
 			function Test:AddCommand_ExecutionCommandViaVR_App3()
-				--hmi side: Start VR and sending UI.OnSystemContext notification 
+				--hmi side: Start VR and sending UI.OnSystemContext notification
 				self.hmiConnection:SendNotification("VR.Started",{})
 				SendOnSystemContext(self,"VRSESSION", self.applications["MediaApp3"])
-				
-				--hmi side: sending UI.OnCommand notification			
+
+				--hmi side: sending UI.OnCommand notification
 				self.hmiConnection:SendNotification("VR.OnCommand",
 				{
 					cmdID = 2003,
 					appID = self.applications["MediaApp3"],
 					grammarID = grammarIDApp3
 				})
-				
-				--hmi side: Stop VR and sending UI.OnSystemContext notification 
+
+				--hmi side: Stop VR and sending UI.OnSystemContext notification
 				self.hmiConnection:SendNotification("VR.Stopped",{})
 				SendOnSystemContext(self,"MAIN", self.applications["MediaApp3"])
-				
+
 				self.mobileSession3:ExpectNotification("OnHMIStatus",
 					{ systemContext = "MAIN", 		hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE"    	  },
 					{ systemContext = "VRSESSION",  hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE"        },
 					{ systemContext = "VRSESSION", 	hmiLevel = "FULL", audioStreamingState = "AUDIBLE"    	  },
 					{ systemContext = "MAIN",  		hmiLevel = "FULL", audioStreamingState = "AUDIBLE"        })
 				:Times(4)
-				
-				--mobile side: expect OnCommand notification 
+
+				--mobile side: expect OnCommand notification
 				self.mobileSession3:ExpectNotification("OnCommand", {cmdID = 2003, triggerSource= "VR"})
 			end
-				
+
 			function Test:Activate_App4()
 				--hmi side: sending SDL.ActivateApp request
 				local RequestId = self.hmiConnection:SendRequest("SDL.ActivateApp", { appID = self.applications["MediaApp4"]})
@@ -11659,7 +11659,7 @@ end
 							data.result.isSDLAllowed ~= true then
 
 							--hmi side: sending SDL.GetUserFriendlyMessage request
-							local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", 
+							local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage",
 												{language = "EN-US", messageCodes = {"DataConsent"}})
 
 							--hmi side: expect SDL.GetUserFriendlyMessage response
@@ -11667,7 +11667,7 @@ end
 								:Do(function(_,data)
 
 									--hmi side: send request SDL.OnAllowSDLFunctionality
-									self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality", 
+									self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality",
 										{allowed = true, source = "GUI", device = {id = config.deviceMAC, name = "127.0.0.1"}})
 
 									--hmi side: expect BasicCommunication.ActivateApp request
@@ -11680,41 +11680,41 @@ end
 										end)
 									:Times(2)
 									:Timeout(11000)
-								end)						
+								end)
 						end
 					end)
-				
-				self.mobileSession4:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"}) 				
+
+				self.mobileSession4:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
 			end
-			
+
 			function Test:AddCommand_ExecutionCommandViaVR_App4()
-				--hmi side: Start VR and sending UI.OnSystemContext notification 
+				--hmi side: Start VR and sending UI.OnSystemContext notification
 				self.hmiConnection:SendNotification("VR.Started",{})
 				SendOnSystemContext(self,"VRSESSION", self.applications["MediaApp4"])
-				
-				--hmi side: sending UI.OnCommand notification			
+
+				--hmi side: sending UI.OnCommand notification
 				self.hmiConnection:SendNotification("VR.OnCommand",
 				{
 					cmdID = 2004,
 					appID = self.applications["MediaApp4"],
 					grammarID = grammarIDApp4
 				})
-				
-				--hmi side: Stop VR and sending UI.OnSystemContext notification 
+
+				--hmi side: Stop VR and sending UI.OnSystemContext notification
 				self.hmiConnection:SendNotification("VR.Stopped",{})
 				SendOnSystemContext(self,"MAIN", self.applications["MediaApp4"])
-				
+
 				self.mobileSession4:ExpectNotification("OnHMIStatus",
 					{ systemContext = "MAIN", 		hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE"    	  },
 					{ systemContext = "VRSESSION",  hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE"        },
 					{ systemContext = "VRSESSION", 	hmiLevel = "FULL", audioStreamingState = "AUDIBLE"    	  },
 					{ systemContext = "MAIN",  		hmiLevel = "FULL", audioStreamingState = "AUDIBLE"        })
 				:Times(4)
-				
-				--mobile side: expect OnCommand notification 
+
+				--mobile side: expect OnCommand notification
 				self.mobileSession4:ExpectNotification("OnCommand", {cmdID = 2004, triggerSource= "VR"})
 			end
-			
+
 			function Test:Activate_App5()
 				--hmi side: sending SDL.ActivateApp request
 				local RequestId = self.hmiConnection:SendRequest("SDL.ActivateApp", { appID = self.applications["MediaApp5"]})
@@ -11727,7 +11727,7 @@ end
 							data.result.isSDLAllowed ~= true then
 
 							--hmi side: sending SDL.GetUserFriendlyMessage request
-							local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", 
+							local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage",
 												{language = "EN-US", messageCodes = {"DataConsent"}})
 
 							--hmi side: expect SDL.GetUserFriendlyMessage response
@@ -11735,7 +11735,7 @@ end
 								:Do(function(_,data)
 
 									--hmi side: send request SDL.OnAllowSDLFunctionality
-									self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality", 
+									self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality",
 										{allowed = true, source = "GUI", device = {id = config.deviceMAC, name = "127.0.0.1"}})
 
 									--hmi side: expect BasicCommunication.ActivateApp request
@@ -11748,42 +11748,42 @@ end
 										end)
 									:Times(2)
 									:Timeout(11000)
-								end)						
+								end)
 						end
 					end)
-				
-				self.mobileSession5:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"}) 
+
+				self.mobileSession5:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
 			end
-			
+
 			function Test:AddCommand_ExecutionCommandViaVR_App5()
-				--hmi side: Start VR and sending UI.OnSystemContext notification 
+				--hmi side: Start VR and sending UI.OnSystemContext notification
 				self.hmiConnection:SendNotification("VR.Started",{})
 				SendOnSystemContext(self,"VRSESSION", self.applications["MediaApp5"])
-				
-				--hmi side: sending UI.OnCommand notification			
+
+				--hmi side: sending UI.OnCommand notification
 				self.hmiConnection:SendNotification("VR.OnCommand",
 				{
 					cmdID = 2005,
 					appID = self.applications["MediaApp5"],
 					grammarID = grammarIDApp5
 				})
-				
-				--hmi side: Stop VR and sending UI.OnSystemContext notification 
+
+				--hmi side: Stop VR and sending UI.OnSystemContext notification
 				self.hmiConnection:SendNotification("VR.Stopped",{})
 				SendOnSystemContext(self,"MAIN", self.applications["MediaApp5"])
-				
+
 				self.mobileSession5:ExpectNotification("OnHMIStatus",
 					{ systemContext = "MAIN", 		hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE"    	  },
 					{ systemContext = "VRSESSION",  hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE"        },
 					{ systemContext = "VRSESSION", 	hmiLevel = "FULL", audioStreamingState = "AUDIBLE"    	  },
 					{ systemContext = "MAIN",  		hmiLevel = "FULL", audioStreamingState = "AUDIBLE"        })
 				:Times(4)
-				
-				--mobile side: expect OnCommand notification 
+
+				--mobile side: expect OnCommand notification
 				self.mobileSession5:ExpectNotification("OnCommand", {cmdID = 2005, triggerSource= "VR"})
-			end			
+			end
 		--End Test case SequenceCheck.4
-		
+
 		-----------------------------------------------------------------------------------------
 		commonFunctions:newTestCasesGroup("Test case: Precondition TC_GrammarID_05")
 		--Begin Test case SequenceCheck.5
@@ -11792,7 +11792,7 @@ end
 			--Requirement id in JAMA:
 				--SDLAQ-TC-1248
 			--Verification criteria:
-				--The goal is to test that commandID is calculated properly from grammarID if command is chosen by VR			
+				--The goal is to test that commandID is calculated properly from grammarID if command is chosen by VR
 			function Test:Activate_App1()
 				--hmi side: sending SDL.ActivateApp request
 				local RequestId = self.hmiConnection:SendRequest("SDL.ActivateApp", { appID = self.applications["Test Application"]})
@@ -11805,7 +11805,7 @@ end
 							data.result.isSDLAllowed ~= true then
 
 							--hmi side: sending SDL.GetUserFriendlyMessage request
-							local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", 
+							local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage",
 												{language = "EN-US", messageCodes = {"DataConsent"}})
 
 							--hmi side: expect SDL.GetUserFriendlyMessage response
@@ -11813,7 +11813,7 @@ end
 								:Do(function(_,data)
 
 									--hmi side: send request SDL.OnAllowSDLFunctionality
-									self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality", 
+									self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality",
 										{allowed = true, source = "GUI", device = {id = config.deviceMAC, name = "127.0.0.1"}})
 
 									--hmi side: expect BasicCommunication.ActivateApp request
@@ -11830,29 +11830,29 @@ end
 
 						end
 					end)
-				
-				self.mobileSession:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"}) 				
+
+				self.mobileSession:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
 			end
---[[TODO: Check after APPLINK-17207 is resolved	
+--TODO: Check after APPLINK-17207 is resolved
 			function Test:AddCommand_ExecutionCommandViaVR_WithOutAppID()
-				--hmi side: Start VR and sending UI.OnSystemContext notification 
+				--hmi side: Start VR and sending UI.OnSystemContext notification
 				self.hmiConnection:SendNotification("VR.Started",{})
 				SendOnSystemContext(self,"VRSESSION")
-				
-				--hmi side: sending UI.OnCommand notification			
+
+				--hmi side: sending UI.OnCommand notification
 				self.hmiConnection:SendNotification("VR.OnCommand",
 				{
-					cmdID = 4001,						
+					cmdID = 4001,
 					grammarID = grammarIDValue
 				})
-				
-				--hmi side: Stop VR and sending UI.OnSystemContext notification 
+
+				--hmi side: Stop VR and sending UI.OnSystemContext notification
 				self.hmiConnection:SendNotification("VR.Stopped",{})
-				SendOnSystemContext(self,"MAIN")		
+				SendOnSystemContext(self,"MAIN")
 
 				--mobile side: expected OnHMIStatus notification
-				if 
-					self.isMediaApplication == true or 
+				if
+					self.isMediaApplication == true or
 					self.appHMITypes["NAVIGATION"] == true then
 						EXPECT_NOTIFICATION("OnHMIStatus",
 							{ systemContext = "MAIN", 		hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE"    	  },
@@ -11867,22 +11867,21 @@ end
 							{ systemContext = "MAIN", 	hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE"    	  })
 						:Times(2)
 				end
-				
-				--mobile side: expect OnCommand notification 
+
+				--mobile side: expect OnCommand notification
 				EXPECT_NOTIFICATION("OnCommand", {cmdID = 4001, triggerSource= "VR"})
-			end			
-		--End Test case SequenceCheck.5		
---]]
+			end
+		--End Test case SequenceCheck.5
 
 	--------------------------------------------------------------------------------------------
 	--Begin Test case SequenceCheck.6
-		--Description: Covers TC APPLINK-18308. 
+		--Description: Covers TC APPLINK-18308.
 
-			--Requirement id in JAMA: 
+			--Requirement id in JAMA:
 					--SDLAQ-CRS-1305
-					
-			--Verification criteria: 
-					--This test is to check the ability to add commands with same names to different menus (root/submenu). 
+
+			--Verification criteria:
+					--This test is to check the ability to add commands with same names to different menus (root/submenu).
 	local function APPLINK_18308()
 		--Begin Precondition
 			--Description: Adding SubMenu(AddSubMenus)
@@ -11894,9 +11893,9 @@ end
 							menuID = menuIDValues[i],
 							menuName = "SubMenu_0"..tostring(i)
 						})
-						
-						EXPECT_HMICALL("UI.AddSubMenu", 
-						{ 
+
+						EXPECT_HMICALL("UI.AddSubMenu",
+						{
 							menuID = menuIDValues[i],
 							menuParams = { menuName = "SubMenu_0"..tostring(i) }
 						})
@@ -11905,35 +11904,35 @@ end
 									self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 									--commonFunctions:printTable(data)
 						end)
-						
+
 						EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 						EXPECT_NOTIFICATION("OnHashChange")
 					end
 				end
 		--End Precondition
-	
+
 		--Send AddCommand "Command_01" VrSynonyms = command1
 			function Test:AddCommand_CommandID01_NoSubmenu()
 					--mobile side: sending AddCommand request
 					local cid = self.mobileSession:SendRPC("AddCommand",
 					{
 						cmdID = 01,
-						menuParams = 	
-						{ 
+						menuParams =
+						{
 							menuName ="Command_01"
 						},
-						vrCommands = 
-						{ 
+						vrCommands =
+						{
 							"command1"
 						}
 					})
-						
+
 					--hmi side: expect VR.AddCommand request
-					EXPECT_HMICALL("VR.AddCommand", 
-					{ 
+					EXPECT_HMICALL("VR.AddCommand",
+					{
 						cmdID = 01,
 						type = "Command",
-						vrCommands = 
+						vrCommands =
 						{
 							"command1"
 						}
@@ -11941,52 +11940,52 @@ end
 					:Do(function(_,data)
 						--hmi side: sending response
 								self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-					end)	
-					
+					end)
+
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-					{ 
+					EXPECT_HMICALL("UI.AddCommand",
+					{
 						cmdID = 01,
-						menuParams = 	
-						{ 
+						menuParams =
+						{
 							menuName ="Command_01"
 						}
 					})
 					:Do(function(_,data)
 						--hmi side: sending UI.AddCommand response
 						self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-					end)	
-					
+					end)
+
 					EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 					EXPECT_NOTIFICATION("OnHashChange")
 				end
-			--End 
-			
-		
+			--End
+
+
 		--Send AddCommand "Command_01" + addItem to "Submenu_01" VrSynonyms = command2
-			
+
 				function Test:AddCommand_SameCommandID01_Submenu()
 					--mobile side: sending AddCommand request
 					local cid = self.mobileSession:SendRPC("AddCommand",
 					{
 						cmdID = 02,
-						menuParams = 	
-						{ 
-							parentID = 11,	
+						menuParams =
+						{
+							parentID = 11,
 							position = 1000,
 							menuName ="Command_01"
 						},
-						vrCommands = 
-						{ 
+						vrCommands =
+						{
 							"command2"
 						}
 					})
 					--hmi side: expect VR.AddCommand request
-					EXPECT_HMICALL("VR.AddCommand", 
-					{ 
+					EXPECT_HMICALL("VR.AddCommand",
+					{
 						cmdID = 02,
 						type = "Command",
-						vrCommands = 
+						vrCommands =
 						{
 							"command2"
 						}
@@ -11994,14 +11993,14 @@ end
 					:Do(function(_,data)
 						--hmi side: sending response
 								self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-					end)	
-					
+					end)
+
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-					{ 
+					EXPECT_HMICALL("UI.AddCommand",
+					{
 						cmdID = 02,
-						menuParams = 	
-						{ 
+						menuParams =
+						{
 							parentID = 11,
 							position = 1000,
 							menuName ="Command_01"
@@ -12010,33 +12009,33 @@ end
 					:Do(function(_,data)
 						--hmi side: sending UI.AddCommand response
 						self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-					end)	
-					
+					end)
+
 					EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 					EXPECT_NOTIFICATION("OnHashChange")
-				end		
-			--End 
-			
+				end
+			--End
+
 		--Send AddCommand "Command_01" + addItem to "Submenu_02" VrSynonyms = disabled
 			function Test:AddCommand_SameCommandID01_DifferentSubmenu_VrSynonymsDisabled()
 					--mobile side: sending AddCommand request
 					local cid = self.mobileSession:SendRPC("AddCommand",
 					{
 						cmdID = 03,
-						menuParams = 	
-						{ 
+						menuParams =
+						{
 							parentID = 22,
 							position = 1000,
 							menuName ="Command_01"
 						}
 					})
-					
+
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-					{ 
+					EXPECT_HMICALL("UI.AddCommand",
+					{
 						cmdID = 03,
-						menuParams = 	
-						{ 
+						menuParams =
+						{
 							parentID = 22,
 							position = 1000,
 							menuName ="Command_01"
@@ -12045,36 +12044,36 @@ end
 					:Do(function(_,data)
 						--hmi side: sending UI.AddCommand response
 						self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-					end)	
-					
+					end)
+
 					EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 					EXPECT_NOTIFICATION("OnHashChange")
-				end	
-				
+				end
+
 		--Send AddCommand "Command_01" + addItem to "Submenu_03" VrSynonyms = command3
-			
+
 				function Test:AddCommand_SameCommandID01_DifferentSubmenu_VrSynonumEnabled()
 					--mobile side: sending AddCommand request
 					local cid = self.mobileSession:SendRPC("AddCommand",
 					{
 						cmdID = 04,
-						menuParams = 	
-						{ 
-							parentID = 33,	
+						menuParams =
+						{
+							parentID = 33,
 							position = 1000,
 							menuName ="Command_01"
 						},
-						vrCommands = 
-						{ 
+						vrCommands =
+						{
 							"command3"
 						}
 					})
 					--hmi side: expect VR.AddCommand request
-					EXPECT_HMICALL("VR.AddCommand", 
-					{ 
+					EXPECT_HMICALL("VR.AddCommand",
+					{
 						cmdID = 04,
 						type = "Command",
-						vrCommands = 
+						vrCommands =
 						{
 							"command3"
 						}
@@ -12082,14 +12081,14 @@ end
 					:Do(function(_,data)
 						--hmi side: sending response
 								self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-					end)	
-					
+					end)
+
 					--hmi side: expect UI.AddCommand request
-					EXPECT_HMICALL("UI.AddCommand", 
-					{ 
+					EXPECT_HMICALL("UI.AddCommand",
+					{
 						cmdID = 04,
-						menuParams = 	
-						{ 
+						menuParams =
+						{
 							parentID = 33,
 							position = 1000,
 							menuName ="Command_01"
@@ -12098,21 +12097,21 @@ end
 					:Do(function(_,data)
 						--hmi side: sending UI.AddCommand response
 						self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-					end)	
-					
+					end)
+
 					EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 					EXPECT_NOTIFICATION("OnHashChange")
-				end		
-			--End 
-		
+				end
+			--End
+
 	end
 	APPLINK_18308()
-	
+
 	--End Test case SequenceCheck.6
 	-------------------------------------------------------------------------------------------
 	--End Test suit SequenceCheck
 
-	
+
 ----------------------------------------------------------------------------------------------
 -----------------------------------------VII TEST BLOCK----------------------------------------
 --------------------------------------Different HMIStatus-------------------------------------
@@ -12121,7 +12120,7 @@ end
 
 	--Begin Test suit DifferentHMIlevel
 	--Description: processing API in different HMILevel
-	
+
 		--Begin Test case DifferentHMIlevel.1
 		--Description: Default values taken from Policy Table
 
@@ -12131,14 +12130,14 @@ end
 				-- SDL doesn't reject AddCommand request when current HMI is FULL.
 				-- SDL doesn't reject AddCommand request when current HMI is LIMITED.
 				-- SDL doesn't reject AddCommand request when current HMI is BACKGROUND.
-			
+
 			--Begin Test case DifferentHMIlevel.1.1
 			--Description: SDL doesn't reject AddCommand request when current HMI is LIMITED.
-			
-			if 
+
+			if
 				Test.isMediaApplication == true or
-				Test.appHMITypes["NAVIGATION"] then 
-				
+				Test.appHMITypes["NAVIGATION"] then
+
 				function Test:ChangeHMIToLimited()
 					--hmi side: sending BasicCommunication.OnAppDeactivated request
 					local cid = self.hmiConnection:SendNotification("BasicCommunication.OnAppDeactivated",
@@ -12146,22 +12145,22 @@ end
 						appID = self.applications["Test Application"],
 						reason = "GENERAL"
 					})
-					
+
 					--mobile side: expect OnHMIStatus notification
 					EXPECT_NOTIFICATION("OnHMIStatus",{hmiLevel = "LIMITED", systemContext = "MAIN", audioStreamingState = "AUDIBLE"})
 				end
-				
+
 				function Test:AddCommand_HMILevelLimited()
 					AddCommand_cmdID(self, 1125, true, "SUCCESS")
-				end			
+				end
 			--End Test case DifferentHMIlevel.1.1
-			
+
 			-----------------------------------------------------------------------------------------
 
 			--Begin Test case DifferentHMIlevel.1.2
 			--Description: SDL doesn't reject AddCommand request when current HMI is BACKGROUND.
-					
-				--Description: Activate second app					
+
+				--Description: Activate second app
 				function Test:Activate_App2()
 					--hmi side: sending SDL.ActivateApp request
 					local RequestId = self.hmiConnection:SendRequest("SDL.ActivateApp", { appID = self.applications["MediaApp2"]})
@@ -12173,7 +12172,7 @@ end
 							if
 								data.result.isSDLAllowed ~= true then
 								--hmi side: sending SDL.GetUserFriendlyMessage request
-								local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", 
+								local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage",
 													{language = "EN-US", messageCodes = {"DataConsent"}})
 
 								--hmi side: expect SDL.GetUserFriendlyMessage response
@@ -12181,7 +12180,7 @@ end
 									:Do(function(_,data)
 
 										--hmi side: send request SDL.OnAllowSDLFunctionality
-										self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality", 
+										self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality",
 											{allowed = true, source = "GUI", device = {id = config.deviceMAC, name = "127.0.0.1"}})
 
 										--hmi side: expect BasicCommunication.ActivateApp request
@@ -12192,17 +12191,17 @@ end
 												self.hmiConnection:SendResponse(data.id,"BasicCommunication.ActivateApp", "SUCCESS", {})
 
 											end)
-										:Times(AnyNumber())										
+										:Times(AnyNumber())
 										:Timeout(11000)
-									end)							
+									end)
 							end
 						end)
-					
+
 					self.mobileSession2:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
 					--mobile side: expect OnHMIStatus notification
 					EXPECT_NOTIFICATION("OnHMIStatus",{hmiLevel = "BACKGROUND", systemContext = "MAIN", audioStreamingState = "NOT_AUDIBLE"})
 				end
-				
+
 				--Description: AddCommand when HMI level BACKGROUND
 					function Test:AddCommand_HMILevelBackground()
 						AddCommand_cmdID(self, 1126, true, "SUCCESS")
@@ -12216,14 +12215,14 @@ end
 						appID = self.applications["Test Application"],
 						reason = "GENERAL"
 					})
-					
+
 					--mobile side: expect OnHMIStatus notification
 					EXPECT_NOTIFICATION("OnHMIStatus",{hmiLevel = "BACKGROUND", systemContext = "MAIN", audioStreamingState = "NOT_AUDIBLE"})
 				end
-				
+
 				function Test:AddCommand_HMILevelBackground()
 					AddCommand_cmdID(self, 1125, true, "SUCCESS")
-				end	
+				end
 
 			end
 			--End Test case DifferentHMIlevel.1.2
@@ -12231,12 +12230,12 @@ end
 	--End Test suit DifferentHMIlevel
 
 
-	
+
 ---------------------------------------------------------------------------------------------------------------------
 ---------------------------VIII ADD COVERAGE TO ATF_AddCmmand(SDLAQ-TC-1375)-----------------------------------------
 -------AddCommand: [RTC 525037] No VR/UI deletecommand request sent when one of them times out (Job-1)---------------
 ---------------------------------------------------------------------------------------------------------------------
---Requirement id in JAMA or JIRA: APPLINK-10501	
+--Requirement id in JAMA or JIRA: APPLINK-10501
 	--SDLAQ-CRS-2928: UI.AddCommand - success, VR.AddCommand - no response
 	--SDLAQ-CRS-2929: VR.AddCommand - success, UI.AddCommand - no response
 	--SDLAQ-CRS-2930: UI.AddCommand - success, VR.AddCommand - error (except of REJECTED)
@@ -12250,38 +12249,38 @@ local function SequenceAddCoverageAPPLINK_10501()
 ----------------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------Common function----------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------
-		
-		--Description: 
+
+		--Description:
 			-- In case VR.AddCommand gets any erroneous response except REJECTED from HMI - SDL must send AddCommand_response(GENERIC_ERROR) to mobile app.
 			-- In case VR.AddCommand gets any REJECTED from HMI - SDL must send AddCommand_response(REJECTED) to mobile app.
 			-- In case SDL sends UI.DeleteCommand to HMI
 		function Test:addCommand_VRErroneousResponseUpdated (vrResultResponse, cmdIDValue)
 			local resultCodeValue
-			if vrResultResponse == "REJECTED" or vrResultResponse == "WARNINGS" then				
+			if vrResultResponse == "REJECTED" or vrResultResponse == "WARNINGS" then
 				resultCodeValue = vrResultResponse
-			else				
+			else
 				resultCodeValue = "GENERIC_ERROR"
 			end
-			
+
 			--mobile side: sending AddCommand request
 				local cid = self.mobileSession:SendRPC("AddCommand",
 					{
 														cmdID = cmdIDValue,
-														menuParams = 	
-														{ 																
+														menuParams =
+														{
 															menuName ="Command"..cmdIDValue
-														}, 
-														vrCommands = 
-														{ 
+														},
+														vrCommands =
+														{
 															"VRCommand"..cmdIDValue
 														}
 													})
 			--hmi side: expect UI.AddCommand request
-			EXPECT_HMICALL("UI.AddCommand", 
-							{ 
+			EXPECT_HMICALL("UI.AddCommand",
+							{
 								cmdID = cmdIDValue,
-								menuParams = 
-								{ 											
+								menuParams =
+								{
 									menuName ="Command"..cmdIDValue
 								}
 							})
@@ -12289,13 +12288,13 @@ local function SequenceAddCoverageAPPLINK_10501()
 				--hmi side: send UI.AddCommand response
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
-			
+
 			--hmi side: expect VR.AddCommand request
-			EXPECT_HMICALL("VR.AddCommand", 
-							{ 
-								cmdID = cmdIDValue,							
+			EXPECT_HMICALL("VR.AddCommand",
+							{
+								cmdID = cmdIDValue,
 								type = "Command",
-								vrCommands = 
+								vrCommands =
 								{
 									"VRCommand"..cmdIDValue
 								}
@@ -12306,7 +12305,7 @@ local function SequenceAddCoverageAPPLINK_10501()
 					self.hmiConnection:SendError(data.id, data.method, vrResultResponse, "Error Messages")
 				end
 			end)
-			
+
 			if vrResultResponse ~= "WARNINGS" then
 				--hmi side: expect UI.DeleteCommand request
 				EXPECT_HMICALL("UI.DeleteCommand", {cmdID = cmdIDValue})
@@ -12315,66 +12314,66 @@ local function SequenceAddCoverageAPPLINK_10501()
 					--hmi side: sending UI.DeleteCommand response
 					self.hmiConnection:SendResponse(data.id,"UI.DeleteCommand", "SUCCESS", {})
 				end)
-			
+
 				--mobile side: expect response
-				EXPECT_RESPONSE(cid, { success = false, resultCode = resultCodeValue })	
+				EXPECT_RESPONSE(cid, { success = false, resultCode = resultCodeValue })
 				:Timeout(12000)
-							
+
 				--mobile side: expect OnHashChange notification is not send to mobile
 				EXPECT_NOTIFICATION("OnHashChange")
 				:Times(0)
 			else
 				--mobile side: expect response
-				EXPECT_RESPONSE(cid, { success = true, resultCode = resultCodeValue })					
-							
+				EXPECT_RESPONSE(cid, { success = true, resultCode = resultCodeValue })
+
 				--mobile side: expect OnHashChange notification
 				EXPECT_NOTIFICATION("OnHashChange")
-				
+
 				commonTestCases:DelayedExp(1000)
-				
+
 			end
 		end
-		
+
 		--------------------------------------------------------------------------------------------------------------
-	
-		--Description: 
+
+		--Description:
 			-- In case UI.AddCommand gets erroneous response except of WARNINGS and UNSUPPORTED_RESOURCE and REJECTED from HMI - SDL must send AddCommand_response(GENERIC_ERROR) to mobile app.
 			-- In case UI.AddCommand gets REJECTED from HMI - SDL must send AddCommand_response(REJECTED) to mobile app.
 			-- In case of WARNINGS or UNSUPPORTED_RESOURCE from HMI, SDL must transfer the resultCode from HMI's response with adding "success: true" to mobile app.
 			-- In case SDL sends VR.DeleteCommand to HMI
 		function Test:addCommand_UIErroneousResponseUpdated (uiResultResponse, cmdIDValue)
 			local resultCodeValue, succcessValue
-			if uiResultResponse == "REJECTED" or uiResultResponse == "WARNINGS" or uiResultResponse == "UNSUPPORTED_RESOURCE" then				
+			if uiResultResponse == "REJECTED" or uiResultResponse == "WARNINGS" or uiResultResponse == "UNSUPPORTED_RESOURCE" then
 				resultCodeValue = uiResultResponse
 				if uiResultResponse ~= "REJECTED" then
 					succcessValue = true
 				else
 					succcessValue = false
 				end
-			else				
+			else
 				resultCodeValue = "GENERIC_ERROR"
 				succcessValue = false
 			end
-			
+
 			--mobile side: sending AddCommand request
 				local cid = self.mobileSession:SendRPC("AddCommand",
 					{
 														cmdID = cmdIDValue,
-														menuParams = 	
-														{ 																
+														menuParams =
+														{
 															menuName ="Command"..cmdIDValue
-														}, 
-														vrCommands = 
-														{ 
+														},
+														vrCommands =
+														{
 															"VRCommand"..cmdIDValue
 														}
 													})
 			--hmi side: expect UI.AddCommand request
-			EXPECT_HMICALL("UI.AddCommand", 
-							{ 
+			EXPECT_HMICALL("UI.AddCommand",
+							{
 								cmdID = cmdIDValue,
-								menuParams = 
-								{ 											
+								menuParams =
+								{
 									menuName ="Command"..cmdIDValue
 								}
 			})
@@ -12384,13 +12383,13 @@ local function SequenceAddCoverageAPPLINK_10501()
 					self.hmiConnection:SendError(data.id, data.method, uiResultResponse, "Error Messages")
 				end
 			end)
-			
+
 			--hmi side: expect VR.AddCommand request
-			EXPECT_HMICALL("VR.AddCommand", 
-							{ 
-								cmdID = cmdIDValue,							
+			EXPECT_HMICALL("VR.AddCommand",
+							{
+								cmdID = cmdIDValue,
 								type = "Command",
-								vrCommands = 
+								vrCommands =
 								{
 									"VRCommand"..cmdIDValue
 								}
@@ -12399,8 +12398,8 @@ local function SequenceAddCoverageAPPLINK_10501()
 				--hmi side: sending VR.AddCommand response
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
-			
-			if uiResultResponse ~= "WARNINGS" and uiResultResponse ~= "UNSUPPORTED_RESOURCE"  then				
+
+			if uiResultResponse ~= "WARNINGS" and uiResultResponse ~= "UNSUPPORTED_RESOURCE"  then
 				--hmi side: expect VR.DeleteCommand request
 				EXPECT_HMICALL("VR.DeleteCommand", {cmdID = cmdIDValue})
 				:Timeout(15000)
@@ -12408,7 +12407,7 @@ local function SequenceAddCoverageAPPLINK_10501()
 					--hmi side: sending VR.DeleteCommand response
 					self.hmiConnection:SendResponse(data.id,"VR.DeleteCommand", "SUCCESS", {})
 				end)
-				
+
 				--mobile side: expect notification
 				EXPECT_NOTIFICATION("OnHashChange")
 				:Times(0)
@@ -12416,44 +12415,44 @@ local function SequenceAddCoverageAPPLINK_10501()
 				--hmi side: expect VR.DeleteCommand request
 				EXPECT_HMICALL("VR.DeleteCommand", {cmdID = cmdIDValue})
 				:Times(0)
-				
+
 				--mobile side: expect notification
 				EXPECT_NOTIFICATION("OnHashChange")
 			end
-			
+
 			--mobile side: expect response
-			EXPECT_RESPONSE(cid, { success = succcessValue, resultCode = resultCodeValue })			
+			EXPECT_RESPONSE(cid, { success = succcessValue, resultCode = resultCodeValue })
 			:Timeout(12000)
-			
+
 			commonTestCases:DelayedExp(1000)
 		end
-	
+
 		-------------------------------------------------------------------------------------------------------------
-		
+
 ---------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------End Common function--------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------------
-	
+
 	--Print new line to separate new test cases group
 	commonFunctions:newTestCasesGroup("-----------------------VIII ADD COVERAGE TO ATF_AddCmmand(SDLAQ-TC-1375)------------------------------")
-	
+
 	local function APPLINK_10501()
 
-		-------------------------------------------------------------------------------------------------------------	
-	
+		-------------------------------------------------------------------------------------------------------------
+
 		-- Description: Activation app
 		commonSteps:ActivationApp( _, "APPLINK_10501_ActivationApp")
 
 		-------------------------------------------------------------------------------------------------------------
-	
+
 		-- Description: UI.AddCommand - success, VR.AddCommand - no response (TIMED_OUT)
 						--JamaID: SDLAQ-CRS-2928
 		function Test:APPLINK_10501_UISuccess_VRTIMED_OUT()
 
 			self:addCommand_VRErroneousResponseUpdated("TIMED_OUT", 2015)
-			
+
 		end
-		
+
 		-------------------------------------------------------------------------------------------------------------
 
 		-- Description: UI.AddCommand - success, VR.AddCommand - no response (TIMED_OUT)
@@ -12461,19 +12460,19 @@ local function SequenceAddCoverageAPPLINK_10501()
 		function Test:APPLINK_10501_VRSuccess_UITIMED_OUT()
 
 			self:addCommand_UIErroneousResponseUpdated("TIMED_OUT", 2016)
-			
+
 		end
-		
-		-------------------------------------------------------------------------------------------------------------		
-		
+
+		-------------------------------------------------------------------------------------------------------------
+
 		-- Description: UI.AddCommand - success, VR.AddCommand - error except REJECTED (GENERIC_ERROR)
 						--JamaID: SDLAQ-CRS-2930
 		function Test:APPLINK_10501_UISuccess_VRGENERIC_ERROR()
 
 			self:addCommand_VRErroneousResponseUpdated("GENERIC_ERROR", 2017)
-			
+
 		end
-		
+
 		-------------------------------------------------------------------------------------------------------------
 
 		-- Description: UI.AddCommand - success, VR.AddCommand - response REJECTED
@@ -12481,19 +12480,19 @@ local function SequenceAddCoverageAPPLINK_10501()
 		function Test:APPLINK_10501_UISuccess_VRREJECTED()
 
 			self:addCommand_VRErroneousResponseUpdated("REJECTED", 2018)
-			
+
 		end
-		
-		-------------------------------------------------------------------------------------------------------------		
-		
+
+		-------------------------------------------------------------------------------------------------------------
+
 		-- Description: VR.AddCommand - success, UI.AddCommand - error except of WARNINGS, UNSUPPORTED_RESOURCE, REJECTED (GENERIC_ERROR)
 						--JamaID: SDLAQ-CRS-2932
 		function Test:APPLINK_10501_VRSuccess_UIGENERIC_ERROR()
 
 			self:addCommand_UIErroneousResponseUpdated("GENERIC_ERROR", 2019)
-			
+
 		end
-		
+
 		-------------------------------------------------------------------------------------------------------------
 
 		-- Description: VR.AddCommand - success, UI.AddCommand - REJECTED
@@ -12501,15 +12500,15 @@ local function SequenceAddCoverageAPPLINK_10501()
 		function Test:APPLINK_10501_VRSuccess_UIREJECTED()
 
 			self:addCommand_UIErroneousResponseUpdated("REJECTED", 2014)
-			
+
 		end
-		
+
 		-------------------------------------------------------------------------------------------------------------
 	end
-	
+
 	--Main to execute test cases
 	APPLINK_10501()
-	
+
 end
 
 SequenceAddCoverageAPPLINK_10501()

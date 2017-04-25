@@ -6,6 +6,8 @@ local mobile_session = require('mobile_session')
 local config = require('config')
 local json  = require('json4lua/json/json')
 
+config.deviceMAC = "12ca17b49af2289436f303e0166030a21e525d266e209267433801a8fd4071a0"
+
 ---------------------------------------------------------------------------------------------
 -----------------------------Required Shared Libraries---------------------------------------
 ---------------------------------------------------------------------------------------------
@@ -24,7 +26,7 @@ local arraySoftButtonsParameter = require('user_modules/shared_testcases/testCas
 ---------------------------------------------------------------------------------------------
 APIName = "ScrollableMessage" -- set request name
 APIId = 25
-strMaxLengthFileName255 = string.rep("a", 251)  .. ".png" -- set max length file name
+local strMaxLengthFileName255 = string.rep("a", 251)  .. ".png" -- set max length file name
 
 local storagePath = config.pathToSDL .. "storage/" .. config.application1.registerAppInterfaceParams.appID .. "_" .. config.deviceMAC .. "/"
 
@@ -46,7 +48,7 @@ end
 
 
 --Delayed expectation
-function DelayedExp(time)
+local function DelayedExp(time)
   local event = events.Event()
   event.matches = function(self, e) return self == e end
   EXPECT_EVENT(event, "Delayed event")
@@ -70,7 +72,7 @@ function Test:createRequest()
 
 	return 	{
 				scrollableMessageBody = "a",
-				timeout = 10000
+				timeout = 1000
 			}
 
 
@@ -1154,7 +1156,7 @@ local function SpecialRequestChecks()
                                                 text = "",
 						image =
                                                       {
-                                                         value = "icon.png",
+                                                         value = storagePath .. "icon.png",
                                                          imageType = "DYNAMIC"
                                                       },
 						type = "BOTH",
@@ -1330,7 +1332,7 @@ local function SpecialRequestChecks()
 						softButtonID = 1,
                                                 image =
                                                       {
-                                                         value = "icon.png",
+                                                         value = storagePath .. "icon.png",
                                                          imageType = "DYNAMIC"
                                                       },
 						type = "IMAGE",
@@ -1578,7 +1580,8 @@ local function verify_resultCode_parameter()
 
 		--mobile side: expect the response
 		-- TODO update after resolving APPLINK-14765 EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info  = "Invalid message received from vehicle"})
-		EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
+		EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "Invalid message received from vehicle" })
+		-- EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 
 	end
 	-----------------------------------------------------------------------------------------
@@ -1622,7 +1625,8 @@ local function verify_resultCode_parameter()
 
 		--mobile side: expect the response
 		-- TODO update after resolving APPLINK-14765 EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info  = "Invalid message received from vehicle"})
-		EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
+		EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "Invalid message received from vehicle" })
+		-- EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 
 	end
 	-----------------------------------------------------------------------------------------
@@ -1638,7 +1642,7 @@ local function verify_resultCode_parameter()
 		{resultCode = "GENERIC_ERROR", success =  false},
 		{resultCode = "DISALLOWED", success =  false},
 		{resultCode = "ABORTED", success =  false},
-		{resultCode = "CHAR_LIMIT_EXCEEDED", success =  false},
+		{resultCode = "CHAR_LIMIT_EXCEEDED", success =  true},
 		{resultCode = "UNSUPPORTED_RESOURCE", success =  true}
 	}
 
@@ -1782,7 +1786,8 @@ local function verify_resultCode_parameter()
 
 			--mobile side: expect the response
 			-- TODO update after resolving APPLINK-14765 EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info  = "Invalid message received from vehicle"})
-			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
+			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info  = "Invalid message received from vehicle"})
+			-- EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 
 		end
 		-----------------------------------------------------------------------------------------
@@ -1825,7 +1830,8 @@ local function verify_resultCode_parameter()
 
 			--mobile side: expect the response
 			-- TODO update after resolving APPLINK-14765 EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info  = "Invalid message received from vehicle"})
-			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
+			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info  = "Invalid message received from vehicle"})
+			-- EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 
 
 		end
@@ -2153,8 +2159,8 @@ local function verify_info_parameter()
 
 		--mobile side: expect the response
 		-- TODO: Update after resolving APPLINK-14765
-		-- EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
-		EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA", info = "Received invalid data on HMI response"})
+		EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
+		-- EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA", info = "Received invalid data on HMI response"})
 
 	end
 	-----------------------------------------------------------------------------------------
@@ -2491,14 +2497,13 @@ local function verify_correlationID_parameter()
 
 
 		--hmi side: expect the request
-		UIParams = self:createUIParameters(Request)
+		local UIParams = self:createUIParameters(Request)
 
 		EXPECT_HMICALL("UI.ScrollableMessage", UIParams)
-		:Do(function(_,data)
+		:Do(function()
 
 			 --HMI sends UI.OnSystemContext
 			self.hmiConnection:SendNotification("UI.OnSystemContext",{ appID = self.applications["Test Application"], systemContext = "HMI_OBSCURED" })
-			scrollableMessageId = data.id
 
 			local function scrollableMessageResponse()
 
@@ -2532,16 +2537,15 @@ local function verify_correlationID_parameter()
 
 		--mobile side: sending the request
 		local Request = self:createRequest()
-		local cid = self.mobileSession:SendRPC("Speak", Request)
-
+		local cid = self.mobileSession:SendRPC(APIName, Request)
 
 		--hmi side: expect the request
-		EXPECT_HMICALL("UI.ScrollableMessage", Request)
-		:Do(function(_,data)
+		local UIParams = self:createUIParameters(Request)
+		EXPECT_HMICALL("UI.ScrollableMessage", UIParams)
+		:Do(function()
 
 			 --HMI sends UI.OnSystemContext
 			self.hmiConnection:SendNotification("UI.OnSystemContext",{ appID = self.applications["Test Application"], systemContext = "HMI_OBSCURED" })
-			scrollableMessageId = data.id
 
 			local function scrollableMessageResponse()
 
@@ -2581,13 +2585,11 @@ local function verify_correlationID_parameter()
 
 
 		--hmi side: expect the request
-		UIParams = self:createUIParameters(Request)
-
+		local UIParams = self:createUIParameters(Request)
 		EXPECT_HMICALL("UI.ScrollableMessage", UIParams)
-		:Do(function(_,data)
+		:Do(function()
 			 --HMI sends UI.OnSystemContext
 			self.hmiConnection:SendNotification("UI.OnSystemContext",{ appID = self.applications["Test Application"], systemContext = "HMI_OBSCURED" })
-			scrollableMessageId = data.id
 
 			local function scrollableMessageResponse()
 
@@ -2621,15 +2623,15 @@ local function verify_correlationID_parameter()
 
 		--mobile side: sending the request
 		local Request = self:createRequest()
-		local cid = self.mobileSession:SendRPC("Speak", Request)
+		local cid = self.mobileSession:SendRPC(APIName, Request)
 
 
 		--hmi side: expect the request
-		EXPECT_HMICALL("UI.ScrollableMessage", Request)
-		:Do(function(_,data)
+		local UIParams = self:createUIParameters(Request)
+		EXPECT_HMICALL("UI.ScrollableMessage", UIParams)
+		:Do(function()
 			 --HMI sends UI.OnSystemContext
 			self.hmiConnection:SendNotification("UI.OnSystemContext",{ appID = self.applications["Test Application"], systemContext = "HMI_OBSCURED" })
-			scrollableMessageId = data.id
 
 			local function scrollableMessageResponse()
 
@@ -2669,13 +2671,13 @@ local function verify_correlationID_parameter()
 
 
 		--hmi side: expect the request
-		UIParams = self:createUIParameters(Request)
+		local UIParams = self:createUIParameters(Request)
 
 		EXPECT_HMICALL("UI.ScrollableMessage", UIParams)
 		:Do(function(_,data)
 			--HMI sends UI.OnSystemContext
 			self.hmiConnection:SendNotification("UI.OnSystemContext",{ appID = self.applications["Test Application"], systemContext = "HMI_OBSCURED" })
-			scrollableMessageId = data.id
+			local scrollableMessageId = data.id
 
 			local function scrollableMessageResponse()
 
@@ -2714,13 +2716,13 @@ local function verify_correlationID_parameter()
 
 
 		--hmi side: expect the request
-		UIParams = self:createUIParameters(Request)
+		local UIParams = self:createUIParameters(Request)
 
 		EXPECT_HMICALL("UI.ScrollableMessage", UIParams)
 		:Do(function(_,data)
 			--HMI sends UI.OnSystemContext
 			self.hmiConnection:SendNotification("UI.OnSystemContext",{ appID = self.applications["Test Application"], systemContext = "HMI_OBSCURED" })
-			scrollableMessageId = data.id
+			local scrollableMessageId = data.id
 
 			local function scrollableMessageResponse()
 
@@ -2759,13 +2761,12 @@ local function verify_correlationID_parameter()
 
 
 		--hmi side: expect the request
-		UIParams = self:createUIParameters(Request)
+		local UIParams = self:createUIParameters(Request)
 
 		EXPECT_HMICALL("UI.ScrollableMessage", UIParams)
 		:Do(function(_,data)
 			--HMI sends UI.OnSystemContext
 			self.hmiConnection:SendNotification("UI.OnSystemContext",{ appID = self.applications["Test Application"], systemContext = "HMI_OBSCURED" })
-			scrollableMessageId = data.id
 
 			local function scrollableMessageResponse()
 				--hmi side: sending the response
@@ -2802,13 +2803,12 @@ local function verify_correlationID_parameter()
 
 
 		--hmi side: expect the request
-		UIParams = self:createUIParameters(Request)
+		local UIParams = self:createUIParameters(Request)
 
 		EXPECT_HMICALL("UI.ScrollableMessage", UIParams)
 		:Do(function(_,data)
 			--HMI sends UI.OnSystemContext
 			self.hmiConnection:SendNotification("UI.OnSystemContext",{ appID = self.applications["Test Application"], systemContext = "HMI_OBSCURED" })
-			scrollableMessageId = data.id
 
 			local function scrollableMessageResponse()
 				--hmi side: sending the response
@@ -2846,13 +2846,12 @@ local function verify_correlationID_parameter()
 
 
 		--hmi side: expect the request
-		UIParams = self:createUIParameters(Request)
+		local UIParams = self:createUIParameters(Request)
 
 		EXPECT_HMICALL("UI.ScrollableMessage", UIParams)
-		:Do(function(_,data)
+		:Do(function()
 			--HMI sends UI.OnSystemContext
 			self.hmiConnection:SendNotification("UI.OnSystemContext",{ appID = self.applications["Test Application"], systemContext = "HMI_OBSCURED" })
-			scrollableMessageId = data.id
 
 			local function scrollableMessageResponse()
 				--hmi side: sending the response
@@ -2892,13 +2891,12 @@ local function verify_correlationID_parameter()
 
 
 		--hmi side: expect the request
-		UIParams = self:createUIParameters(Request)
+		local UIParams = self:createUIParameters(Request)
 
 		EXPECT_HMICALL("UI.ScrollableMessage", UIParams)
-		:Do(function(_,data)
+		:Do(function()
 			--HMI sends UI.OnSystemContext
 			self.hmiConnection:SendNotification("UI.OnSystemContext",{ appID = self.applications["Test Application"], systemContext = "HMI_OBSCURED" })
-			scrollableMessageId = data.id
 
 			local function scrollableMessageResponse()
 				--hmi side: sending the response
@@ -3050,8 +3048,8 @@ local function SpecialResponseChecks()
 
 			--mobile side: expect response
 			-- TODO: Update after APPLINK-14765
-			-- EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR",  info = "Invalid message received from vehicle"})
-			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
+			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR",  info = "Invalid message received from vehicle"})
+			-- EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(13000)
 
 		end
@@ -3791,7 +3789,7 @@ local function SequenceChecks()
 		function Test:ScrollableMessage_OnResetTimeout()
 
 			--mobile side: sending ScrollableMessage request
-			local cid = self.mobileSession:SendRPC("ScrollableMessage", {scrollableMessageBody = "abc"})
+			local cid = self.mobileSession:SendRPC("ScrollableMessage", {scrollableMessageBody = "abc", timeout = 20000})
 
 
 
@@ -3801,7 +3799,7 @@ local function SequenceChecks()
 
 				--HMI sends UI.OnSystemContext
 				self.hmiConnection:SendNotification("UI.OnSystemContext",{ appID = self.applications["Test Application"], systemContext = "HMI_OBSCURED" })
-				scrollableMessageId = data.id
+				local scrollableMessageId = data.id
 
 
 				local function SendOnResetTimeout()
@@ -3824,23 +3822,20 @@ local function SequenceChecks()
 					self.hmiConnection:SendNotification("UI.OnSystemContext",{ appID = self.applications["Test Application"], systemContext = "MAIN" })
 				end
 				--RUN_AFTER(scrollableMessageResponse, 19000)
-				RUN_AFTER(scrollableMessageResponse, 30000)
+				RUN_AFTER(scrollableMessageResponse, 20000)
 
 
 			end)
 
 
 			--mobile side: expect OnHMIStatus notification
-			EXPECT_NOTIFICATION("OnHMIStatus",
-					{systemContext = "HMI_OBSCURED", hmiLevel = "FULL", audioStreamingState = audibleState},
-					{systemContext = "MAIN", hmiLevel = "FULL", audioStreamingState = audibleState}
-			)
+			EXPECT_NOTIFICATION("OnHMIStatus", { systemContext = "HMI_OBSCURED", hmiLevel = "FULL"}, {systemContext = "MAIN", hmiLevel = "FULL" })
 			:Times(2)
-			:Timeout(21000)
+			:Timeout(22000)
 
 			--mobile side: expect the response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(21000)
+			:Timeout(22000)
 
 		end
 	--End Test case SequenceCheck.2
@@ -4221,8 +4216,8 @@ local function SequenceChecks()
 
 		--Verification criteria: Checking long click on IMAGE soft button
 
-          function Test:SM_IMAGESoftButtons_LongClick()
-			RequestParams =
+      function Test:SM_IMAGESoftButtons_LongClick()
+			local RequestParams =
 			{
 				scrollableMessageBody = "a",
 				softButtons =
@@ -4264,7 +4259,7 @@ local function SequenceChecks()
 
 				--HMI sends UI.OnSystemContext
 				self.hmiConnection:SendNotification("UI.OnSystemContext",{ appID = self.applications["Test Application"], systemContext = "HMI_OBSCURED" })
-				scrollableMessageId = data.id
+				local scrollableMessageId = data.id
 
 				--Long press button "action" (id=2)
 				local function ButtonEventPress()
@@ -4290,24 +4285,21 @@ local function SequenceChecks()
 
 			end)
 
-
-
 			--mobile side: OnButtonEvent notifications
 			EXPECT_NOTIFICATION("OnButtonEvent",
-			{buttonName = "CUSTOM_BUTTON", buttonEventMode = "BUTTONDOWN", customButtonID = 2},
-			{buttonName = "CUSTOM_BUTTON", buttonEventMode = "BUTTONUP", customButtonID = 2})
+				{ buttonName = "CUSTOM_BUTTON", buttonEventMode = "BUTTONDOWN", customButtonID = 2 },
+				{ buttonName = "CUSTOM_BUTTON", buttonEventMode = "BUTTONUP", customButtonID = 2 })
 			:Times(2)
 
 			--mobile side: OnButtonPress notifications
 			EXPECT_NOTIFICATION("OnButtonPress",
-			{buttonName = "CUSTOM_BUTTON", buttonPressMode = "LONG", customButtonID = 3})
+				{ buttonName = "CUSTOM_BUTTON", buttonPressMode = "LONG", customButtonID = 2})
 			:Times(1)
-
 
 			--mobile side: expect OnHMIStatus notification
 			EXPECT_NOTIFICATION("OnHMIStatus",
-					{systemContext = "HMI_OBSCURED", hmiLevel = "FULL", audioStreamingState = audibleState},
-					{systemContext = "MAIN", hmiLevel = "FULL", audioStreamingState = audibleState}
+				{ systemContext = "HMI_OBSCURED", hmiLevel = "FULL"},
+				{ systemContext = "MAIN", hmiLevel = "FULL"}
 			)
 			:Times(2)
 
@@ -4382,7 +4374,7 @@ local function SequenceChecks()
 		--Verification criteria: Checking short click on BOTH soft button
 
            function Test:SM_SoftButtonTypeBOTH_ShortClick()
-			RequestParams =
+			local RequestParams =
 			{
 				scrollableMessageBody = "a",
 				softButtons =
@@ -4439,7 +4431,7 @@ local function SequenceChecks()
 
 				--HMI sends UI.OnSystemContext
 				self.hmiConnection:SendNotification("UI.OnSystemContext",{ appID = self.applications["Test Application"], systemContext = "HMI_OBSCURED" })
-				scrollableMessageId = data.id
+				local scrollableMessageId = data.id
 
 				--Press button "Third" (id=3)
 				local function ButtonEventPress()
@@ -4503,7 +4495,7 @@ local function SequenceChecks()
 
 		--Begin Test case SequenceCheck.10.1
 
-                function Test:SM_SoftButtonTypeBOTHAndTextUndefined()
+    function Test:SM_SoftButtonTypeBOTHAndTextUndefined()
 
 			--mobile side: sending the request
 			local Request =
@@ -4545,7 +4537,7 @@ local function SequenceChecks()
 
 	    --Begin Test case SequenceCheck.10.2
 
-                function Test:SM_SoftButtonTypeBOTHAndImageUndefined()
+      function Test:SM_SoftButtonTypeBOTHAndImageUndefined()
 
 			--mobile side: sending the request
 			local Request =
@@ -4771,27 +4763,28 @@ local function SequenceChecks()
 
 		--Verification criteria: Check that On.ButtonEvent(CUSTOM_BUTTON) notification is not transferred from HMI to mobile app by SDL if CUSTOM_BUTTON is not subscribed
 
-     		 function Test:UnsubscribeButton_CUSTOM_BUTTON_SUCCESS()
+ --     		 function Test:UnsubscribeButton_CUSTOM_BUTTON_SUCCESS()
 
-		--mobile side: send UnsubscribeButton request
-		local cid = self.mobileSession:SendRPC("UnsubscribeButton",
-			{
-				buttonName = "CUSTOM_BUTTON"
-			})
+	-- 	--mobile side: send UnsubscribeButton request
+	-- 	local cid = self.mobileSession:SendRPC("UnsubscribeButton",
+	-- 		{
+	-- 			buttonName = "CUSTOM_BUTTON"
+	-- 		})
 
-			--hmi side: expect OnButtonSubscription notification
-			EXPECT_HMINOTIFICATION("Buttons.OnButtonSubscription", {name = "CUSTOM_BUTTON", isSubscribed = false})
-			:Timeout(5000)
+	-- 		--hmi side: expect OnButtonSubscription notification
+	-- 		EXPECT_HMINOTIFICATION("Buttons.OnButtonSubscription", {name = "CUSTOM_BUTTON", isSubscribed = false})
+	-- 		:Timeout(5000)
 
-			-- Mobile side: expects SubscribeButton response
-			-- Mobile side: expects EXPECT_NOTIFICATION("OnHashChange") if SUCCESS
-			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-	                --:Timeout(13000)
+	-- 		-- Mobile side: expects SubscribeButton response
+	-- 		-- Mobile side: expects EXPECT_NOTIFICATION("OnHashChange") if SUCCESS
+	-- 		EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
+	--                 --:Timeout(13000)
 
-	end
+	-- end
 
-        	   function Test:SM_SoftButton_AfterUnsubscribe()
-			RequestParams =
+    function Test:SM_SoftButton_AfterUnsubscribe()
+
+			local RequestParams =
 			{
 				scrollableMessageBody = "a",
 				softButtons =
@@ -4799,16 +4792,14 @@ local function SequenceChecks()
 					{
 						softButtonID = 1,
 						type = "BOTH",
-                                                text = "First",
-                                                image =
-				                 {
+            text = "First",
+            image = {
 							value = "action.png",
 							imageType = "DYNAMIC"
-						  },
+						},
 						isHighlighted = true,
-                                                systemAction = "DEFAULT_ACTION"
+            systemAction = "DEFAULT_ACTION"
 					}
-
 				}
 			}
 
@@ -4823,7 +4814,7 @@ local function SequenceChecks()
 
 				--HMI sends UI.OnSystemContext
 				self.hmiConnection:SendNotification("UI.OnSystemContext",{ appID = self.applications["Test Application"], systemContext = "HMI_OBSCURED" })
-				scrollableMessageId = data.id
+				local scrollableMessageId = data.id
 
 				--Long press button "First" (id=1)
 				local function ButtonEventPress()
@@ -4849,22 +4840,19 @@ local function SequenceChecks()
 
 			end)
 
-
-			--mobile side: OnButtonEvent notifications
-			EXPECT_NOTIFICATION("OnButtonEvent",
-			{buttonName = "CUSTOM_BUTTON", buttonEventMode = "BUTTONDOWN", customButtonID = 1},
-			{buttonName = "CUSTOM_BUTTON", buttonEventMode = "BUTTONUP", customButtonID = 1})
-			:Times(0)
-
-			--mobile side: OnButtonPress notifications
-			EXPECT_NOTIFICATION("OnButtonPress",
-			{buttonName = "CUSTOM_BUTTON", buttonPressMode = "LONG", customButtonID = 1})
-			:Times(0)
-
-
-
 			--mobile side: expect the response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "ABORTED" })
+			:Do(function()
+					--mobile side: OnButtonEvent notifications
+					EXPECT_NOTIFICATION("OnButtonEvent",
+						{ buttonName = "CUSTOM_BUTTON", buttonEventMode = "BUTTONDOWN", customButtonID = 1 },
+						{ buttonName = "CUSTOM_BUTTON", buttonEventMode = "BUTTONUP", customButtonID = 1 })
+					:Times(0)
+					--mobile side: OnButtonPress notifications
+					EXPECT_NOTIFICATION("OnButtonPress",
+						{ buttonName = "CUSTOM_BUTTON", buttonPressMode = "LONG", customButtonID = 1 })
+					:Times(0)
+				end)
 
 		end
 

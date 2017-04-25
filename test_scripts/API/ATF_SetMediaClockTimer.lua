@@ -2,6 +2,7 @@
 --APPLINK-13417: SDL writes ERROR in log and ignore all responses after HMI send UI.SetMediaClockTimer response with fake parameter
 --ToDO: will be updated according to APPLINK-14765
 ---------------------------------------------------------------------------------------------
+config.deviceMAC = "12ca17b49af2289436f303e0166030a21e525d266e209267433801a8fd4071a0"
 
 Test = require('connecttest')
 require('cardinalities')
@@ -80,7 +81,7 @@ end
 								:Do(function(_,data)
 									self.hmiConnection:SendResponse(data.id,"BasicCommunication.ActivateApp", "SUCCESS", {})
 								end)
-								:Times(2)
+								:Times(1)
 						end)
 
 				end
@@ -3278,6 +3279,7 @@ end
 			  	self.mobileSession2 = mobile_session.MobileSession(
 			    self,
 			    self.mobileConnection)
+			    self.mobileSession2:StartService(7)
 			end
 
 
@@ -3448,8 +3450,9 @@ end
 
 					:Timeout(iTimeout)
 					:Do(function(_,data)
-						--hmi side: sending UI.SetMediaClockTimer response	--self.hmiConnection:Send('{"jsonrpc":"2.0","id":'..tostring(data.id)..',"result":{"code":0,"method":"UI.SetMediaClockTimer"}}')
-						self.hmiConnection:Send('{"jsonrpc":"2.0","id":'..tostring(data.id)..',"result":{"code":0}, "method":"UI.SetMediaClockTimer"}')
+						--hmi side: sending UI.SetMediaClockTimer response
+						-- self.hmiConnection:Send('{"jsonrpc":"2.0","id":'..tostring(data.id)..',"result":{"code":0,"method":"UI.SetMediaClockTimer"}}')
+						self.hmiConnection:Send('{"jsonrpc":"2.0","id":'..tostring(data.id)..',"result":{"method":"UI.SetMediaClockTimer"}}')
 
 
 					end)

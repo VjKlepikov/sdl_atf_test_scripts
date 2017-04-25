@@ -28,10 +28,10 @@ common_steps:PreconditionSteps("Precondition",7)
 
 -----------------------------------------------Steps------------------------------------------
 function Test:Verify_App_Change_To_BACKGROUND_Incase_HmiLevel_Is_FULL_And_DeactiveHmi_Is_True()
-  self.hmiConnection:SendNotification("BasicCommunication.OnEventChanged
-	    isActive= true, eventName="DEACTIVATE_HMI"})
+  self.hmiConnection:SendNotification("BasicCommunication.OnEventChanged",
+    { isActive = true, eventName="DEACTIVATE_HMI" })
   self.mobileSession:ExpectNotification("OnHMIStatus",
-	    {hmiLevel="BACKGROUND", audioStreamingState="NOT_AUDIBLE", systemContext = "MAIN"})
+	  { hmiLevel="BACKGROUND", audioStreamingState="NOT_AUDIBLE", systemContext = "MAIN" })
 end
 
 -------------------------------------------Postcondition-------------------------------------
