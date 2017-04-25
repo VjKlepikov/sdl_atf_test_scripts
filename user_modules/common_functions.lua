@@ -1,12 +1,12 @@
 -- This script contains common functions that are used in many script.
--- How to use: CommonFunctions:IsFileExist(path to file)
+-- How to use: common_functions:IsFileExist(path to file)
 --------------------------------------------------------------------------------
-local CommonFunctions = {}
+local common_functions = {}
 -- COMMON FUNCTIONS FOR FILE AND FOLDER
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-function CommonFunctions:DeleteLogsFileAndPolicyTable(DeleteLogsFlags)
-  CommonFunctions:DeletePolicyTable()
+function common_functions:DeleteLogsFileAndPolicyTable(DeleteLogsFlags)
+  common_functions:DeletePolicyTable()
   DeleteLogsFlags = DeleteLogsFlags or true
   if DeleteLogsFlags then
     --Delete app_info.dat and log files
@@ -14,30 +14,30 @@ function CommonFunctions:DeleteLogsFileAndPolicyTable(DeleteLogsFlags)
   end
 end
 
-function CommonFunctions:DeletePolicyTable()
-  CommonFunctions:CheckSdlPath()
-  local policy_file = config.pathToSDL .. CommonFunctions:GetValueFromIniFile("AppStorageFolder") .. "/policy.sqlite"
-  if CommonFunctions:IsFileExist(policy_file) then
+function common_functions:DeletePolicyTable()
+  common_functions:CheckSdlPath()
+  local policy_file = config.pathToSDL .. common_functions:GetValueFromIniFile("AppStorageFolder") .. "/policy.sqlite"
+  if common_functions:IsFileExist(policy_file) then
     os.remove(policy_file)
   end
   policy_file = config.pathToSDL .. "policy.sqlite"
-  if CommonFunctions:IsFileExist(policy_file) then
+  if common_functions:IsFileExist(policy_file) then
     os.remove(policy_file)
   end
 end
 
-function CommonFunctions:DeleteLogsFiles()
-  CommonFunctions:CheckSdlPath()
+function common_functions:DeleteLogsFiles()
+  common_functions:CheckSdlPath()
   if self:IsFileExist(config.pathToSDL .. "app_info.dat") then
     os.remove(config.pathToSDL .. "app_info.dat")
   end
-  os.execute("rm -f " .. config.pathToSDL .. "*.log")
+  os.remove(config.pathToSDL .. "*.log")
 end
 
 -- Check file existence
 -- @param file_name:
 --------------------------------------------------------------------------------
-function CommonFunctions:IsFileExist(file_name)
+function common_functions:IsFileExist(file_name)
   local f=io.open(file_name,"r")
 
   if f ~= nil then
@@ -49,7 +49,7 @@ function CommonFunctions:IsFileExist(file_name)
 end
 
 -- Check directory existence
-function CommonFunctions:IsDirectoryExist(DirectoryPath)
+function common_functions:IsDirectoryExist(DirectoryPath)
   local returnValue
   local Command = assert( io.popen( "[ -d " .. tostring(DirectoryPath) .. " ] && echo \"Exist\" || echo \"NotExist\"" , 'r'))
   local CommandResult = tostring(Command:read( '*l' ))
@@ -58,14 +58,14 @@ function CommonFunctions:IsDirectoryExist(DirectoryPath)
   elseif CommandResult == "Exist" then
     returnValue = true
   else
-    CommonFunctions:userPrint(31," Some unexpected result in Directory_exist function, CommandResult = " .. tostring(CommandResult))
+    common_functions:userPrint(31," Some unexpected result in Directory_exist function, CommandResult = " .. tostring(CommandResult))
     returnValue = false
   end
   return returnValue
 end
 
 -- Find FindExpression in .ini file and replace matched string by parameterName = ValueToUpdate
-function CommonFunctions:SetValuesInIniFile(FindExpression, parameterName, ValueToUpdate )
+function common_functions:SetValuesInIniFile(FindExpression, parameterName, ValueToUpdate )
   local SDLini = config.pathToSDL .. "smartDeviceLink.ini"
 
   f = assert(io.open(SDLini, "r"))
@@ -88,7 +88,7 @@ function CommonFunctions:SetValuesInIniFile(FindExpression, parameterName, Value
       f = assert(io.open(SDLini, "w"))
       f:write(fileContentUpdated)
     else
-      CommonFunctions:userPrint(31, "Finding of '" .. tostring(parameterName) .. " = value' is failed. Expect string finding and replacing the value to " .. tostring(ValueToUpdate))
+      common_functions:userPrint(31, "Finding of '" .. tostring(parameterName) .. " = value' is failed. Expect string finding and replacing the value to " .. tostring(ValueToUpdate))
     end
     f:close()
   end
@@ -97,12 +97,12 @@ end
 --------------------------------------------------------------------------------
 -- Update PendingRequestsAmount in .ini file to test TOO_MANY_PENDING_REQUESTS resultCode
 --------------------------------------------------------------------------------
-function CommonFunctions:SetValuesInIniFile_PendingRequestsAmount(ValueToUpdate)
-  CommonFunctions:SetValuesInIniFile("%p?PendingRequestsAmount%s?=%s-[%d]-%s-\n", "PendingRequestsAmount", ValueToUpdate)
+function common_functions:SetValuesInIniFile_PendingRequestsAmount(ValueToUpdate)
+  common_functions:SetValuesInIniFile("%p?PendingRequestsAmount%s?=%s-[%d]-%s-\n", "PendingRequestsAmount", ValueToUpdate)
 end
 
 -- Get value of parameter in "smartDeviceLink.ini"
-function CommonFunctions:GetValueFromIniFile(parameter_name)
+function common_functions:GetValueFromIniFile(parameter_name)
   find_result = string.find (config.pathToSDL, '.$')
   if string.sub(config.pathToSDL,find_result) ~= "/" then
     config.pathToSDL = config.pathToSDL..tostring("/")
@@ -119,13 +119,13 @@ function CommonFunctions:GetValueFromIniFile(parameter_name)
   end
   file:close()
   if value == "" then
-    CommonFunctions:PrintError(" smartDeviceLink.ini does not have parameter name: " .. tostring(parameter_name))
+    common_functions:PrintError(" smartDeviceLink.ini does not have parameter name: " .. tostring(parameter_name))
   end
   return value
 end
 
 -- Replace a string in "smartDeviceLink.ini" by other string
-function CommonFunctions:ReplaceStringInIniFile(originalString, replacedString)
+function common_functions:ReplaceStringInIniFile(originalString, replacedString)
   local iniFilePath = config.pathToSDL .. "smartDeviceLink.ini"
   local iniFile = io.open(iniFilePath, "r")
   sContent = ""
@@ -146,7 +146,7 @@ function CommonFunctions:ReplaceStringInIniFile(originalString, replacedString)
 end
 
 -- function to update config.lua
-function CommonFunctions:UpdateConfigFile(paramName, valueToSet)
+function common_functions:UpdateConfigFile(paramName, valueToSet)
   local PathToConfig = "./modules/config.lua"
   f = assert(io.open("./modules/config.lua", "r"))
   fileContent = f:read("*all")
@@ -157,7 +157,7 @@ function CommonFunctions:UpdateConfigFile(paramName, valueToSet)
   end
   StringToReplace = paramName .. " = ".. tostring(valueToSet)
   if not fileContentTextFields then
-    CommonFunctions:PrintError(paramName .. " is not found in config.lua")
+    common_functions:PrintError(paramName .. " is not found in config.lua")
   else
     fileContentUpdated = string.gsub(fileContent, fileContentTextFields, StringToReplace)
     f = assert(io.open(PathToConfig, "w"))
@@ -171,7 +171,7 @@ end
 -- Make reserve copy of file (FileName) in /bin folder
 -- @param file_name: file name will be backed up
 --------------------------------------------------------------------------------
-function CommonFunctions:BackupFile(file_name)
+function common_functions:BackupFile(file_name)
   os.execute(" cp " .. config.pathToSDL .. file_name .. " " .. config.pathToSDL .. file_name .. "_origin" )
 end
 --------------------------------------------------------------------------------
@@ -179,7 +179,7 @@ end
 -- @param file_name: file name will be backed up
 -- @param is_removed_backed_up_file: true: remove backed up file, otherwise, does not remove.
 --------------------------------------------------------------------------------
-function CommonFunctions:RestoreFile(file_name, is_removed_backed_up_file)
+function common_functions:RestoreFile(file_name, is_removed_backed_up_file)
   os.execute(" cp " .. config.pathToSDL .. file_name .. "_origin " .. config.pathToSDL .. file_name )
   if is_removed_backed_up_file then
     os.execute( " rm -f " .. config.pathToSDL .. file_name .. "_origin" )
@@ -192,7 +192,7 @@ end
 -- @param parent_item: it will be added new items in added_json_items
 -- @param added_json_items: it is a table contains items to be added to json file
 --------------------------------------------------------------------------------
-function CommonFunctions:AddItemsIntoJsonFile(json_file, parent_item, added_json_items)
+function common_functions:AddItemsIntoJsonFile(json_file, parent_item, added_json_items)
   local match_result = "null"
   local temp_replace_value = "\"Temporary_Text\""
   local file = io.open(json_file, "r")
@@ -229,16 +229,16 @@ end
 -- @param path_to_parameter: full path of parameter
 -- Example: path for Location1 parameter: {"policy", functional_groupings, "Location1"}
 --------------------------------------------------------------------------------
-function CommonFunctions:GetParameterValueInJsonFile(json_file, path_to_parameter)
+function common_functions:GetParameterValueInJsonFile(json_file, path_to_parameter)
   local file = io.open(json_file, "r")
   if not file then
-    CommonFunctions:PrintError("Open " .. json_file .. " unsuccessfully")
+    common_functions:PrintError("Open " .. json_file .. " unsuccessfully")
     return nil
   end
   local json_data = file:read("*all")
   file:close()
   if json_data == "" then
-    CommonFunctions:PrintError("There is no data in " .. json_file .. " file")
+    common_functions:PrintError("There is no data in " .. json_file .. " file")
     return nil
   end
   local json = require("modules/json")
@@ -256,7 +256,7 @@ end
 -- @param parent_item: it will be remove items
 -- @param removed_items: it is a array of items will be removed
 --------------------------------------------------------------------------------
-function CommonFunctions:RemoveItemsFromJsonFile(json_file, parent_item, removed_items)
+function common_functions:RemoveItemsFromJsonFile(json_file, parent_item, removed_items)
   local match_result = "null"
   local temp_replace_value = "\"Temporary_Text\""
   local file = io.open(json_file, "r")
@@ -288,9 +288,9 @@ end
 -- @param json_file: file name of a JSON file
 -- @param parent_item: contains the value want to get
 --------------------------------------------------------------------------------
-function CommonFunctions:GetItemsFromJsonFile(json_file, parent_item)
+function common_functions:GetItemsFromJsonFile(json_file, parent_item)
   if not self:IsFileExist(json_file) then
-    CommonFunctions:PrintError("File is not existed")
+    common_functions:PrintError("File is not existed")
     return
   end
   local file = io.open(json_file, "r")
@@ -300,7 +300,7 @@ function CommonFunctions:GetItemsFromJsonFile(json_file, parent_item)
   local data = json.decode(json_data)
   local value = data
   for i = 1, #parent_item do
-    if value[parent_item[i]] == nil then
+    if not value[parent_item[i]] then
       return nil
     end
     value = value[parent_item[i]]
@@ -314,7 +314,7 @@ end
 -- @param compared_specified_item: specify item on json to compare. Example: {"policy_table", "functional_groupings", "funtional_group1"}
 -- If it is omitted, compare all items.
 --------------------------------------------------------------------------------
-function CommonFunctions:CompareJsonFiles(file_name1, file_name2, compared_specified_item)
+function common_functions:CompareJsonFiles(file_name1, file_name2, compared_specified_item)
   local file1 = io.open(file_name1, "r")
   local data1 = file1:read("*all")
   file1:close()
@@ -329,7 +329,7 @@ function CommonFunctions:CompareJsonFiles(file_name1, file_name2, compared_speci
     json_data1 = json_data1[compared_specified_item[i]]
     json_data2 = json_data2[compared_specified_item[i]]
   end
-  return CommonFunctions:CompareTables(json_data1,json_data2)
+  return common_functions:CompareTables(json_data1,json_data2)
 end
 
 -- COMMON FUNCTIONS FOR POLICY TABLE
@@ -340,18 +340,18 @@ end
 -- @param parent_item: it will be remove items
 -- @param removed_items: it is a array of items will be removed
 --------------------------------------------------------------------------------
-function CommonFunctions:QueryPolicyDataBase(sdl_query)
+function common_functions:QueryPolicyDataBase(sdl_query)
   sdl_query = "\"" .. sdl_query .. "\""
   -- Look for policy.sqlite file
   local policy_file1 = config.pathToSDL .. "storage/policy.sqlite"
   local policy_file2 = config.pathToSDL .. "policy.sqlite"
   local policy_file
-  if CommonFunctions:IsFileExist(policy_file1) then
+  if common_functions:IsFileExist(policy_file1) then
     policy_file = policy_file1
-  elseif CommonFunctions:IsFileExist(policy_file2) then
+  elseif common_functions:IsFileExist(policy_file2) then
     policy_file = policy_file2
   else
-    CommonFunctions:PrintError("policy.sqlite file is not exist")
+    common_functions:PrintError("policy.sqlite file is not exist")
   end
   if policy_file then
     local temp_file = config.pathToSDL .. "temp_policy.sqlite"
@@ -372,8 +372,8 @@ end
 -- @param modified_parameters: a table contains parameter that need updated new value
 -- @param default_app_parameters: default parameters such as config.application1.registerAppInterfaceParams.
 --------------------------------------------------------------------------------
-function CommonFunctions:CreateRegisterAppParameters(modified_parameters, default_app_parameters)
-  local app = CommonFunctions:CloneTable(config.application1.registerAppInterfaceParams)
+function common_functions:CreateRegisterAppParameters(modified_parameters, default_app_parameters)
+  local app = common_functions:CloneTable(config.application1.registerAppInterfaceParams)
   default_app_parameters = default_app_parameters or app
   for k, v in pairs(modified_parameters) do
     app[k] = v
@@ -385,7 +385,7 @@ end
 -- Get mobile connection name
 -- @param mobile_session_name: name of session to get mobile connection name
 --------------------------------------------------------------------------------
-function CommonFunctions:GetMobileConnectionName(mobile_session_name, self)
+function common_functions:GetMobileConnectionName(mobile_session_name, self)
   for k_mobile_connection_name, v_mobile_connection_data in pairs(self.mobile_connections) do
     for k_mobile_session_name, v_mobile_session_data in pairs(v_mobile_connection_data) do
       if k_mobile_session_name == mobile_session_name then
@@ -399,7 +399,7 @@ end
 -- Get application name on a mobile connection
 -- @param mobile_session_name: name of session to get mobile connection name
 --------------------------------------------------------------------------------
-function CommonFunctions:GetApplicationName(mobile_session_name, self)
+function common_functions:GetApplicationName(mobile_session_name, self)
   for k_mobile_connection_name, v_mobile_connection_data in pairs(self.mobile_connections) do
     for k_mobile_session_name, v_mobile_session_data in pairs(v_mobile_connection_data) do
       if k_mobile_session_name == mobile_session_name then
@@ -409,14 +409,14 @@ function CommonFunctions:GetApplicationName(mobile_session_name, self)
       end -- if k_mobile_session_name
     end -- for k_mobile_session_name
   end -- for k_mobile_connection_name
-  CommonFunctions:PrintError("'" .. mobile_session_name .. "' session is not exist so that application name is not found.")
+  common_functions:PrintError("'" .. mobile_session_name .. "' session is not exist so that application name is not found.")
   return nil
 end
 --------------------------------------------------------------------------------
 -- Get mobile connection name and mobile session name of an application,
 -- @param app_name: name of application to get mobile session name
 --------------------------------------------------------------------------------
-function CommonFunctions:GetMobileConnectionNameAndSessionName(app_name, self)
+function common_functions:GetMobileConnectionNameAndSessionName(app_name, self)
   for k_mobile_connection_name, v_mobile_connection_data in pairs(self.mobile_connections) do
     for k_mobile_session_name, v_mobile_session_data in pairs(v_mobile_connection_data) do
       for k_application_name, v_application_data in pairs(v_mobile_session_data) do
@@ -426,15 +426,15 @@ function CommonFunctions:GetMobileConnectionNameAndSessionName(app_name, self)
       end
     end
   end
-  CommonFunctions:PrintError("'" .. app_name .. "' application is not exist so that mobile session is not found.")
+  common_functions:PrintError("'" .. app_name .. "' application is not exist so that mobile session is not found.")
   return nil
 end
 --------------------------------------------------------------------------------
 -- Get HMI app ID of current app in a session
 -- @param app_name: name of application to get corresponding HMI app ID
 --------------------------------------------------------------------------------
-function CommonFunctions:GetHmiAppId(app_name, self)
-  local mobile_connection_name, mobile_session_name = CommonFunctions:GetMobileConnectionNameAndSessionName(app_name, self)
+function common_functions:GetHmiAppId(app_name, self)
+  local mobile_connection_name, mobile_session_name = common_functions:GetMobileConnectionNameAndSessionName(app_name, self)
   local application = self.mobile_connections[mobile_connection_name][mobile_session_name][app_name]
   if not application.is_unregistered then
     return application.hmi_app_id
@@ -445,7 +445,7 @@ end
 --------------------------------------------------------------------------------
 -- Get list of HMI app IDs of existing applications (applications have been registered and have not been unregistered yet).
 --------------------------------------------------------------------------------
-function CommonFunctions:GetHmiAppIds(self)
+function common_functions:GetHmiAppIds(self)
   local hmi_app_ids = {}
   for k_mobile_connection_name, v_mobile_connection_data in pairs(self.mobile_connections) do
     for k_mobile_session_name, v_mobile_session_data in pairs(v_mobile_connection_data) do
@@ -461,7 +461,7 @@ end
 --------------------------------------------------------------------------------
 -- Get list of applications that were registered
 --------------------------------------------------------------------------------
-function CommonFunctions:GetRegisteredApplicationNames(self)
+function common_functions:GetRegisteredApplicationNames(self)
   local app_names = {}
   for k_mobile_connection_name, v_mobile_connection_data in pairs(self.mobile_connections) do
     for k_mobile_session_name, v_mobile_session_data in pairs(v_mobile_connection_data) do
@@ -479,8 +479,8 @@ end
 -- @param mobile_connect_name: name of mobile session
 -- @param app_name: name of application
 --------------------------------------------------------------------------------
-function CommonFunctions:GetAppParameter(app_name, queried_parameter_name, self)
-  local mobile_connection_name, mobile_session_name = CommonFunctions:GetMobileConnectionNameAndSessionName(app_name, self)
+function common_functions:GetAppParameter(app_name, queried_parameter_name, self)
+  local mobile_connection_name, mobile_session_name = common_functions:GetMobileConnectionNameAndSessionName(app_name, self)
   local application = self.mobile_connections[mobile_connection_name][mobile_session_name][app_name]
   return application.register_application_parameters[queried_parameter_name]
 end
@@ -488,9 +488,9 @@ end
 -- Check application is media or not
 -- @param app_name: name of application
 --------------------------------------------------------------------------------
-function CommonFunctions:IsMediaApp(app_name, self)
-  local is_media = CommonFunctions:GetAppParameter(app_name, "isMediaApplication", self)
-  local app_hmi_types = CommonFunctions:GetAppParameter(app_name, "appHMIType", self)
+function common_functions:IsMediaApp(app_name, self)
+  local is_media = common_functions:GetAppParameter(app_name, "isMediaApplication", self)
+  local app_hmi_types = common_functions:GetAppParameter(app_name, "appHMIType", self)
   for i = 1, #app_hmi_types do
     if (app_hmi_types[i] == "COMMUNICATION") or (app_hmi_types[i] == "NAVIGATION") or (app_hmi_types[i] == "MEDIA") then
       is_media = true
@@ -502,7 +502,7 @@ end
 -- Store mobile connect data to use later
 -- @param mobile_connection_name: name of connection that is used by ATF
 --------------------------------------------------------------------------------
-function CommonFunctions:StoreConnectionData(mobile_connection_name, self)
+function common_functions:StoreConnectionData(mobile_connection_name, self)
   if not self.mobile_connections then
     self.mobile_connections = {}
   end
@@ -512,7 +512,7 @@ end
 -- Check connection is exist or not
 -- @param mobile_connection_name: name of connection that is used by ATF
 --------------------------------------------------------------------------------
-function CommonFunctions:IsConnectionDataExist(mobile_connection_name, self)
+function common_functions:IsConnectionDataExist(mobile_connection_name, self)
   if not self.mobile_connections then
     self.mobile_connections = {}
   end
@@ -526,7 +526,7 @@ end
 -- @param mobile_connection_name: name of mobile connection
 -- @param mobile_session_name: name of session
 --------------------------------------------------------------------------------
-function CommonFunctions:StoreSessionData(mobile_connection_name, mobile_session_name, self)
+function common_functions:StoreSessionData(mobile_connection_name, mobile_session_name, self)
   self.mobile_connections[mobile_connection_name][mobile_session_name] = {}
 end
 --------------------------------------------------------------------------------
@@ -534,8 +534,8 @@ end
 -- @param mobile_session_name:
 -- @param app_name:
 --------------------------------------------------------------------------------
-function CommonFunctions:StoreApplicationData(mobile_session_name, app_name, application_parameters, hmi_app_id, self)
-  local mobile_connection_name = CommonFunctions:GetMobileConnectionName(mobile_session_name, self)
+function common_functions:StoreApplicationData(mobile_session_name, app_name, application_parameters, hmi_app_id, self)
+  local mobile_connection_name = common_functions:GetMobileConnectionName(mobile_session_name, self)
   self.mobile_connections[mobile_connection_name][mobile_session_name][app_name] = {
     register_application_parameters = application_parameters,
     hmi_app_id = hmi_app_id,
@@ -546,8 +546,8 @@ end
 -- Set status of application is unregistered
 -- @param app_name: name of application is unregistered
 --------------------------------------------------------------------------------
-function CommonFunctions:SetApplicationStatusIsUnRegistered(app_name, self)
-  local mobile_connection_name, mobile_session_name = CommonFunctions:GetMobileConnectionNameAndSessionName(app_name, self)
+function common_functions:SetApplicationStatusIsUnRegistered(app_name, self)
+  local mobile_connection_name, mobile_session_name = common_functions:GetMobileConnectionNameAndSessionName(app_name, self)
   self.mobile_connections[mobile_connection_name][mobile_session_name][app_name].is_unregistered = true
 end
 --------------------------------------------------------------------------------
@@ -556,8 +556,8 @@ end
 -- @param on_hmi_status: HMI status such as {hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"}
 -- @param self: "self" object in side a Test.
 --------------------------------------------------------------------------------
-function CommonFunctions:StoreHmiStatus(app_name, on_hmi_status, self)
-  local mobile_connection_name, mobile_session_name = CommonFunctions:GetMobileConnectionNameAndSessionName(app_name, self)
+function common_functions:StoreHmiStatus(app_name, on_hmi_status, self)
+  local mobile_connection_name, mobile_session_name = common_functions:GetMobileConnectionNameAndSessionName(app_name, self)
   local application = self.mobile_connections[mobile_connection_name][mobile_session_name][app_name]
   if not application.on_hmi_status then
     application.on_hmi_status = {}
@@ -574,8 +574,8 @@ end
 -- @param specific_parameter_name: It can be hmiLevel, audioStreamingState and systemContext.
 -- If it is omitted, return all parameters such as {hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"}
 --------------------------------------------------------------------------------
-function CommonFunctions:GetHmiStatus(app_name, self, specific_parameter_name)
-  local mobile_connection_name, mobile_session_name = CommonFunctions:GetMobileConnectionNameAndSessionName(app_name, self)
+function common_functions:GetHmiStatus(app_name, self, specific_parameter_name)
+  local mobile_connection_name, mobile_session_name = common_functions:GetMobileConnectionNameAndSessionName(app_name, self)
   local application = self.mobile_connections[mobile_connection_name][mobile_session_name][app_name]
   if specific_parameter_name then
     return application.on_hmi_status[specific_parameter_name]
@@ -589,14 +589,14 @@ end
 -- Print error message on ATF script console
 -- @param error_message: message to be printed.
 --------------------------------------------------------------------------------
-function CommonFunctions:PrintError(error_message)
+function common_functions:PrintError(error_message)
   print(" \27[31m " .. error_message .. " \27[0m ")
 end
 --------------------------------------------------------------------------------
 -- Delay to verify expected result
 -- @param time: time in seconds for delay verifying expected result
 --------------------------------------------------------------------------------
-function CommonFunctions:DelayedExp(time)
+function common_functions:DelayedExp(time)
   local event = events.Event()
   event.matches = function(self, e) return self == e end
   EXPECT_EVENT(event, "Delayed event")
@@ -610,11 +610,11 @@ function CommonFunctions:DelayedExp(time)
 end
 
 -- COMMON FUNCTIONS TO STRING
-function CommonFunctions:CreateString(length)
+function common_functions:CreateString(length)
   return string.rep("a", length)
 end
 
-function CommonFunctions:CreateArrayString(size, length)
+function common_functions:CreateArrayString(size, length)
   length = length or 1
   local temp = {}
   for i = 1, size do
@@ -624,7 +624,7 @@ function CommonFunctions:CreateArrayString(size, length)
 end
 
 -- COMMON FUNCTIONS TO TABLE
-function CommonFunctions:ConvertTableToString(tbl, i)
+function common_functions:ConvertTableToString(tbl, i)
   local strIndex = ""
   local strIndex2 = ""
   local strReturn = ""
@@ -660,7 +660,7 @@ function CommonFunctions:ConvertTableToString(tbl, i)
           strReturn = strReturn .. "\n"
         end
       end
-      strReturn = strReturn .. CommonFunctions:ConvertTableToString(v, i+1)
+      strReturn = strReturn .. common_functions:ConvertTableToString(v, i+1)
     end
     strReturn = strReturn .. "\n"
     strReturn = strReturn .. strIndex .. "}"
@@ -676,27 +676,30 @@ function CommonFunctions:ConvertTableToString(tbl, i)
   return strReturn
 end
 
-function CommonFunctions:PrintTable(tbl)
+function common_functions:PrintTable(tbl)
   print ("-------------------------------------------------------------------")
-  print (CommonFunctions:ConvertTableToString (tbl, 1))
+  print (common_functions:ConvertTableToString (tbl, 1))
   print ("-------------------------------------------------------------------")
 end
 
-function CommonFunctions:CloneTable(original)
-  if original == nil then
-    return {}
-  end
-  local copy = {}
-  for k, v in pairs(original) do
-    if type(v) == 'table' then
-      v = CommonFunctions:CloneTable(v)
+function common_functions:CloneTable(original)
+  local orig_type = type(original)
+  local copy
+  if orig_type == 'table' then
+    copy = {}
+    for k, v in pairs(original) do
+      if type(v) == 'table' then
+        v = common_functions:CloneTable(v)
+      end
+      copy[k] = v
     end
-    copy[k] = v
+  else
+    copy = original
   end
   return copy
 end
 
-function CommonFunctions:CompareTables(t1,t2)
+function common_functions:CompareTables(t1,t2)
   local ty1 = type(t1)
   local ty2 = type(t2)
   if ty1 ~= ty2 then return false end
@@ -704,28 +707,86 @@ function CommonFunctions:CompareTables(t1,t2)
   if ty1 ~= 'table' and ty2 ~= 'table' then return t1 == t2 end
   for k1,v1 in pairs(t1) do
     local v2 = t2[k1]
-    if v2 == nil or not CommonFunctions:CompareTables(v1,v2) then return false end
+    if v2 == nil or not common_functions:CompareTables(v1,v2) then return false end
   end
   for k2,v2 in pairs(t2) do
     local v1 = t1[k2]
-    if v1 == nil or not CommonFunctions:CompareTables(v1,v2) then return false end
+    if v1 == nil or not common_functions:CompareTables(v1,v2) then return false end
   end
   return true
+end
+
+function common_functions:CompareTablesNotSorted(table1,table2)
+  local t1 = common_functions:CloneTable(table1)
+  local t2 = common_functions:CloneTable(table2)
+  local ty1 = type(t1)
+  local ty2 = type(t2)
+  if ty1 ~= ty2 then
+    return false
+  end
+  -- non-table types can be directly compared
+  if ty1 ~= 'table' and ty2 ~= 'table' then
+    return t1 == t2
+  end
+  -- find each item of table t1 on table t2. if find, remove this item on both table
+  local total_find_items_of_table1 = 0
+  local number_of_items_on_table1 = 0
+  for k1, v1 in pairs(t1) do
+    number_of_items_on_table1 = number_of_items_on_table1 + 1
+    local v2 = t2[k1]
+    if type(k1) == 'number' then
+      -- compare array with care about order
+      -- find v1 in array t2
+      local find = false
+      for k2, v2 in pairs (t2) do
+        if type(k2) == 'number' then
+          if common_functions:CompareTablesNotSorted(v1, v2) then
+            find = true
+            total_find_items_of_table1 = total_find_items_of_table1 + 1
+            t2[k2] = nil
+            break
+          end
+        end
+      end
+
+      if find == false then -- if v1 is not found in array t2
+        return false
+      end
+
+    else
+      if v2 == nil then
+        return false
+      end
+      if common_functions:CompareTablesNotSorted(v1,v2) then -- found v1 = v2
+        total_find_items_of_table1 = total_find_items_of_table1 + 1
+        t2[k1] = nil
+      end
+    end
+    if total_find_items_of_table1 == number_of_items_on_table1 then
+    end
+  end
+
+  local rest_items_on_table2 = 0
+  for k2, v2 in pairs(t2) do
+    rest_items_on_table2 = rest_items_on_table2 + 1
+  end
+  return total_find_items_of_table1 == number_of_items_on_table1 and rest_items_on_table2 == 0
+
 end
 
 -- Check if specified value (which also may be a table) is present in a table.
 -- @param value: checked value, may be a table
 -- @param searched_table: table where a value will be searched in
 -- @example: Find("find", { { "find" } }) -> true
-function CommonFunctions:Find(value, searched_table)
-  if CommonFunctions:CompareTables(value, searched_table) then
+function common_functions:Find(value, searched_table)
+  if common_functions:CompareTables(value, searched_table) then
     return true
   end
   if type(searched_table) ~= "table" then
     return false
   end
   for _, v in pairs(searched_table) do
-    if CommonFunctions:Find(value, v) then
+    if common_functions:Find(value, v) then
       return true
     end
   end
@@ -737,11 +798,11 @@ end
 -- Make reserve copy of file (FileName) in /bin folder
 -- @param file_name: file name will be backed up
 --------------------------------------------------------------------------------
-function CommonFunctions:KillAllSdlProcesses()
+function common_functions:KillAllSdlProcesses()
   os.execute(" kill -9 $(ps aux | grep -e smartDeviceLinkCore | awk '{print$2}')" )
 end
 
-function CommonFunctions:CheckSdlPath()
+function common_functions:CheckSdlPath()
   --Verify config.pathToSDL
   findresultFirstCharacters = string.match (config.pathToSDL, '^%.%/')
   if findresultFirstCharacters == "./" then
@@ -756,12 +817,12 @@ function CommonFunctions:CheckSdlPath()
   end
 end
 
-function CommonFunctions:UserPrint(color, message, delimeter)
+function common_functions:UserPrint(color, message, delimeter)
   delimeter = delimeter or "\n"
   io.write("\27[" .. tostring(color) .. "m" .. tostring(message) .. "\27[0m", delimeter)
 end
 
-function CommonFunctions:CreateIntegersArray(value, size)
+function common_functions:CreateIntegersArray(value, size)
   value = value or 1
   size = size or 1
   local temp = {}
@@ -771,7 +832,7 @@ function CommonFunctions:CreateIntegersArray(value, size)
   return temp
 end
 
-function CommonFunctions:CreateStructsArray(structure, size)
+function common_functions:CreateStructsArray(structure, size)
   size = size or 1
   local temp = {}
   for i = 1, size do
@@ -780,13 +841,13 @@ function CommonFunctions:CreateStructsArray(structure, size)
   return temp
 end
 
-function CommonFunctions:PrintError(errorMessage)
+function common_functions:PrintError(errorMessage)
   print()
   print(" \27[31m " .. errorMessage .. " \27[0m ")
 end
 
-function CommonFunctions:StoreHmiAppId(app_name, hmi_app_id, self)
-  local mobile_connection_name, mobile_session_name = CommonFunctions:GetMobileConnectionNameAndSessionName(app_name, self)
+function common_functions:StoreHmiAppId(app_name, hmi_app_id, self)
+  local mobile_connection_name, mobile_session_name = common_functions:GetMobileConnectionNameAndSessionName(app_name, self)
   self.mobile_connections[mobile_connection_name][mobile_session_name][app_name].hmi_app_id = hmi_app_id
 end
 
@@ -795,7 +856,7 @@ end
 -- @param test_name: name of test function
 -- @param test_module: Test module that contains list of tests.
 -----------------------------------------------------------------------------
-function CommonFunctions:RemoveTest(test_name, test_module)
+function common_functions:RemoveTest(test_name, test_module)
   local test_function
   for k_test_function, v_test_name in pairs(test_module.case_names) do
     if v_test_name == test_name then
@@ -827,7 +888,7 @@ end
 -- Get full path to image
 -- @param image_file_name: name of the image
 -----------------------------------------------------------------------------
-function CommonFunctions:GetFullPathIcon(image_file_name, appId)
+function common_functions:GetFullPathIcon(image_file_name, appId)
   if not appId then
     appId = config.application1.registerAppInterfaceParams.appID
   end
@@ -841,11 +902,11 @@ end
 -- @param upper_bound: max value of range
 -- @param value_to_check: value to check it is in range
 -----------------------------------------------------------------------------
-function CommonFunctions:InRange(lower_bound, upper_bound, value_to_check)
+function common_functions:InRange(lower_bound, upper_bound, value_to_check)
   if lower_bound <= value_to_check and value_to_check <= upper_bound then
     return true
   end
   return false
 end
 
-return CommonFunctions
+return common_functions
