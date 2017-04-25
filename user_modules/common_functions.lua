@@ -1,5 +1,5 @@
 -- This script contains common functions that are used in many script.
--- How to use: common_functions:IsFileExist(path to file)
+-- How to use: CommonFunctions:IsFileExist(path to file)
 --------------------------------------------------------------------------------
 local CommonFunctions = {}
 -- COMMON FUNCTIONS FOR FILE AND FOLDER
@@ -17,11 +17,11 @@ end
 function CommonFunctions:DeletePolicyTable()
   CommonFunctions:CheckSdlPath()
   local policy_file = config.pathToSDL .. CommonFunctions:GetValueFromIniFile("AppStorageFolder") .. "/policy.sqlite"
-  if common_functions:IsFileExist(policy_file) then
+  if CommonFunctions:IsFileExist(policy_file) then
     os.remove(policy_file)
   end
   policy_file = config.pathToSDL .. "policy.sqlite"
-  if common_functions:IsFileExist(policy_file) then
+  if CommonFunctions:IsFileExist(policy_file) then
     os.remove(policy_file)
   end
 end
@@ -31,7 +31,7 @@ function CommonFunctions:DeleteLogsFiles()
   if self:IsFileExist(config.pathToSDL .. "app_info.dat") then
     os.remove(config.pathToSDL .. "app_info.dat")
   end
-  os.remove(config.pathToSDL .. "*.log")
+  os.execute("rm -f " .. config.pathToSDL .. "*.log")
 end
 
 -- Check file existence
@@ -232,13 +232,13 @@ end
 function CommonFunctions:GetParameterValueInJsonFile(json_file, path_to_parameter)
   local file = io.open(json_file, "r")
   if not file then
-    common_functions:PrintError("Open " .. json_file .. " unsuccessfully")
+    CommonFunctions:PrintError("Open " .. json_file .. " unsuccessfully")
     return nil
   end
   local json_data = file:read("*all")
   file:close()
   if json_data == "" then
-    common_functions:PrintError("There is no data in " .. json_file .. " file")
+    CommonFunctions:PrintError("There is no data in " .. json_file .. " file")
     return nil
   end
   local json = require("modules/json")
@@ -300,7 +300,7 @@ function CommonFunctions:GetItemsFromJsonFile(json_file, parent_item)
   local data = json.decode(json_data)
   local value = data
   for i = 1, #parent_item do
-    if not value[parent_item[i]] then
+    if value[parent_item[i]] == nil then
       return nil
     end
     value = value[parent_item[i]]
@@ -351,7 +351,7 @@ function CommonFunctions:QueryPolicyDataBase(sdl_query)
   elseif CommonFunctions:IsFileExist(policy_file2) then
     policy_file = policy_file2
   else
-    common_functions:PrintError("policy.sqlite file is not exist")
+    CommonFunctions:PrintError("policy.sqlite file is not exist")
   end
   if policy_file then
     local temp_file = config.pathToSDL .. "temp_policy.sqlite"
@@ -373,7 +373,7 @@ end
 -- @param default_app_parameters: default parameters such as config.application1.registerAppInterfaceParams.
 --------------------------------------------------------------------------------
 function CommonFunctions:CreateRegisterAppParameters(modified_parameters, default_app_parameters)
-  local app = common_functions:CloneTable(config.application1.registerAppInterfaceParams)
+  local app = CommonFunctions:CloneTable(config.application1.registerAppInterfaceParams)
   default_app_parameters = default_app_parameters or app
   for k, v in pairs(modified_parameters) do
     app[k] = v
@@ -683,18 +683,15 @@ function CommonFunctions:PrintTable(tbl)
 end
 
 function CommonFunctions:CloneTable(original)
-  local orig_type = type(original)
-  local copy
-  if orig_type == 'table' then
-    copy = {}
-    for k, v in pairs(original) do
-      if type(v) == 'table' then
-        v = CommonFunctions:CloneTable(v)
-      end
-      copy[k] = v
+  if original == nil then
+    return {}
+  end
+  local copy = {}
+  for k, v in pairs(original) do
+    if type(v) == 'table' then
+      v = CommonFunctions:CloneTable(v)
     end
-  else
-    copy = original
+    copy[k] = v
   end
   return copy
 end
@@ -714,64 +711,6 @@ function CommonFunctions:CompareTables(t1,t2)
     if v1 == nil or not CommonFunctions:CompareTables(v1,v2) then return false end
   end
   return true
-end
-
-function CommonFunctions:CompareTablesNotSorted(table1,table2)
-  local t1 = CommonFunctions:CloneTable(table1)
-  local t2 = CommonFunctions:CloneTable(table2)
-  local ty1 = type(t1)
-  local ty2 = type(t2)
-  if ty1 ~= ty2 then
-    return false
-  end
-  -- non-table types can be directly compared
-  if ty1 ~= 'table' and ty2 ~= 'table' then
-    return t1 == t2
-  end
-  -- find each item of table t1 on table t2. if find, remove this item on both table
-  local total_find_items_of_table1 = 0
-  local number_of_items_on_table1 = 0
-  for k1, v1 in pairs(t1) do
-    number_of_items_on_table1 = number_of_items_on_table1 + 1
-    local v2 = t2[k1]
-    if type(k1) == 'number' then
-      -- compare array with care about order
-      -- find v1 in array t2
-      local find = false
-      for k2, v2 in pairs (t2) do
-        if type(k2) == 'number' then
-          if CommonFunctions:CompareTablesNotSorted(v1, v2) then
-            find = true
-            total_find_items_of_table1 = total_find_items_of_table1 + 1
-            t2[k2] = nil
-            break
-          end
-        end
-      end
-
-      if find == false then -- if v1 is not found in array t2
-        return false
-      end
-
-    else
-      if v2 == nil then
-        return false
-      end
-      if CommonFunctions:CompareTablesNotSorted(v1,v2) then -- found v1 = v2
-        total_find_items_of_table1 = total_find_items_of_table1 + 1
-        t2[k1] = nil
-      end
-    end
-    if total_find_items_of_table1 == number_of_items_on_table1 then
-    end
-  end
-
-  local rest_items_on_table2 = 0
-  for k2, v2 in pairs(t2) do
-    rest_items_on_table2 = rest_items_on_table2 + 1
-  end
-  return total_find_items_of_table1 == number_of_items_on_table1 and rest_items_on_table2 == 0
-
 end
 
 -- Check if specified value (which also may be a table) is present in a table.
