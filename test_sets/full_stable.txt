@@ -355,3 +355,4 @@
 ./test_scripts/Smoke_test/ATF_SDL_Resume_AppData_After_Unexpected_Disconnect.lua
 ./test_scripts/Smoke_test/ATF_Smoke_testing_Priority_Level.lua
 ./test_scripts/API/DeactivateHMI/ATF_DEACTIVATE_HMI_NonMediaAppInFull_PostponeResume_AfterRAI_IgnitionOff.lua
+./test_scripts/Smoke_test/ATF_SDL_finishes_its_working_properly_by_ignition_off_after_OnwakeSDL.lua
