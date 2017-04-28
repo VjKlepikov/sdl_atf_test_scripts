@@ -241,64 +241,64 @@ local function OnAppRegistered_hmiDisplayLanguageDesired()
   commonSteps:UnregisterApplication("OnAppRegistered_hmiDisplayLanguageDesired_Precondition_UnregisterApplication")
 
   --ToDo: shall be removed when APPLINK-24902: "Genivi: Unexpected unregistering application at resumption after closing session" is fixed
-  -- function ReRegisterAppInterface(self)
-  -- print("\27[31m Register application again because of APPLINK-24902: Genivi: Unexpected unregistering application at resumption after closing session.\27[0m")
-  -- local CorIdRAI = self.mobileSession:SendRPC("RegisterAppInterface",
-  -- {
-  -- syncMsgVersion =
-  -- {
-  -- majorVersion = 3,
-  -- minorVersion = 0
-  -- },
-  -- appName = "SPT",
-  -- isMediaApplication = true,
-  -- languageDesired = "FR-CA",
-  -- hmiDisplayLanguageDesired = "FR-CA",
-  -- appID = "1234567",
-  -- deviceInfo =
-  -- {
-  -- os = "Android",
-  -- carrier = "Megafon",
-  -- firmwareRev = "Name: Linux, Version: 3.4.0-perf",
-  -- osVersion = "4.4.2",
-  -- maxNumberRFCOMMPorts = 1
-  -- }
-  -- })
-  -- --hmi side: expected BasicCommunication.OnAppRegistered
-  -- EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered",
-  -- {
-  -- application =
-  -- {
-  -- appName = "SPT",
-  -- policyAppID = "1234567",
-  -- isMediaApplication = true,
-  -- hmiDisplayLanguageDesired = "FR-CA"
-  -- }
-  -- })
-  -- :ValidIf(function(_,data)
-  -- --UPDATED to verify APPLINK-13603
-  -- local result = true
-  -- if (data.params.application.requestType ~= nil) then
-  -- for i=1, #data.params.application.requestType do
-  -- --print("data.params.application.requestType = " ..data.params.application.requestType[i])
-  -- if (#data.params.application.requestType[i] == 0) then
-  -- print ("\27[33m DEFECT: APPLINK-13603 \27[0m")
-  -- print("application.requestType[" ..i .."] is NIL")
-  -- result = false
-  -- end
-  -- end
-  -- end
-  -- return result
-  -- end)
+  function ReRegisterAppInterface(self)
+  print("\27[31m Register application again because of APPLINK-24902: Genivi: Unexpected unregistering application at resumption after closing session.\27[0m")
+  local CorIdRAI = self.mobileSession:SendRPC("RegisterAppInterface",
+  {
+  syncMsgVersion =
+  {
+  majorVersion = 3,
+  minorVersion = 0
+  },
+  appName = "SPT",
+  isMediaApplication = true,
+  languageDesired = "FR-CA",
+  hmiDisplayLanguageDesired = "FR-CA",
+  appID = "1234567",
+  deviceInfo =
+  {
+  os = "Android",
+  carrier = "Megafon",
+  firmwareRev = "Name: Linux, Version: 3.4.0-perf",
+  osVersion = "4.4.2",
+  maxNumberRFCOMMPorts = 1
+  }
+  })
+  --hmi side: expected BasicCommunication.OnAppRegistered
+  EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered",
+  {
+  application =
+  {
+  appName = "SPT",
+  policyAppID = "1234567",
+  isMediaApplication = true,
+  hmiDisplayLanguageDesired = "FR-CA"
+  }
+  })
+  :ValidIf(function(_,data)
+  --UPDATED to verify APPLINK-13603
+  local result = true
+  if (data.params.application.requestType ~= nil) then
+  for i=1, #data.params.application.requestType do
+  --print("data.params.application.requestType = " ..data.params.application.requestType[i])
+  if (#data.params.application.requestType[i] == 0) then
+  print ("\27[33m DEFECT: APPLINK-13603 \27[0m")
+  print("application.requestType[" ..i .."] is NIL")
+  result = false
+  end
+  end
+  end
+  return result
+  end)
 
-  -- --mobile side: RegisterAppInterface response
-  -- EXPECT_RESPONSE(CorIdRAI, { success = true, resultCode = "WRONG_LANGUAGE"})
+  --mobile side: RegisterAppInterface response
+  EXPECT_RESPONSE(CorIdRAI, { success = true, resultCode = "WRONG_LANGUAGE"})
 
-  -- EXPECT_NOTIFICATION("OnHMIStatus", {hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
+  EXPECT_NOTIFICATION("OnHMIStatus", {hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
 
-  -- EXPECT_NOTIFICATION("OnPermissionsChange", {})
+  EXPECT_NOTIFICATION("OnPermissionsChange", {})
 
-  -- end
+  end
 
   function Test:OnAppRegistered_hmiDisplayLanguageDesired()
     local result = true
@@ -337,15 +337,15 @@ local function OnAppRegistered_hmiDisplayLanguageDesired()
         }
       })
     --ToDo: shall be removed when APPLINK-24902: "Genivi: Unexpected unregistering application at resumption after closing session" is fixed
-    -- :Do(function(_,data)
-    -- local result = true
-    -- EXPECT_HMINOTIFICATION("BasicCommunication.OnAppUnregistered", {})
-    -- :ValidIf(function(_,data)
-    -- --Vald
-    -- result = ReRegisterAppInterface(self)
-    -- return result
-    -- end)
-    -- end)
+    :Do(function(_,data)
+    local result = true
+    EXPECT_HMINOTIFICATION("BasicCommunication.OnAppUnregistered", {})
+    :ValidIf(function(_,data)
+    --Vald
+    result = ReRegisterAppInterface(self)
+    return result
+    end)
+    end)
     :ValidIf(function(_,data)
         local result = true
         --UPDATED to verify APPLINK-13603
@@ -363,13 +363,13 @@ local function OnAppRegistered_hmiDisplayLanguageDesired()
       end)
 
     --ToDo: shall be uncommented when APPLINK-24902: "Genivi: Unexpected unregistering application at resumption after closing session" is fixed
-    --mobile side: RegisterAppInterface response
+    --[[--mobile side: RegisterAppInterface response
     EXPECT_RESPONSE(CorIdRAI, { success = true, resultCode = "WRONG_LANGUAGE"})
 
     EXPECT_NOTIFICATION("OnHMIStatus", {hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
 
     EXPECT_NOTIFICATION("OnPermissionsChange", {})
-
+    --]]
   end
 
 end
