@@ -29,11 +29,13 @@
 
 ---------------------------------------------------------------------------------------------
 require('user_modules/all_common_modules')
+
+--[[ Local variables]]
 local mobile_cid
 local hmi_cid_vr
 local default_timeout = tonumber(common_functions:GetValueFromIniFile("DefaultTimeout"))
 
-local paramsSend = {
+local mobile_request = {
   interactionMode = "MANUAL_ONLY",
   timeout = 5000,
   initialText = "StartPerformInteraction",
@@ -69,9 +71,9 @@ local paramsSend = {
   interactionLayout = "ICON_ONLY"
 }
 
-local ui_timeout = default_timeout + paramsSend.timeout * 2
+local ui_timeout = default_timeout + mobile_request.timeout * 2
 
---------------------------------------Precondition-------------------------------------------------------
+--[[ Preconditions ]]
 common_steps:AddNewTestCasesGroup("Preconditions")
 common_steps:PreconditionSteps("Preconditions", const.precondition.ACTIVATE_APP)
 common_steps:PutFile("Preconditions_PutFile_action.png", "action.png")
@@ -107,24 +109,24 @@ function Test:Precondition_CreateInteractionChoiceSet()
   EXPECT_RESPONSE(cid, { resultCode = "SUCCESS", success = true })
 end
 
-----------------------------------------Steps-----------------------------------------------------
+--[[ Test ]]
 common_steps:AddNewTestCasesGroup("Test")
 function Test:Send_PerformInteraction_Request()
   --Step 1. App -> SDL: PerformInteraction (timeout, params, mode: MANUAL_ONLY)
-  mobile_cid = self.mobileSession:SendRPC("PerformInteraction", paramsSend)
+  mobile_cid = self.mobileSession:SendRPC("PerformInteraction", mobile_request)
 
   --Step 2. SDL -> HMI: VR.PerformInteraction (initialPrompt, timeoutPrompt,helpPrompt, timeout)// without grammarID
   EXPECT_HMICALL("VR.PerformInteraction",
     {
-      helpPrompt = paramsSend.helpPrompt,
-      initialPrompt = paramsSend.initialPrompt,
-      timeout = paramsSend.timeout,
-      timeoutPrompt = paramsSend.timeoutPrompt
+      helpPrompt = mobile_request.helpPrompt,
+      initialPrompt = mobile_request.initialPrompt,
+      timeout = mobile_request.timeout,
+      timeoutPrompt = mobile_request.timeoutPrompt
     }
   )
   :ValidIf(function(_,data)
       if data.params.grammarID then
-        common_functions:UserPrint(31, "grammarID exist")
+        self:FailTestCase("grammarID exist")
         return false
       else
         return true
@@ -137,7 +139,7 @@ function Test:Send_PerformInteraction_Request()
   --Step 4. SDL -> HMI: UI.PerformInteraction (params, timeout)
   EXPECT_HMICALL("UI.PerformInteraction",
     {
-      timeout = paramsSend.timeout,
+      timeout = mobile_request.timeout,
       choiceSet = {
         {
           choiceID = 1,
@@ -151,7 +153,7 @@ function Test:Send_PerformInteraction_Request()
       initialText =
       {
         fieldName = "initialInteractionText",
-        fieldText = paramsSend.initialText
+        fieldText = mobile_request.initialText
       }
     })
 end
@@ -161,6 +163,9 @@ function Test:Send_VR_Responds()
   self.hmiConnection:SendNotification("TTS.Started")
   self.hmiConnection:SendResponse(hmi_cid_vr, "VR.PerformInteraction", "SUCCESS", {info = "vr info"})
   vr_time = timestamp()
+  -- display date time
+  print("=====Time when HMI sends VR.PerformInteraction response and SDL start timer=====")
+  os.execute("date")
   EXPECT_NOTIFICATION("OnHMIStatus", { systemContext = "MAIN", hmiLevel = "FULL", audioStreamingState = "ATTENUATED"})
 end
 
@@ -171,12 +176,13 @@ function Test:UI_Display_Choices_and_OnResetTimeout()
 
   -- 8. HMI -> SDL: OnResetTimeout () during timeout is not expired
   local function OnResetTimeout()
-    current_time = timestamp()
-    if (current_time - vr_time > default_timeout) and (current_time - vr_time < ui_timeout) then
+    local current_time = timestamp()
+    local interval = current_time - vr_time
+    if (interval > default_timeout) and (interval < ui_timeout) then
       self.hmiConnection:SendNotification("UI.OnResetTimeout", {appID = hmi_app_id, methodName = "UI.PerformInteraction"})
       reset_timeout = timestamp()
       common_functions:UserPrint(32, "Time to sending OnResetTimeout is " ..
-        tostring(current_time - vr_time) ..", expected ~" .. tostring(ui_timeout - 2000))
+        tostring(interval) ..", expected ~" .. tostring(ui_timeout - 2000))
     else
       self:FailTestCase("Time to sending OnResetTimeout is more than " .. tostring(ui_timeout))
     end
@@ -187,23 +193,24 @@ end
 
 function Test:SDL_sends_GENERIC_ERROR_after_timeout_expired()
   --Step 12. SDL -> App: PerformInteraction (GENERIC_ERROR, success:false)
-  EXPECT_RESPONSE(mobile_cid, { success = false, resultCode = "GENERIC_ERROR"})
+  EXPECT_RESPONSE(mobile_cid, {success = false, resultCode = "GENERIC_ERROR"})
   :Timeout(ui_timeout + 1000)
   :ValidIf(function(_,data)
       local current_time = timestamp()
-      if (current_time - reset_timeout < ui_timeout + 1000) and (current_time - reset_timeout > ui_timeout) then
+      local interval = current_time - reset_timeout
+      if (interval < ui_timeout + 1000) and (interval > ui_timeout - 1000) then
         common_functions:UserPrint(32, "SUCCESS:Time to GENERIC_ERROR: " ..
-          tostring(current_time - reset_timeout) ..", expected ~" .. tostring(ui_timeout))
+          tostring(interval) ..", expected ~" .. tostring(ui_timeout))
         return true
       else
         common_functions:UserPrint(31, "FAIL:Time to GENERIC_ERROR: " ..
-          tostring(current_time - reset_timeout) ..", expected ~" .. tostring(ui_timeout))
+          tostring(interval) ..", expected ~" .. tostring(ui_timeout))
         return false
       end
     end)
 end
 
---------------------------------Postcondition-------------------------------------------------------------
+--[[ Postconditions ]]
 common_steps:AddNewTestCasesGroup("Postcondition")
 local app_name = config.application1.registerAppInterfaceParams.appName
 common_steps:UnregisterApp("Postcondition_UnRegisterApp", app_name)
