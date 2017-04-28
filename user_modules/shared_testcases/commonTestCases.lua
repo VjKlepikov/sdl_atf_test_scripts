@@ -245,8 +245,7 @@ function commonTestCases:verifyResultCode_TOO_MANY_PENDING_REQUESTS(numberOfRequ
 		--mobile side: expect response
 		EXPECT_RESPONSE(APIName)
 		:ValidIf(function(exp,data)
-			if
-				data.payload.resultCode == "TOO_MANY_PENDING_REQUESTS" then
+			if data.payload.resultCode == "TOO_MANY_PENDING_REQUESTS" then
 				n = n+1
 					print(" \27[32m "..APIName.." response came with resultCode TOO_MANY_PENDING_REQUESTS \27[0m")
 					return true
