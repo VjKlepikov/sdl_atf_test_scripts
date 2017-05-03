@@ -29,7 +29,6 @@ common_steps:AddNewTestCasesGroup("Preconditions")
 common_steps:PreconditionSteps("Preconditions", 7)
 common_steps:PutFile("Preconditions_PutFile_action.png", "action.png")
 function Test:Precondition_CreateInteractionChoiceSet_ChoiceSetID_1()
-  --mobile side: sending CreateInteractionChoiceSet request
   local cid = self.mobileSession:SendRPC("CreateInteractionChoiceSet",
   {
     interactionChoiceSetID = 1,
@@ -50,8 +49,6 @@ function Test:Precondition_CreateInteractionChoiceSet_ChoiceSetID_1()
       }
     }
   })
-  
-  --hmi side: expect VR.AddCommand
   EXPECT_HMICALL("VR.AddCommand", 
   { 
     cmdID = 1,
@@ -59,11 +56,8 @@ function Test:Precondition_CreateInteractionChoiceSet_ChoiceSetID_1()
     vrCommands = {"VrChoice1"}
   })
   :Do(function(_,data)						
-    --hmi side: sending VR.AddCommand response
     self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
   end)		
-  
-  --mobile side: expect CreateInteractionChoiceSet response
   EXPECT_RESPONSE(cid, { resultCode = "SUCCESS", success = true })
 end
 
@@ -72,7 +66,7 @@ end
 common_steps:AddNewTestCasesGroup("Test")
 
 function Test:Mobile_sends_PerformInteraction_BOTH_and_VR_does_not_respond()
-  print("[INFO] This test case is executed in 60 seconds. Please wait!") 
+  common_functions:UserPrint(const.color.green, "[INFO] This test case is executed in 60 seconds. Please wait!") 
   local request = {
     interactionMode = "BOTH",
     timeout = 5000, 
@@ -90,10 +84,8 @@ function Test:Mobile_sends_PerformInteraction_BOTH_and_VR_does_not_respond()
     },
     interactionLayout = "ICON_ONLY"
   }
-  
   -- 1. App -> SDL: PerformInteraction (timeout, params, mode: BOTH) 
   local mobile_cid = self.mobileSession:SendRPC("PerformInteraction", request)
-  
   -- 2. SDL -> HMI: VR.PerformInteraction (params, timeout)// with grammarID
   -- 3. SDL does not start the timeout for VR
   -- 5. No user action on VR
@@ -110,13 +102,14 @@ function Test:Mobile_sends_PerformInteraction_BOTH_and_VR_does_not_respond()
       return true
     else 
       self:FailTestCase("VR.PerformInteraction does not have grammarID parameter")
-      return true
     end
   end) 
   :Do(function(_,data)
     self.hmiConnection:SendNotification("VR.Started")
-  end)	 
-  
+    self.hmiConnection:SendNotification("TTS.Started")	
+    local hmi_app_id = common_functions:GetHmiAppId(const.default_app.appName, self)
+    self.hmiConnection:SendNotification("UI.OnSystemContext",{appID = hmi_app_id, systemContext = "VRSESSION"})   
+  end)	   
   -- 4. SDL -> HMI: UI.PerformInteraction (params, timeout) 
   EXPECT_HMICALL("UI.PerformInteraction", 
   {
@@ -133,21 +126,24 @@ function Test:Mobile_sends_PerformInteraction_BOTH_and_VR_does_not_respond()
       fieldName = "initialInteractionText",
       fieldText = request.initialText
     }
-  })
-  
-  -- SDL does not send response when VR does not respond
-  common_functions:DelayedExp(60000)
+  }) 
+  -- 7. SDL waits for VR response eternally, does not start the timer for UI and does not send any <result_code> to mobile app  
+  -- If SDL starts timer for UI, SDL will respond when timer is finished (in 10 + 5*2 = 20s)
+  -- => check SDL does not send response from 21 to 60 seconds.
+  common_functions:DelayedExp(60000) 
   self.mobileSession:ExpectResponse(mobile_cid, {})
   :Times(0)
-  
   --mobile side: OnHMIStatus notification
-  EXPECT_NOTIFICATION("OnHMIStatus", {systemContext = "MAIN", hmiLevel = "FULL"}) 
-  
+  EXPECT_NOTIFICATION("OnHMIStatus", 
+    {hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"},
+    {hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE", systemContext = "VRSESSION"}
+  )
+  :Times(2)  
 end
 
 ---------------------------------------------------------------------------------------------
 --[[ Postconditions ]]
 common_steps:AddNewTestCasesGroup("Postconditions")
-local app_name = config.application1.registerAppInterfaceParams.appName
+local app_name = const.default_app.appName
 common_steps:UnregisterApp("Postcondition_UnRegisterApp", app_name)
 common_steps:StopSDL("Postcondition_StopSDL")

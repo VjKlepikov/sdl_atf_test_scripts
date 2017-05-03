@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------
--- Requirement summary: 
--- [APPLINK-19427]: [PerformInteraction]: SDL must wait response for both UI and VR components 
+-- Requirement summary:
+-- [APPLINK-19427]: [PerformInteraction]: SDL must wait response for both UI and VR components
 -- [APPLINK-28014]: [PerformInteraction] SDL must increase <timeout> param for MANUAL_ONLY and BOTH modes
 
 -- Description:
@@ -24,50 +24,50 @@
 require('user_modules/all_common_modules')
 
 --[[ Local Variables ]]
-local mob_cid, vr_cid, ui_cid, vr_response_time
+local mob_cid, vr_cid, ui_cid, vr_response_time, hmi_app_id
 
 --[[ Preconditions ]]
--- if not applicable remove this section
+
 common_steps:AddNewTestCasesGroup("Preconditions")
 -- An app is registered and activated
-common_steps:PreconditionSteps("Preconditions", 7)
+common_steps:PreconditionSteps("Preconditions", const.precondition.ACTIVATE_APP)
 common_steps:PutFile("Preconditions_PutFile_action.png", "action.png")
 function Test:Precondition_CreateInteractionChoiceSet_interactionChoiceSetID_1()
-  --mobile side: sending CreateInteractionChoiceSet request
-  cid = self.mobileSession:SendRPC("CreateInteractionChoiceSet",
-  {
-    interactionChoiceSetID = 1,
-    choiceSet = 
+
+  local cid = self.mobileSession:SendRPC("CreateInteractionChoiceSet",
     {
-      { 
-        choiceID = 1,
-        menuName ="Choice1",
-        vrCommands = 
-        { 
-          "VrChoice1",
-        }, 
-        image =
-        { 
-          value ="action.png",
-          imageType ="STATIC",
+      interactionChoiceSetID = 1,
+      choiceSet =
+      {
+        {
+          choiceID = 1,
+          menuName ="Choice1",
+          vrCommands =
+          {
+            "VrChoice1",
+          },
+          image =
+          {
+            value ="action.png",
+            imageType ="STATIC",
+          }
         }
       }
-    }
-  })
-  
-  --hmi side: expect VR.AddCommand
-  EXPECT_HMICALL("VR.AddCommand", 
-  { 
-    cmdID = 1,
-    type = "Choice",
-    vrCommands = {"VrChoice1"}
-  })
-  :Do(function(_,data)						
-    --hmi side: sending VR.AddCommand response
-    self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-  end)		
-  
-  --mobile side: expect CreateInteractionChoiceSet response
+    })
+
+
+  EXPECT_HMICALL("VR.AddCommand",
+    {
+      cmdID = 1,
+      type = "Choice",
+      vrCommands = {"VrChoice1"}
+    })
+  :Do(function(_,data)
+
+      self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
+    end)
+
+
   EXPECT_RESPONSE(cid, { resultCode = "SUCCESS", success = true })
 end
 
@@ -76,105 +76,89 @@ end
 common_steps:AddNewTestCasesGroup("Test")
 
 function Test:Step_1_4_Mobile_Sends_Request_PerformInteraction_BOTH()
-  
-  local hmi_app_id = common_functions:GetHmiAppId(config.application1.registerAppInterfaceParams.appName, self)
-  
-  -- 1. App -> SDL: PerformInteraction (timeout, params, mode: BOTH) 
+  -- 1. App -> SDL: PerformInteraction (timeout, params, mode: BOTH)
   local request = {
     interactionMode = "BOTH",
-    timeout = 5000, 
+    timeout = 5000,
     initialText = "StartPerformInteraction",
-    initialPrompt = {{text = "Make your choice", type = "TEXT"}}, 
+    initialPrompt = {{text = "Make your choice", type = "TEXT"}},
     interactionChoiceSetIDList = {1},
     helpPrompt = {{text = "Help Prompt", type = "TEXT"}},
-    timeoutPrompt = {{text = "Time out", type = "TEXT"}}, 
+    timeoutPrompt = {{text = "Time out", type = "TEXT"}},
     vrHelp = {
-      { 
+      {
         text = "New VRHelp",
-        position = 1,	
-        image = {value = "icon.png", imageType = "STATIC"} 
+        position = 1,
+        image = {value = "icon.png", imageType = "STATIC"}
       }
     },
     interactionLayout = "ICON_ONLY"
   }
   -- mobile side: sending PerformInteraction request
   mob_cid = self.mobileSession:SendRPC("PerformInteraction", request)
-  
   -- 2. SDL -> HMI: VR.PerformInteraction (params, timeout)// with grammarID
-  EXPECT_HMICALL("VR.PerformInteraction", 
-  {
-    helpPrompt = request.helpPrompt,
-    initialPrompt = request.initialPrompt,
-    timeout = request.timeout,
-    timeoutPrompt = request.timeoutPrompt
-  })			
-  :ValidIf(function(_,data)
-    if data.params.grammarID then
-      return true
-    else 
-      self:FailTestCase("VR.PerformInteraction does not have grammarID parameter")
-      return false
-    end
-  end)
-  :Do(function(_,data)
-    vr_cid = data.id 
-  end) 
-  
-  
-  -- 3. SDL does not start the timeout for VR
-  -- 4. SDL -> HMI: UI.PerformInteraction (params, timeout) 
-  EXPECT_HMICALL("UI.PerformInteraction", 
-  {
-    timeout = request.timeout,
-    choiceSet = {
-      {
-        choiceID = 1,
-        image = {imageType = "STATIC", value = "action.png"},
-        menuName = "Choice1"
-      }
-    },
-    initialText = 
+  EXPECT_HMICALL("VR.PerformInteraction",
     {
-      fieldName = "initialInteractionText",
-      fieldText = request.initialText
-    }
-  })
+      helpPrompt = request.helpPrompt,
+      initialPrompt = request.initialPrompt,
+      timeout = request.timeout,
+      timeoutPrompt = request.timeoutPrompt
+    })
+  :ValidIf(function(_,data)
+      if data.params.grammarID then
+        return true
+      else
+        self:FailTestCase("VR.PerformInteraction does not have grammarID parameter")
+
+      end
+    end)
   :Do(function(_,data)
-    ui_cid = data.id 
-  end) 
+      vr_cid = data.id
+    end)
+  -- 3. SDL does not start the timeout for VR
+  -- 4. SDL -> HMI: UI.PerformInteraction (params, timeout)
+  EXPECT_HMICALL("UI.PerformInteraction",
+    {
+      timeout = request.timeout,
+      choiceSet = {
+        {
+          choiceID = 1,
+          image = {imageType = "STATIC", value = "action.png"},
+          menuName = "Choice1"
+        }
+      },
+      initialText =
+      {
+        fieldName = "initialInteractionText",
+        fieldText = request.initialText
+      }
+    })
+  :Do(function(_,data)
+      ui_cid = data.id
+    end)
+end
+
+function Test:Step_1_4_VR_Started()
+  self.hmiConnection:SendNotification("VR.Started")
+  EXPECT_NOTIFICATION("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
+end
+
+function Test:Step_1_4_TTS_Started_initialPrompt()
+  self.hmiConnection:SendNotification("TTS.Started")
 end
 
 function Test:Step_5_VR_Responds_SUCCESS_SDL_Start_Timer()
   -- 5. HMI -> SDL: VR.PerformInteraction (SUCCESS, choiceID)
-  self.hmiConnection:SendResponse(vr_id, "VR.PerformInteraction", "SUCCESS", {info = "VR error message"})
+  self.hmiConnection:SendResponse(vr_cid, "VR.PerformInteraction", "SUCCESS", {info = "VR error message"})
   vr_response_time = timestamp()
   -- display date time
-  print("=====Time when HMI sends VR.PerformInteraction response and SDL start timer=====")
-  os.execute("date") 
-end
-
-function Test:Step_6_VR_Started()
-  local hmi_app_id = common_functions:GetHmiAppId(config.application1.registerAppInterfaceParams.appName, self)
-  
-  --Send notification to start VR
-  self.hmiConnection:SendNotification("VR.Started")						
-  
-  --mobile side: OnHMIStatus notifications
-  EXPECT_NOTIFICATION("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
-end
-
-function Test:Step_6_TTS_Started_initialPrompt()
-  --Send notification to start TTS		
-  self.hmiConnection:SendNotification("TTS.Started")	
+  common_functions:UserPrint(const.color.green, "=====Time when HMI sends VR.PerformInteraction response and SDL start timer=====")
+  os.execute("date")
 end
 
 function Test:Step_6_UI_OnSystemContext_VRSESSION()
-  
-  local hmi_app_id = common_functions:GetHmiAppId(config.application1.registerAppInterfaceParams.appName, self)
-  
-  self.hmiConnection:SendNotification("UI.OnSystemContext",{appID = hmi_app_id, systemContext = "VRSESSION"}) 
-  
-  --mobile side: OnHMIStatus notifications
+  hmi_app_id = common_functions:GetHmiAppId(const.default_app.appName, self)
+  self.hmiConnection:SendNotification("UI.OnSystemContext",{appID = hmi_app_id, systemContext = "VRSESSION"})
   EXPECT_NOTIFICATION("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE", systemContext = "VRSESSION"})
 end
 
@@ -183,67 +167,52 @@ function Test:Step_6_TTS_Stopped_initialPrompt()
 end
 
 function Test:Step_6_TTS_Started_timeoutPrompt()
-  --Send notification to start TTS		
-  self.hmiConnection:SendNotification("TTS.Started")	
+  --Send notification to start TTS
+  self.hmiConnection:SendNotification("TTS.Started")
 end
 
 function Test:Step_6_TTS_Stopped_timeoutPrompt()
-  
   self.hmiConnection:SendNotification("TTS.Stopped")
-  
 end
 
 function Test:Step_6_VR_Stopped()
-  
-  self.hmiConnection:SendNotification("VR.Stopped") 
-  
-  --mobile side: OnHMIStatus notifications
+  self.hmiConnection:SendNotification("VR.Stopped")
   EXPECT_NOTIFICATION("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "VRSESSION"})
 end
 
 function Test:Step_6_UI_display_Choices_OnSystemContext_HMI_OBSCURED()
-  
-  local hmi_app_id = common_functions:GetHmiAppId(config.application1.registerAppInterfaceParams.appName, self)
-  
   --Choice icon list is displayed
-  self.hmiConnection:SendNotification("UI.OnSystemContext",{appID = hmi_app_id, systemContext = "HMI_OBSCURED"}) 
-  
-  --mobile side: OnHMIStatus notifications
-  EXPECT_NOTIFICATION("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "HMI_OBSCURED"}) 
-end
-
-function Test:Step_6_VR_Responds_TIMED_OUT_SDL_Start_Timer()
-  self.hmiConnection:SendError(vr_cid, "VR.PerformInteraction", "TIMED_OUT", "VR error message")																				 
+  self.hmiConnection:SendNotification("UI.OnSystemContext",{appID = hmi_app_id, systemContext = "HMI_OBSCURED"})
+  EXPECT_NOTIFICATION("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "HMI_OBSCURED"})
 end
 
 function Test:Step_7_UI_PerformInteraction_SUCCESS()
-  print("[INFO] This step may take 19 seconds to wait before sending UI.PerformInteraction response") 
+  common_functions:UserPrint(const.color.green, "[INFO] This step may take 19 seconds to wait before sending UI.PerformInteraction response")
   local ui_response_time = timestamp()
   local interval = ui_response_time - vr_response_time
-  if (interval <= 19000) then 
-    local wait_more_time = math.floor((19000 - interval)/1000) -- in seconds
+  if (interval <= 19000) then
+    local wait_more_time = math.floor((19000 - interval)/1000) -- unit is second
     os.execute("sleep " .. tostring(wait_more_time))
-  end
-  print("=====Time when HMI sends UI.PerformInteraction response=====")
+  end  
+  common_functions:UserPrint(const.color.green, "=====Time when HMI sends UI.PerformInteraction response=====")
   os.execute("date")
   -- 7. HMI -> SDL: UI.PerformInteraction (SUCCESS)
-  self.hmiConnection:SendResponse(ui_cid, "UI.PerformInteraction", "SUCCESS", {choiceID = 1}) 
-  
+  self.hmiConnection:SendResponse(ui_cid, "UI.PerformInteraction", "SUCCESS", {choiceID = 1})
   -- 8. SDL -> App: PerformInteraction (SUCCESS, success:true, choiceID)
-  EXPECT_RESPONSE(mob_cid, {success = true, resultCode = "SUCCESS", triggerSource = "MENU", choiceID = 1}) 
-  :Timeout(20000)
+  EXPECT_RESPONSE(mob_cid, {success = true, resultCode = "SUCCESS", triggerSource = "MENU", choiceID = 1})
+  :Timeout(20000) -- (19 + 1): 
+  -- 19 seconds for sleep and excute steps after HMI sends VR.PerformInteraction 
+  -- 1 second to to wait for SDL forwards PerformInteraction response to mobile sine HMI sends UI.PerformInteraction
 end
 
 function Test:Step_7_UI_close_pop_up_OnSystemContext_MAIN()
-  local hmi_app_id = common_functions:GetHmiAppId(config.application1.registerAppInterfaceParams.appName, self)
-  self.hmiConnection:SendNotification("UI.OnSystemContext",{appID = hmi_app_id, systemContext = "MAIN"}) 
-  --mobile side: OnHMIStatus notifications
+  self.hmiConnection:SendNotification("UI.OnSystemContext",{appID = hmi_app_id, systemContext = "MAIN"})
   EXPECT_NOTIFICATION("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
 end
 
 ---------------------------------------------------------------------------------------------
 --[[ Postconditions ]]
 common_steps:AddNewTestCasesGroup("Postconditions")
-local app_name = config.application1.registerAppInterfaceParams.appName
+local app_name = const.default_app.appName
 common_steps:UnregisterApp("Postcondition_UnRegisterApp", app_name)
 common_steps:StopSDL("Postcondition_StopSDL")
