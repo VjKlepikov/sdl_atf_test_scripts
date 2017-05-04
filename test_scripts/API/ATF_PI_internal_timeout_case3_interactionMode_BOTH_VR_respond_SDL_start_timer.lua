@@ -189,7 +189,7 @@ function Test:Step_7_UI_PerformInteraction_SUCCESS()
   local ui_response_time = timeout - 1000
   if (interval < ui_response_time) then -- 1s to make sure that HMI sends UI response before timeout
     local wait_more_time = math.floor((ui_response_time - interval)/1000) -- unit is second
-    common_functions:UserPrint(const.color.green, "[INFO] This step may take " .. wait_more_time .. " miliseconds to wait before sending UI.PerformInteraction response")
+    common_functions:UserPrint(const.color.green, "[INFO] This step may take " .. wait_more_time .. " seconds to wait before sending UI.PerformInteraction response")
     os.execute("sleep " .. tostring(wait_more_time))
   end
   common_functions:UserPrint(const.color.green, "=====Time when HMI sends UI.PerformInteraction response=====")
@@ -198,9 +198,6 @@ function Test:Step_7_UI_PerformInteraction_SUCCESS()
   self.hmiConnection:SendResponse(ui_cid, "UI.PerformInteraction", "SUCCESS", {choiceID = 1})  
   -- 8. SDL -> App: PerformInteraction (SUCCESS, success:true, choiceID)
   EXPECT_RESPONSE("PerformInteraction", {success = true, resultCode = "SUCCESS", triggerSource = "MENU", choiceID = 1})  
-end
-
-function Test:Step_7_UI_close_pop_up_OnSystemContext_MAIN()
   self.hmiConnection:SendNotification("UI.OnSystemContext",{appID = hmi_app_id, systemContext = "MAIN"})
   EXPECT_NOTIFICATION("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
 end

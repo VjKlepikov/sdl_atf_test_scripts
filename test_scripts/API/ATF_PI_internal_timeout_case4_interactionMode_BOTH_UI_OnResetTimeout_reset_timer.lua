@@ -185,19 +185,19 @@ function Test:Step_8_10_UI_OnResetTimeout_SDL_Restart_Timer()
   -- 8. No user action on UI
   -- 9. HMI -> SDL: OnResetTimeout () during timeout is not expired
   -- 10. SDL resets <default watchdog timeout> for UI  
-  local timeout_after_reset = default_timeout + 5000*2
-  common_functions:UserPrint(const.color.green, "[INFO] This step takes about " .. tostring(timeout_after_reset - 2000) .. " miliseconds. Please wait!")
-  local on_reset_time = timestamp()
-  local interval = on_reset_time - vr_response_time
-  if (interval <= 19000) then
-    local wait_more_time = math.floor((19000 - interval)/1000) -- unit is second
+  local timeout = default_timeout + 5000*2
+  local on_reset_time = timeout - 1000 -- send OnResetTimeout 1 second before timeout
+  local current_time = timestamp()
+  local interval = current_time - vr_response_time
+  
+  if (interval <= on_reset_time) then
+    local wait_more_time = math.floor((on_reset_time - interval)/1000) -- unit is second
+    common_functions:UserPrint(const.color.green, "[INFO] This step takes about " .. tostring(wait_more_time) .. " seconds. Please wait!")
     os.execute("sleep " .. tostring(wait_more_time))
   end  
   common_functions:UserPrint(const.color.green, "=====Time when HMI sends UI.PerformInteraction response=====")
-  os.execute("date")
-  
-  
-  common_functions:DelayedExp(timeout_after_reset - 2000) -- -2s to make sure that timeout has not happened.
+  os.execute("date")    
+  common_functions:DelayedExp(timeout - 2000) -- -2s to make sure that timeout has not happened.
   self.hmiConnection:SendNotification("UI.OnResetTimeout", {appID = hmi_app_id, methodName = "UI.PerformInteraction"})  
   -- SDL does not respond PerformInteraction to mobile
   EXPECT_RESPONSE("PerformInteraction")
@@ -221,9 +221,6 @@ function Test:Step_12_14_UI_PerformInteraction()
   self.hmiConnection:SendResponse(ui_cid, "UI.PerformInteraction", "SUCCESS", {choiceID = 1}) 
   -- 14. SDL -> App: PerformInteraction (<result_code>, choiceID)
   EXPECT_RESPONSE(mob_cid, {success = true, resultCode = "SUCCESS", triggerSource = "MENU", choiceID = 1})
-end
-
-function Test:Step_12_14_UI_close_pop_up_OnSystemContext_MAIN()
   self.hmiConnection:SendNotification("UI.OnSystemContext",{appID = hmi_app_id, systemContext = "MAIN"}) 
   EXPECT_NOTIFICATION("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
 end
