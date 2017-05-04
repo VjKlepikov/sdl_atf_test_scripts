@@ -312,8 +312,8 @@
 ./test_scripts/Smoke_test/ATF_RevokedApp_DISALLOWED_RPCs.lua [APPLINK-32944]
 ./test_scripts/Smoke_test/ATF_HeartBeat_V2_Protocol.lua
 ./test_scripts/Smoke_test/ATF_HeartBeat_V3_CheckedHeartBeatAndACKFromSDL_UncheckedACKFromMobile.lua
-./test_scripts/Smoke_test/ATF_HeartBeat_V3_AppNotAnswerHeartBeat.lua
-./test_scripts/Smoke_test/ATF_Smoke_testing_resumption_after_heartbeat_disconnect.lua
+./test_scripts/Smoke_test/ATF_HeartBeat_V3_AppNotAnswerHeartBeat.lua [APPLINK-34378]
+./test_scripts/Smoke_test/ATF_Smoke_testing_resumption_after_heartbeat_disconnect.lua [APPLINK-34378]
 ./test_scripts/Smoke_test/ATF_Smoke_testing_resumption_30s_after_ignition_cycle.lua
 ./test_scripts/Smoke_test/ATF_Smoke_testing_audio_stream_over_pipe.lua
 ./test_scripts/Smoke_test/ATF_Smoke_testing_video_stream_over_pipe.lua
