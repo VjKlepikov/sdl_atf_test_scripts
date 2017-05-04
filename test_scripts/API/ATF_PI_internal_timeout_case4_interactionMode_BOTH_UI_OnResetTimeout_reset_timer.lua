@@ -29,7 +29,7 @@
 require('user_modules/all_common_modules')
 
 --[[ Local Variables ]]
-local mob_cid, vr_cid, ui_cid, hmi_app_id
+local mob_cid, vr_cid, ui_cid, hmi_app_id, vr_response_time, on_reset_time
 local default_timeout = common_functions:GetValueFromIniFile("DefaultTimeout")
 
 --[[ Preconditions ]]
@@ -133,7 +133,6 @@ function Test:Step_1_4_Mobile_Sends_Request_PerformInteraction_BOTH_timeout_5000
   :Do(function(_,data)
     ui_cid = data.id 
   end)
-  
 end
 
 function Test:Step_5_7_VR_Started()
@@ -164,7 +163,11 @@ function Test:Step_5_7_TTS_Stopped_timeoutPrompt()
 end
 
 function Test:Step_5_7_VR_Responds_TIMED_OUT_SDL_Start_Timer()
-  self.hmiConnection:SendError(vr_cid, "VR.PerformInteraction", "TIMED_OUT", "VR error message")																				
+  self.hmiConnection:SendError(vr_cid, "VR.PerformInteraction", "TIMED_OUT", "VR error message")
+  vr_response_time = timestamp()
+  -- display date time
+  common_functions:UserPrint(const.color.green, "=====Time when HMI sends VR.PerformInteraction response and SDL start timer=====")
+  os.execute("date")  
 end
 
 function Test:Step_5_7_VR_Stopped()
@@ -183,23 +186,33 @@ function Test:Step_8_10_UI_OnResetTimeout_SDL_Restart_Timer()
   -- 9. HMI -> SDL: OnResetTimeout () during timeout is not expired
   -- 10. SDL resets <default watchdog timeout> for UI  
   local timeout_after_reset = default_timeout + 5000*2
-  common_functions:UserPrint(const.color.green, "[INFO] This step takes about " .. tostring(timeout_after_reset - 2000) .. " seconds. Please wait!")
+  common_functions:UserPrint(const.color.green, "[INFO] This step takes about " .. tostring(timeout_after_reset - 2000) .. " miliseconds. Please wait!")
+  local on_reset_time = timestamp()
+  local interval = on_reset_time - vr_response_time
+  if (interval <= 19000) then
+    local wait_more_time = math.floor((19000 - interval)/1000) -- unit is second
+    os.execute("sleep " .. tostring(wait_more_time))
+  end  
+  common_functions:UserPrint(const.color.green, "=====Time when HMI sends UI.PerformInteraction response=====")
+  os.execute("date")
+  
+  
   common_functions:DelayedExp(timeout_after_reset - 2000) -- -2s to make sure that timeout has not happened.
   self.hmiConnection:SendNotification("UI.OnResetTimeout", {appID = hmi_app_id, methodName = "UI.PerformInteraction"})  
   -- SDL does not respond PerformInteraction to mobile
-  -- EXPECT_RESPONSE(mob_cid, {})
-  -- This is an ATF issue. ATF does not allow to check one response in 2 tests. So if we check here, we can not check in next test.
+  EXPECT_RESPONSE("PerformInteraction")
+  :Times(0)
 end
 
 function Test:Step_11_UI_OnResetTimeout_SDL_Restart_Timer_one_more_time()
   -- 11. HMI resets timeout until user action
   local timeout_after_reset = default_timeout + 5000*2
-  common_functions:UserPrint(const.color.green, "[INFO] This step takes about " .. tostring(timeout_after_reset - 2000) .. " seconds. Please wait!")
+  common_functions:UserPrint(const.color.green, "[INFO] This step takes about " .. tostring(timeout_after_reset - 2000) .. " miliseconds. Please wait!")
   common_functions:DelayedExp(timeout_after_reset - 2000) -- -2s to make sure that timeout has not happened.
   self.hmiConnection:SendNotification("UI.OnResetTimeout", {appID = hmi_app_id, methodName = "UI.PerformInteraction"})  
   -- SDL does not respond PerformInteraction to mobile
-  -- EXPECT_RESPONSE(mob_cid, {})
-  -- This is an ATF issue. ATF does not allow to check one response in 2 tests. So if we check here, we can not check in next test.
+  EXPECT_RESPONSE("PerformInteraction")
+  :Times(0)
 end
 
 function Test:Step_12_14_UI_PerformInteraction()
@@ -208,7 +221,6 @@ function Test:Step_12_14_UI_PerformInteraction()
   self.hmiConnection:SendResponse(ui_cid, "UI.PerformInteraction", "SUCCESS", {choiceID = 1}) 
   -- 14. SDL -> App: PerformInteraction (<result_code>, choiceID)
   EXPECT_RESPONSE(mob_cid, {success = true, resultCode = "SUCCESS", triggerSource = "MENU", choiceID = 1})
-  :Timeout(22000)
 end
 
 function Test:Step_12_14_UI_close_pop_up_OnSystemContext_MAIN()

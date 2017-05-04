@@ -25,15 +25,14 @@ require('user_modules/all_common_modules')
 
 --[[ Local Variables ]]
 local mob_cid, vr_cid, ui_cid, vr_response_time, hmi_app_id
+local default_timeout = common_functions:GetValueFromIniFile("DefaultTimeout")
 
 --[[ Preconditions ]]
-
 common_steps:AddNewTestCasesGroup("Preconditions")
 -- An app is registered and activated
 common_steps:PreconditionSteps("Preconditions", const.precondition.ACTIVATE_APP)
 common_steps:PutFile("Preconditions_PutFile_action.png", "action.png")
 function Test:Precondition_CreateInteractionChoiceSet_interactionChoiceSetID_1()
-
   local cid = self.mobileSession:SendRPC("CreateInteractionChoiceSet",
     {
       interactionChoiceSetID = 1,
@@ -54,8 +53,6 @@ function Test:Precondition_CreateInteractionChoiceSet_interactionChoiceSetID_1()
         }
       }
     })
-
-
   EXPECT_HMICALL("VR.AddCommand",
     {
       cmdID = 1,
@@ -63,11 +60,8 @@ function Test:Precondition_CreateInteractionChoiceSet_interactionChoiceSetID_1()
       vrCommands = {"VrChoice1"}
     })
   :Do(function(_,data)
-
       self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
     end)
-
-
   EXPECT_RESPONSE(cid, { resultCode = "SUCCESS", success = true })
 end
 
@@ -109,7 +103,6 @@ function Test:Step_1_4_Mobile_Sends_Request_PerformInteraction_BOTH()
         return true
       else
         self:FailTestCase("VR.PerformInteraction does not have grammarID parameter")
-
       end
     end)
   :Do(function(_,data)
@@ -147,6 +140,12 @@ function Test:Step_1_4_TTS_Started_initialPrompt()
   self.hmiConnection:SendNotification("TTS.Started")
 end
 
+function Test:Step_1_4_UI_OnSystemContext_VRSESSION()
+  hmi_app_id = common_functions:GetHmiAppId(const.default_app.appName, self)
+  self.hmiConnection:SendNotification("UI.OnSystemContext",{appID = hmi_app_id, systemContext = "VRSESSION"})
+  EXPECT_NOTIFICATION("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE", systemContext = "VRSESSION"})
+end
+
 function Test:Step_5_VR_Responds_SUCCESS_SDL_Start_Timer()
   -- 5. HMI -> SDL: VR.PerformInteraction (SUCCESS, choiceID)
   self.hmiConnection:SendResponse(vr_cid, "VR.PerformInteraction", "SUCCESS", {info = "VR error message"})
@@ -154,12 +153,9 @@ function Test:Step_5_VR_Responds_SUCCESS_SDL_Start_Timer()
   -- display date time
   common_functions:UserPrint(const.color.green, "=====Time when HMI sends VR.PerformInteraction response and SDL start timer=====")
   os.execute("date")
-end
-
-function Test:Step_6_UI_OnSystemContext_VRSESSION()
-  hmi_app_id = common_functions:GetHmiAppId(const.default_app.appName, self)
-  self.hmiConnection:SendNotification("UI.OnSystemContext",{appID = hmi_app_id, systemContext = "VRSESSION"})
-  EXPECT_NOTIFICATION("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE", systemContext = "VRSESSION"})
+  -- SDL does not send PerformInteraction to mobile
+  EXPECT_RESPONSE("PerformInteraction")
+  :Times(0)  
 end
 
 function Test:Step_6_TTS_Stopped_initialPrompt()
@@ -167,7 +163,6 @@ function Test:Step_6_TTS_Stopped_initialPrompt()
 end
 
 function Test:Step_6_TTS_Started_timeoutPrompt()
-  --Send notification to start TTS
   self.hmiConnection:SendNotification("TTS.Started")
 end
 
@@ -187,22 +182,22 @@ function Test:Step_6_UI_display_Choices_OnSystemContext_HMI_OBSCURED()
 end
 
 function Test:Step_7_UI_PerformInteraction_SUCCESS()
-  common_functions:UserPrint(const.color.green, "[INFO] This step may take 19 seconds to wait before sending UI.PerformInteraction response")
-  local ui_response_time = timestamp()
-  local interval = ui_response_time - vr_response_time
-  if (interval <= 19000) then
-    local wait_more_time = math.floor((19000 - interval)/1000) -- unit is second
+  -- Calculate time to send UI.PerformInteraction response
+  local timeout = default_timeout + 5000*2  
+  local current_time = timestamp()
+  local interval = current_time - vr_response_time
+  local ui_response_time = timeout - 1000
+  if (interval < ui_response_time) then -- 1s to make sure that HMI sends UI response before timeout
+    local wait_more_time = math.floor((ui_response_time - interval)/1000) -- unit is second
+    common_functions:UserPrint(const.color.green, "[INFO] This step may take " .. wait_more_time .. " miliseconds to wait before sending UI.PerformInteraction response")
     os.execute("sleep " .. tostring(wait_more_time))
-  end  
+  end
   common_functions:UserPrint(const.color.green, "=====Time when HMI sends UI.PerformInteraction response=====")
-  os.execute("date")
+  os.execute("date")  
   -- 7. HMI -> SDL: UI.PerformInteraction (SUCCESS)
-  self.hmiConnection:SendResponse(ui_cid, "UI.PerformInteraction", "SUCCESS", {choiceID = 1})
+  self.hmiConnection:SendResponse(ui_cid, "UI.PerformInteraction", "SUCCESS", {choiceID = 1})  
   -- 8. SDL -> App: PerformInteraction (SUCCESS, success:true, choiceID)
-  EXPECT_RESPONSE(mob_cid, {success = true, resultCode = "SUCCESS", triggerSource = "MENU", choiceID = 1})
-  :Timeout(20000) -- (19 + 1): 
-  -- 19 seconds for sleep and excute steps after HMI sends VR.PerformInteraction 
-  -- 1 second to to wait for SDL forwards PerformInteraction response to mobile sine HMI sends UI.PerformInteraction
+  EXPECT_RESPONSE("PerformInteraction", {success = true, resultCode = "SUCCESS", triggerSource = "MENU", choiceID = 1})  
 end
 
 function Test:Step_7_UI_close_pop_up_OnSystemContext_MAIN()

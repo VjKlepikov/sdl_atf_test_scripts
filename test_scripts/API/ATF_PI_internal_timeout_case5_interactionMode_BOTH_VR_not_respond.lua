@@ -26,7 +26,7 @@ require('user_modules/all_common_modules')
 --[[ Preconditions ]]
 common_steps:AddNewTestCasesGroup("Preconditions")
 -- An app is registered and activated
-common_steps:PreconditionSteps("Preconditions", 7)
+common_steps:PreconditionSteps("Preconditions", const.precondition.ACTIVATE_APP)
 common_steps:PutFile("Preconditions_PutFile_action.png", "action.png")
 function Test:Precondition_CreateInteractionChoiceSet_ChoiceSetID_1()
   local cid = self.mobileSession:SendRPC("CreateInteractionChoiceSet",
