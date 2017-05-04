@@ -317,6 +317,7 @@
 ./test_scripts/Smoke_test/ATF_Smoke_testing_resumption_30s_after_ignition_cycle.lua
 ./test_scripts/Smoke_test/ATF_Smoke_testing_audio_stream_over_pipe.lua
 ./test_scripts/Smoke_test/ATF_Smoke_testing_video_stream_over_pipe.lua
+./test_scripts/Smoke_test/ATF_Smoke_testing_resumption_after_3_consecutive_ignition_cycle.lua [APPLINK-34400]
 ./test_scripts/Capabilities/UI-GetCapabilities/hmiCapabilities/ATF_UI_GetCapabilities_hmiCapabilities_phoneCall_miss.lua
 ./test_scripts/Capabilities/UI-GetCapabilities/hmiCapabilities/ATF_UI_GetCapabilities_hmiCapabilities_navigation_miss.lua
 ./test_scripts/Capabilities/UI-GetCapabilities/hmiCapabilities/ATF_UI_GetCapabilities_hmiCapabilities_navigation_invalid_value.lua
