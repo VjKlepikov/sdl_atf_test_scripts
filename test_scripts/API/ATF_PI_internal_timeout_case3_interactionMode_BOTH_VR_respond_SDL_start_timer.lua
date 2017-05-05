@@ -26,6 +26,7 @@ require('user_modules/all_common_modules')
 --[[ Local Variables ]]
 local mob_cid, vr_cid, ui_cid, vr_response_time, hmi_app_id
 local default_timeout = common_functions:GetValueFromIniFile("DefaultTimeout")
+config.application1.registerAppInterfaceParams.isMediaApplication = true
 
 --[[ Preconditions ]]
 common_steps:AddNewTestCasesGroup("Preconditions")
@@ -195,11 +196,11 @@ function Test:Step_7_UI_PerformInteraction_SUCCESS()
   common_functions:UserPrint(const.color.green, "=====Time when HMI sends UI.PerformInteraction response=====")
   os.execute("date")  
   -- 7. HMI -> SDL: UI.PerformInteraction (SUCCESS)
-  self.hmiConnection:SendResponse(ui_cid, "UI.PerformInteraction", "SUCCESS", {choiceID = 1})  
-  -- 8. SDL -> App: PerformInteraction (SUCCESS, success:true, choiceID)
-  EXPECT_RESPONSE("PerformInteraction", {success = true, resultCode = "SUCCESS", triggerSource = "MENU", choiceID = 1})  
+  self.hmiConnection:SendResponse(ui_cid, "UI.PerformInteraction", "SUCCESS", {choiceID = 1}) 
   self.hmiConnection:SendNotification("UI.OnSystemContext",{appID = hmi_app_id, systemContext = "MAIN"})
   EXPECT_NOTIFICATION("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
+  -- 8. SDL -> App: PerformInteraction (SUCCESS, success:true, choiceID)
+  EXPECT_RESPONSE("PerformInteraction", {success = true, resultCode = "SUCCESS", triggerSource = "MENU", choiceID = 1})
 end
 
 ---------------------------------------------------------------------------------------------

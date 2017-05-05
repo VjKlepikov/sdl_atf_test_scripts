@@ -22,6 +22,7 @@
 
 ---------------------------------------------------------------------------------------------
 require('user_modules/all_common_modules')
+config.application1.registerAppInterfaceParams.isMediaApplication = true
 
 --[[ Preconditions ]]
 common_steps:AddNewTestCasesGroup("Preconditions")
