@@ -1,6 +1,22 @@
 ---------------------------------------------------------------------------------------------
+-- APPLINK-16207 [GenericResultCodes] TOO_MANY_REQUESTS for the applications in other than NONE levels
+-- APPLINK-8533 SDL must block apps that send messages of higher frequency than defined in .ini file
+--
 -- Mobile app sends more packets than defined by "count of packets" in custom period of time.
 -- Source: SDLAQ-TC-726 in Jama
+--
+-- Preconditions:
+-- 1. Define FrequencyCount = 50 and FrequencyTime = 5000 in .ini file
+-- 2. Start SDL
+-- 3. Register application
+-- 4. Activate application --> hmiLevel = "FULL"
+--
+-- Steps:
+-- 1. Send 51 RPCs within 5 seconds
+--
+-- Expected result:
+-- All RPCs processed successfully except the last one
+-- Application is unregistered with TOO_MANY_REQUESTS reason
 ---------------------------------------------------------------------------------------------
 
 -- [[ General configuration parameters ]]
@@ -12,6 +28,10 @@ local commonFunctions = require("user_modules/shared_testcases_genivi/commonFunc
 local commonSteps = require("user_modules/shared_testcases_genivi/commonSteps")
 local commonTestCases = require("user_modules/shared_testcases_genivi/commonTestCases")
 local commonPreconditions = require("user_modules/shared_testcases_genivi/commonPreconditions")
+
+-- [[ Local Variables ]]
+local start_time = 0
+local finish_time = 0
 
 -- [[ General Precondition before ATF start ]]
 commonFunctions:SDLForceStop()
@@ -45,6 +65,7 @@ function Test:ActivateApp()
           end)
       end
     end)
+  commonTestCases:DelayedExp(5000)
 end
 
 -- [[ Test ]]
@@ -65,8 +86,14 @@ end
 local numRq = 0
 local numRs = 0
 
+function Test.DelayBefore()
+  commonTestCases:DelayedExp(5000)
+  RUN_AFTER(function() start_time = timestamp() end, 5000)
+end
+
 for i = 1, 51 do
   Test["RPC_" .. string.format("%02d", i)] = function(self)
+    if i == 1 then start_time = timestamp() end
     commonTestCases:DelayedExp(50)
     if not received then
       local cid = self.mobileSession:SendRPC("ListFiles", { })
@@ -79,19 +106,32 @@ for i = 1, 51 do
   end
 end
 
-function Test.Delay()
-  commonTestCases:DelayedExp(2000)
+function Test.DelayAfter()
+  finish_time = timestamp()
+  commonTestCases:DelayedExp(5000)
 end
 
-function Test.Check_OnAppInterfaceUnregistered()
-  print("Is OnAppInterfaceUnregistered(TOO_MANY_REQUESTS) received: " .. tostring(received))
+function Test:CheckTimeOut()
+  local processing_time = finish_time - start_time
+  print("Processing time: " .. processing_time)
+  if processing_time > 5000 then
+    self:FailTestCase("Processing time is more than 5 sec.")
+  end
+end
+
+function Test:CheckAppIsUnregistered()
   print("Number of Sent RPCs: " .. numRq)
   print("Number of Responses: " .. numRs)
+  if not received then
+    self:FailTestCase("OnAppInterfaceUnregistered(TOO_MANY_REQUESTS) is not received")
+  else
+    print("OnAppInterfaceUnregistered(TOO_MANY_REQUESTS) is received")
+  end
 end
 
 -- [[ Postconditions ]]
 
-function Test.Restore_files()
+function Test.RestoreFiles()
   commonPreconditions:RestoreFile("smartDeviceLink.ini")
 end
 
