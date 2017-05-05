@@ -25,22 +25,46 @@
 require('user_modules/all_common_modules')
 
 --[[ Local variables]]
-local mobile_session = "mobileSession"
-local app = common_functions:CreateRegisterAppParameters(
-  {isMediaApplication = true, appHMIType = {"MEDIA"}, appID = "1", appName = "Application"})
+local grammarIDValue
+local request_AddSubMenu =
+{
+  menuID = 1,
+  position = 500,
+  menuName = "SubMenupositive1"
+}
+local request_AddCommand =
+{
+  cmdID = 1,
+  menuParams =
+  {
+    position = 0,
+    menuName ="Command1",
+    parentID = 0
+  },
+  vrCommands = {"VRCommand1"}
+}
+local request_ChoiceSet =
+{
+  interactionChoiceSetID = 1,
+  choiceSet =
+  {
+    {
+      choiceID = 1,
+      menuName = "Choice1",
+      vrCommands =
+      {
+        "VrChoice1",
+      }
+    }
+  }
+}
 
 --[[ Preconditions ]]
 common_steps:AddNewTestCasesGroup("Preconditions")
-common_functions:DeleteLogsFileAndPolicyTable()
 common_steps:PreconditionSteps("Precondition",const.precondition.ACTIVATE_APP)
 
 function Test:Precondition_AddSubMenu()
-  local cid = self.mobileSession:SendRPC("AddSubMenu",
-    {
-      menuID = 1,
-      position = 500,
-      menuName = "SubMenupositive1"
-    })
+  local cid = self.mobileSession:SendRPC("AddSubMenu", request_AddSubMenu)
   EXPECT_HMICALL("UI.AddSubMenu",
     {
       menuID = 1,
@@ -62,16 +86,7 @@ function Test:Precondition_AddSubMenu()
 end
 
 function Test:Precondition_AddCommand()
-  local cid = self.mobileSession:SendRPC("AddCommand",
-    {
-      cmdID = 1,
-      menuParams =
-      {
-        position = 0,
-        menuName ="Command1"
-      },
-      vrCommands = {"VRCommand1"}
-    })
+  local cid = self.mobileSession:SendRPC("AddCommand", request_AddCommand)
   EXPECT_HMICALL("UI.AddCommand",
     {
       cmdID = 1,
@@ -98,29 +113,16 @@ function Test:Precondition_AddCommand()
       self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
     end)
   EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
-  EXPECT_NOTIFICATION("OnHashChange")
-  :Do(function(_, data)
-      self.currentHashID = data.payload.hashID
+  :Do(function(_,data)
+      EXPECT_NOTIFICATION("OnHashChange")
+      :Do(function(_, data)
+          self.currentHashID = data.payload.hashID
+        end)
     end)
 end
 
 function Test:Precondition_CreateInteractionChoiceSet()
-  local cid = self.mobileSession:SendRPC("CreateInteractionChoiceSet",
-    {
-      interactionChoiceSetID = 1,
-      choiceSet =
-      {
-
-        {
-          choiceID = 1,
-          menuName = "Choice1",
-          vrCommands =
-          {
-            "VrChoice1",
-          }
-        }
-      }
-    })
+  local cid = self.mobileSession:SendRPC("CreateInteractionChoiceSet",request_ChoiceSet)
   EXPECT_HMICALL("VR.AddCommand",
     {
       cmdID = 1,
@@ -149,13 +151,64 @@ function Test:OnExitAllApplication_SUSPEND()
   EXPECT_HMINOTIFICATION("BasicCommunication.OnSDLPersistenceComplete")
 end
 
+function Test:SDLStoresResumptionDataInAppInfoDatAfterSUSPEND()
+  local resumptionAppData
+  local resumptionDataTable
+  local file_exist = false
+  local count_sleep = 1
+  path_file = config.pathToSDL .."app_info.dat"
+
+  while file_exist == false and count_sleep < 9 do
+    if common_functions:IsFileExist(path_file) then
+      local file = io.open(path_file, r)
+      local resumptionfile = file:read("*a")
+      resumptionDataTable = json.decode(resumptionfile)
+
+      for p = 1, #resumptionDataTable.resumption.resume_app_list do
+        if resumptionDataTable.resumption.resume_app_list[p].appID == "0000001" then
+          resumptionAppData = resumptionDataTable.resumption.resume_app_list[p]
+        end
+      end
+      if resumptionAppData.applicationSubMenus and #resumptionAppData.applicationSubMenus ~= 1 then
+        self:FailTestCase("Wrong number of SubMenus saved in app_info.dat " .. tostring(#resumptionAppData.applicationSubMenus) .. ", expected 1")
+      else
+        if common_functions:CompareTablesNotSorted(request_AddSubMenu,resumptionAppData.applicationSubMenus[1]) == false then
+          self:FailTestCase("Wrong data of SubMenus saved in app_info.dat " .. tostring(#resumptionAppData.applicationSubMenus))
+        end
+      end
+
+      if resumptionAppData.applicationCommands and #resumptionAppData.applicationCommands ~= 1 then
+        self:FailTestCase("Wrong number of AddCommands saved in app_info.dat " .. tostring(#resumptionAppData.applicationCommands) .. ", expected 1")
+      else
+        if common_functions:CompareTablesNotSorted(request_AddCommand,resumptionAppData.applicationCommands[1]) == false then
+          self:FailTestCase("Wrong data of AddCommand saved in app_info.dat")
+        end
+      end
+
+      if resumptionAppData.applicationChoiceSets and #resumptionAppData.applicationChoiceSets ~= 1 then
+        self:FailTestCase("Wrong number of ChoiceSets saved in app_info.dat " .. ", expected 1")
+      else
+        request_ChoiceSet.grammarID = grammarIDValue
+        if common_functions:CompareTablesNotSorted(request_ChoiceSet,resumptionAppData.applicationChoiceSets[1]) == false then
+          self:FailTestCase("Wrong data of ChoiceSet saved in app_info.dat ")
+        end
+      end
+      file_exist = true
+    else
+      os.execute("sleep " .. tostring(count_sleep))
+      count_sleep = count_sleep + 1
+    end
+  end
+end
+
 function Test:OnAwakeSDL()
   self.hmiConnection:SendNotification("BasicCommunication.OnAwakeSDL",{})
+  common_functions:DelayedExp(5000)
 end
 
 function Test:OnExitAllApplication_IGNITION_OFF()
   self.hmiConnection:SendNotification("BasicCommunication.OnExitAllApplications",{reason = "IGNITION_OFF"})
-  EXPECT_HMINOTIFICATION("BasicCommunication.OnSDLClose")
-  EXPECT_HMINOTIFICATION("BasicCommunication.OnAppUnregistered")
   EXPECT_NOTIFICATION("OnAppInterfaceUnregistered",{reason="IGNITION_OFF"})
+  EXPECT_HMINOTIFICATION("BasicCommunication.OnAppUnregistered", { unexpectedDisconnect = false })
+  EXPECT_HMINOTIFICATION("BasicCommunication.OnSDLClose")
 end
