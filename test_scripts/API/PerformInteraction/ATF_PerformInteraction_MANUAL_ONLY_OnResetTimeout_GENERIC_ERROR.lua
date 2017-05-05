@@ -203,9 +203,7 @@ function Test:SDL_sends_GENERIC_ERROR_after_timeout_expired()
           tostring(interval) ..", expected ~" .. tostring(ui_timeout) .. " ==")
         return true
       else
-        common_functions:UserPrint(const.color.red, "== FAIL:Time to GENERIC_ERROR: " ..
-          tostring(interval) ..", expected ~" .. tostring(ui_timeout) .. "==")
-        return false
+        self:FailTestCase("Time to GENERIC_ERROR: " .. tostring(interval) ..", expected ~" .. tostring(ui_timeout))
       end
     end)
 end
