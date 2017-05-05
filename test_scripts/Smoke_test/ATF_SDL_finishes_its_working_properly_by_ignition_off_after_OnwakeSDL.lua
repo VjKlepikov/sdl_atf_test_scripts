@@ -126,7 +126,7 @@ function Test:Precondition_CreateInteractionChoiceSet()
   EXPECT_HMICALL("VR.AddCommand",
     {
       cmdID = 1,
-      appID = self.applications[config.application1.registerAppInterfaceParams.appName],
+      appID = self.applications[const.default_app.appName],
       type = "Choice",
       vrCommands = {"VrChoice1"}
     })
@@ -172,7 +172,7 @@ function Test:SDLStoresResumptionDataInAppInfoDatAfterSUSPEND()
       if resumptionAppData.applicationSubMenus and #resumptionAppData.applicationSubMenus ~= 1 then
         self:FailTestCase("Wrong number of SubMenus saved in app_info.dat " .. tostring(#resumptionAppData.applicationSubMenus) .. ", expected 1")
       else
-        if common_functions:CompareTablesNotSorted(request_AddSubMenu,resumptionAppData.applicationSubMenus[1]) == false then
+        if not common_functions:CompareTablesNotSorted(request_AddSubMenu,resumptionAppData.applicationSubMenus[1]) then
           self:FailTestCase("Wrong data of SubMenus saved in app_info.dat " .. tostring(#resumptionAppData.applicationSubMenus))
         end
       end
@@ -180,16 +180,17 @@ function Test:SDLStoresResumptionDataInAppInfoDatAfterSUSPEND()
       if resumptionAppData.applicationCommands and #resumptionAppData.applicationCommands ~= 1 then
         self:FailTestCase("Wrong number of AddCommands saved in app_info.dat " .. tostring(#resumptionAppData.applicationCommands) .. ", expected 1")
       else
-        if common_functions:CompareTablesNotSorted(request_AddCommand,resumptionAppData.applicationCommands[1]) == false then
+        if not common_functions:CompareTablesNotSorted(request_AddCommand,resumptionAppData.applicationCommands[1]) then
           self:FailTestCase("Wrong data of AddCommand saved in app_info.dat")
         end
       end
 
+      print(tostring(#resumptionAppData.applicationChoiceSets))
       if resumptionAppData.applicationChoiceSets and #resumptionAppData.applicationChoiceSets ~= 1 then
         self:FailTestCase("Wrong number of ChoiceSets saved in app_info.dat " .. ", expected 1")
       else
         request_ChoiceSet.grammarID = grammarIDValue
-        if common_functions:CompareTablesNotSorted(request_ChoiceSet,resumptionAppData.applicationChoiceSets[1]) == false then
+        if not common_functions:CompareTablesNotSorted(request_ChoiceSet,resumptionAppData.applicationChoiceSets[1]) then
           self:FailTestCase("Wrong data of ChoiceSet saved in app_info.dat ")
         end
       end
