@@ -158,48 +158,89 @@ function Test:SDLStoresResumptionDataInAppInfoDatAfterSUSPEND()
   local count_sleep = 1
   path_file = config.pathToSDL .."app_info.dat"
 
+  -- Check file "app_info.dat" is exist in 9 seconds
   while file_exist == false and count_sleep < 9 do
-    if common_functions:IsFileExist(path_file) then
-      local file = io.open(path_file, r)
-      local resumptionfile = file:read("*a")
-      resumptionDataTable = json.decode(resumptionfile)
-
-      for p = 1, #resumptionDataTable.resumption.resume_app_list do
-        if resumptionDataTable.resumption.resume_app_list[p].appID == "0000001" then
-          resumptionAppData = resumptionDataTable.resumption.resume_app_list[p]
-        end
-      end
-      if resumptionAppData.applicationSubMenus and #resumptionAppData.applicationSubMenus ~= 1 then
-        self:FailTestCase("Wrong number of SubMenus saved in app_info.dat " .. tostring(#resumptionAppData.applicationSubMenus) .. ", expected 1")
-      else
-        if not common_functions:CompareTablesNotSorted(request_AddSubMenu,resumptionAppData.applicationSubMenus[1]) then
-          self:FailTestCase("Wrong data of SubMenus saved in app_info.dat " .. tostring(#resumptionAppData.applicationSubMenus))
-        end
-      end
-
-      if resumptionAppData.applicationCommands and #resumptionAppData.applicationCommands ~= 1 then
-        self:FailTestCase("Wrong number of AddCommands saved in app_info.dat " .. tostring(#resumptionAppData.applicationCommands) .. ", expected 1")
-      else
-        if not common_functions:CompareTablesNotSorted(request_AddCommand,resumptionAppData.applicationCommands[1]) then
-          self:FailTestCase("Wrong data of AddCommand saved in app_info.dat")
-        end
-      end
-
-      print(tostring(#resumptionAppData.applicationChoiceSets))
-      if resumptionAppData.applicationChoiceSets and #resumptionAppData.applicationChoiceSets ~= 1 then
-        self:FailTestCase("Wrong number of ChoiceSets saved in app_info.dat " .. ", expected 1")
-      else
-        request_ChoiceSet.grammarID = grammarIDValue
-        if not common_functions:CompareTablesNotSorted(request_ChoiceSet,resumptionAppData.applicationChoiceSets[1]) then
-          self:FailTestCase("Wrong data of ChoiceSet saved in app_info.dat ")
-        end
-      end
-      file_exist = true
-    else
-      os.execute("sleep " .. tostring(count_sleep))
+    file_exist = common_functions:IsFileExist(path_file)
+    if not file_exist then
+      os.execute("sleep 1")
       count_sleep = count_sleep + 1
+    else
+      file_exist = true
     end
   end
+
+  if not file_exist then
+    self:FailTestCase("File app_info.dat is not exist")
+    return
+  end
+
+  -- Check data saved in "app_info.dat"
+  local file = io.open(path_file, r)
+  local resumptionfile = file:read("*a")
+  local resumptionDataTable = json.decode(resumptionfile)
+
+  -- Check resume_app_list is exist
+  for p = 1, #resumptionDataTable.resumption.resume_app_list do
+    if resumptionDataTable.resumption.resume_app_list[p].appID == const.default_app.appID then
+      resumptionAppData = resumptionDataTable.resumption.resume_app_list[p]
+    end
+  end
+
+  -- Check resume_app_list is not exist
+  if not resumptionAppData then
+    self:FailTestCase("resume_app_list for app is not exist")
+    return
+  end
+
+  -- Check AddSubmenu is saved in "app_info.dat"
+  if not resumptionAppData.applicationSubMenus then
+    self:FailTestCase("applicationSubMenus is not exist in resumption data for app")
+    return
+  end
+
+  if #resumptionAppData.applicationSubMenus > 1 then
+    self:FailTestCase("Wrong number of SubMenus saved in app_info.dat " .. tostring(#resumptionAppData.applicationSubMenus) .. ", expected 1")
+    return
+  end
+
+  if not common_functions:CompareTablesNotSorted(request_AddSubMenu,resumptionAppData.applicationSubMenus[1]) then
+    self:FailTestCase("Wrong data of SubMenus saved in app_info.dat ")
+    return
+  end
+
+  -- Check AddCommand is saved in "app_info.dat"
+  if not resumptionAppData.applicationCommands then
+    self:FailTestCase("applicationCommands is not exist in resumption data for app")
+    return
+  end
+
+  if #resumptionAppData.applicationCommands > 1 then
+    self:FailTestCase("Wrong number of AddCommands saved in app_info.dat " .. tostring(#resumptionAppData.applicationCommands) .. ", expected 1")
+    return
+  end
+
+  if not common_functions:CompareTablesNotSorted(request_AddCommand,resumptionAppData.applicationCommands[1]) then
+    self:FailTestCase("Wrong data of AddCommands saved in app_info.dat ")
+    return
+  end
+
+  -- Check ChoiceSet is saved in "app_info.dat"
+  if not resumptionAppData.applicationChoiceSets then
+    self:FailTestCase("applicationChoiceSets is not exist in resumption data for app")
+    return
+  end
+
+  if #resumptionAppData.applicationChoiceSets > 1 then
+    self:FailTestCase("Wrong number of ChoiceSets saved in app_info.dat " .. tostring(#resumptionAppData.applicationChoiceSets) .. ", expected 1")
+    return
+  end
+
+  request_ChoiceSet.grammarID = grammarIDValue
+  if not common_functions:CompareTablesNotSorted(request_ChoiceSet,resumptionAppData.applicationChoiceSets[1]) then
+    self:FailTestCase("Wrong data of ChoiceSets saved in app_info.dat ")
+    return
+  end
+
 end
 
 function Test:OnAwakeSDL()
