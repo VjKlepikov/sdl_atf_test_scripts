@@ -32,6 +32,7 @@
 require('user_modules/all_common_modules')
 
 --[[ Local variables]]
+const.default_app.isMediaApplication = true
 local hmi_cid_vr
 local hmi_app_id
 local default_timeout = tonumber(common_functions:GetValueFromIniFile("DefaultTimeout"))
