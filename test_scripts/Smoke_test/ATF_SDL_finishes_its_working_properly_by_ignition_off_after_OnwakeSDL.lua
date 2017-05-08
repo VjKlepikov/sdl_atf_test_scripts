@@ -113,12 +113,12 @@ function Test:Precondition_AddCommand()
       self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
     end)
   EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
-  -- :Do(function(_,data)
-  EXPECT_NOTIFICATION("OnHashChange")
-  :Do(function(_, data)
-      self.currentHashID = data.payload.hashID
+  :Do(function(_,data)
+      EXPECT_NOTIFICATION("OnHashChange")
+      :Do(function(_, data)
+          self.currentHashID = data.payload.hashID
+        end)
     end)
-  -- end)
 end
 
 function Test:Precondition_CreateInteractionChoiceSet()
