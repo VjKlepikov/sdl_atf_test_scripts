@@ -78,7 +78,7 @@ function Test:Precondition_AddSubMenu()
     end)
   EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
   :Do(function()
-      EXPECT_NOTIFICATION("OnHashChange")
+      EXPECT_NOTIFICATION("OnHashChange", {})
       :Do(function(_, data)
           self.currentHashID = data.payload.hashID
         end)
@@ -114,7 +114,7 @@ function Test:Precondition_AddCommand()
     end)
   EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
   :Do(function(_,data)
-      EXPECT_NOTIFICATION("OnHashChange")
+      EXPECT_NOTIFICATION("OnHashChange", {})
       :Do(function(_, data)
           self.currentHashID = data.payload.hashID
         end)
@@ -136,7 +136,7 @@ function Test:Precondition_CreateInteractionChoiceSet()
     end)
   EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
   :Do(function(_,data)
-      EXPECT_NOTIFICATION("OnHashChange")
+      EXPECT_NOTIFICATION("OnHashChange", {})
       :Do(function(_, data)
           self.currentHashID = data.payload.hashID
         end)
@@ -156,7 +156,7 @@ function Test:SDLStoresResumptionDataInAppInfoDatAfterSUSPEND()
   local resumptionDataTable
   local file_exist = false
   local count_sleep = 1
-  path_file = config.pathToSDL .."app_info.dat"
+  local path_file = config.pathToSDL .."app_info.dat"
 
   -- Check file "app_info.dat" is exist in 9 seconds
   while file_exist == false and count_sleep < 9 do
