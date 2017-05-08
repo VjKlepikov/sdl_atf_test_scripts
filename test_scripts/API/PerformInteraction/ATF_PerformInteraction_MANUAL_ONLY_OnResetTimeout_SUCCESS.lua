@@ -204,7 +204,7 @@ function Test:HMI_sends_UI_PerformInteraction_response_after_OnResetTimeout_SUCC
 
   self.hmiConnection:SendNotification("TTS.Stopped")
   self.hmiConnection:SendNotification("VR.Stopped")
-  self.hmiConnection:SendNotification("UI.OnSystemContext",{appID = hmi_app_id, systemContext = "MAIN"})self.hmiConnection:SendNotification("UI.OnSystemContext",{appID = hmi_app_id, systemContext = "MAIN"})
+  self.hmiConnection:SendNotification("UI.OnSystemContext",{appID = hmi_app_id, systemContext = "MAIN"})
 
   EXPECT_NOTIFICATION("OnHMIStatus",
     { systemContext = "HMI_OBSCURED", hmiLevel = "FULL", audioStreamingState = "AUDIBLE" },
