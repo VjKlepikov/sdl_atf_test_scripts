@@ -358,6 +358,7 @@
 ./test_scripts/Smoke_test/ATF_SDL_Resume_AppData_After_Unexpected_Disconnect.lua
 ./test_scripts/Smoke_test/ATF_Smoke_testing_Priority_Level.lua
 ./test_scripts/API/DeactivateHMI/ATF_DEACTIVATE_HMI_NonMediaAppInFull_PostponeResume_AfterRAI_IgnitionOff.lua
+./test_scripts/Smoke_test/ATF_SDL_finishes_its_working_properly_by_ignition_off_after_OnwakeSDL.lua [APPLINK-33793]
 ./test_scripts/API/PerformInteraction/ATF_PerformInteraction_MANUAL_ONLY_OnResetTimeout_GENERIC_ERROR.lua
 ./test_scripts/API/PerformInteraction/ATF_PerformInteraction_MANUAL_ONLY_OnResetTimeout_SUCCESS.lua
 ./test_scripts/API/PerformInteraction/ATF_PerformInteraction_BOTH_timeout_ui_expire.lua [APPLINK-34344]
