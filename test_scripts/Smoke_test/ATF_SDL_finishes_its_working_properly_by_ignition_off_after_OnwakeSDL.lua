@@ -113,12 +113,12 @@ function Test:Precondition_AddCommand()
       self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
     end)
   EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
-  :Do(function(_,data)
-      EXPECT_NOTIFICATION("OnHashChange")
-      :Do(function(_, data)
-          self.currentHashID = data.payload.hashID
-        end)
+  -- :Do(function(_,data)
+  EXPECT_NOTIFICATION("OnHashChange")
+  :Do(function(_, data)
+      self.currentHashID = data.payload.hashID
     end)
+  -- end)
 end
 
 function Test:Precondition_CreateInteractionChoiceSet()
@@ -252,5 +252,9 @@ function Test:OnExitAllApplication_IGNITION_OFF()
   self.hmiConnection:SendNotification("BasicCommunication.OnExitAllApplications",{reason = "IGNITION_OFF"})
   EXPECT_NOTIFICATION("OnAppInterfaceUnregistered",{reason="IGNITION_OFF"})
   EXPECT_HMINOTIFICATION("BasicCommunication.OnAppUnregistered", { unexpectedDisconnect = false })
+  -- remove sdl.pid avoid SDL crashed
+  if common_functions:IsFileExist("sdl.pid") then
+    os.remove("sdl.pid")
+  end
   EXPECT_HMINOTIFICATION("BasicCommunication.OnSDLClose")
 end
