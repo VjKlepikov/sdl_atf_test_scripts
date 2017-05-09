@@ -370,3 +370,4 @@
 ./test_scripts/Smoke_test/ATF_Smoke_testing_Register_App_After_Connection_Was_Closed.lua
 ./test_scripts/Smoke_test/ATF_Smoke_testing_Register_App_In_Current_Connection.lua
 ./test_scripts/Smoke_test/ATF_Policy_PTU_Register_App_Not_Listed_In_LocalPT.lua
+./test_scripts/Smoke_test/ATF_Policy_PM_adds_app_level_and_module_config_to_snapshot.lua
