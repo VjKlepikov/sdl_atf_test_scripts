@@ -9,7 +9,7 @@ local invalid_values_string = {
   {value = nil, description = "Omit"}
 }
 local invalid_values_enum = {
-  {value = "", description = "empty"},  
+  {value = "", description = "empty"},
   {value = "ABLED", description = "non existent value"},
   {value = nil, description = "Omit"}
 }
@@ -23,16 +23,16 @@ local invalid_transport_type = {
 
 ------------------------------------ Common functions ---------------------------------------
 -- Check usb_transport_status in LPT
-local function CheckDevicesNotUpdateInPolicyTable()	
+local function CheckDevicesNotUpdateInPolicyTable()
   Test["Check_usbTranportStatus_is_not_updated_in_LPT"] = function(self)
     -- Wait for data is saved to DB
-    os.execute("sleep 2") 	
-    local sql_query = "select * from device where (id = '1' or id = '2') and usb_transport_status = 'ENABLED'"
+    os.execute("sleep 2")
+    local sql_query = "select * from device where (id = '1' or id = '2') and usb_transport_enabled = '1'"
     local result = common_functions:QueryPolicyDataBase(sql_query)
     if(result ~= nil) then
       self:FailTestCase("usbTransportStatus is updated in DB")
     end
-  end		
+  end
 end
 
 -------------------------------------- Preconditions --------------------------
@@ -44,7 +44,7 @@ common_steps:PreconditionSteps("CreateEmptyLPT", 1)
 common_steps:StopSDL("StopForUpdateLPT")
 -- Prepare devices in LPT
 for i = 1, 2 do
-  insert_devices = "INSERT INTO DEVICE (id, hardware, firmware_rev, os, os_version, carrier, max_number_rfcom_ports, connection_type, usb_transport_status, unpaired) Values (" .. tostring(i)..", 'HTC" .. tostring(i) .. "', 'Name: Linux, Version: 3.4.0-perf', 'Android', '4.4.2', 'Megafon', 1, 'USB_AOA', 'DISABLED', 0);"
+  insert_devices = "INSERT INTO DEVICE (id, hardware, firmware_rev, os, os_version, carrier, max_number_rfcom_ports, connection_type, usb_transport_enabled, unpaired) Values (" .. tostring(i)..", 'HTC" .. tostring(i) .. "', 'Name: Linux, Version: 3.4.0-perf', 'Android', '4.4.2', 'Megafon', 1, 'USB_AOA', 0, 0);"
   common_steps:ModifyLocalPolicyTable("InsertDevicesIntoLPT_" ..tostring(i) , insert_devices)
 end
 common_steps:PreconditionSteps("PreconditionSteps", 6)

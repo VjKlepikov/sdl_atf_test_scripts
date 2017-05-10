@@ -25,9 +25,12 @@ local arrayStringParameterInResponse = require('user_modules/shared_testcases/te
 ---------------------------------------------------------------------------------------------
 ------------------------------------ Common Variables ---------------------------------------
 ---------------------------------------------------------------------------------------------
-APIName = "EndAudioPassThru" -- set request name
+config.deviceMAC = "12ca17b49af2289436f303e0166030a21e525d266e209267433801a8fd4071a0"
+local strMaxLengthFileName255 = string.rep("a", 251) .. ".png" -- set max length file name
+-- local APIName = "EndAudioPassThru" -- set request name
 local infoMessage = string.rep("a", 1000)
-local storagePath = config.pathToSDL .. "storage/" .. config.application1.registerAppInterfaceParams.appID .. "_" .. config.deviceMAC .. "/"
+--local storagePath = config.pathToSDL .. "storage/" .. config.application1.registerAppInterfaceParams.appID .. "_" .. config.deviceMAC .. "/"
+local storagePath = config.pathToSDL .. "storage"
 local function SendOnSystemContext(self, ctx)
 	self.hmiConnection:SendNotification("UI.OnSystemContext",{ appID = self.applications["Test Application"], systemContext = ctx })
 end
@@ -269,7 +272,7 @@ function Test:policyUpdate(policyFileName, bAllowed)
 					--print("SDL.GetUserFriendlyMessage is received")
 
 					--hmi side: sending SDL.GetListOfPermissions request to SDL
-					local RequestIdGetListOfPermissions = self.hmiConnection:SendRequest("SDL.GetListOfPermissions", {appID = self.applications["Test Application"]})
+					local RequestIdGetListOfPermissions = self.hmiConnection:SendRequest("SDL.GetListOfPermissions", {})
 
 					-- hmi side: expect SDL.GetListOfPermissions response
 					 -- TODO: update after resolving APPLINK-16094 EXPECT_HMIRESPONSE(RequestIdGetListOfPermissions,{result = {code = 0, method = "SDL.GetListOfPermissions", allowedFunctions = {{name = groupName}}}})
@@ -325,7 +328,7 @@ end
 	commonSteps:PutFile("PutFile_MaxLength_255Characters", strMaxLengthFileName255)
 
 	--3. Update policy to allow request
-	policyTable:Precondition_updatePolicy_By_overwriting_preloaded_pt("files/PTU_OmittedEndAudioPassThru.json", "files/PTU_ForEndAudioPassThru.json")
+	policyTable:Precondition_updatePolicy_By_overwriting_preloaded_pt("files/PTU_ForEndAudioPassThru.json")
 
 
 ---------------------------------------------------------------------------------------------
@@ -356,6 +359,21 @@ end
 
 			--Verification criteria:
 					-- EndAudioPassThru finishes the previously activated PerfromAudioPassThu. First EndAudioPassThru is responded by SDL, then the relevant PerfromAudioPassThu gets the response.
+
+			function Test:Precondition_UserAllowed()
+				local groupName = "New"
+				local groupID
+				local RequestIdGetListOfPermissions = self.hmiConnection:SendRequest("SDL.GetListOfPermissions", {})
+				EXPECT_HMIRESPONSE(RequestIdGetListOfPermissions)
+				:Do(function(_, data)
+						if data.result.allowedFunctions[1] ~= nil then
+							groupID = data.result.allowedFunctions[1].id
+						end
+						self.hmiConnection:SendNotification("SDL.OnAppPermissionConsent",
+							{ appID =  self.applications["Test Application"], consentedFunctions = {{ allowed = true, id = groupID, name = groupName}}, source = "GUI"})
+					end)
+			end
+
 			function Test:EndAudioPassThru_Positive()
 				local uiPerformID
 				local params ={
@@ -404,7 +422,7 @@ end
 
 				--mobile side: expect PerformAudioPassThru response
 				EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
-				:ValidIf (function(_,data)
+				:ValidIf (function(_, data)
 					if file_check(storagePath.."/".."audio.wav") ~= true then
 						print(" \27[36m Can not found file: audio.wav \27[0m ")
 						return false
@@ -2129,7 +2147,11 @@ end
 			--Begin Test case ResultCodeChecks.3.2
 			--Description: Check resultCode USER_DISALLOWED when RPC has not yet received user's consents
 				function Test:Precondition_PolicyUpdate()
-					self:policyUpdate("PTU_ForEndAudioPassThru.json", false)
+					local RequestIdUpdateSDL = self.hmiConnection:SendRequest("SDL.UpdateSDL")
+          EXPECT_HMIRESPONSE(RequestIdUpdateSDL,{result = {code = 0, method = "SDL.UpdateSDL"}})
+          :Do(function()
+          		self:policyUpdate("PTU_ForEndAudioPassThru.json", false)
+          	end)
 
 					DelayedExp(2000)
 				end

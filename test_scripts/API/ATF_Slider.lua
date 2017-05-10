@@ -79,7 +79,8 @@ function Test:createRequest()
 	return 	{
 				numTicks = 26,
 				position = 1,
-				sliderHeader ="sliderHeader"
+				sliderHeader ="sliderHeader",
+				timeout = 1000
 			}
 
 end
@@ -92,7 +93,7 @@ function Test:createUIParameters(Request)
 
 	--process for default value of timeout parameter
 	if UIRequest["timeout"]  == nil then
-		UIRequest["timeout"] =  10000
+		UIRequest["timeout"] = 10000
 	end
 
 	return UIRequest
@@ -204,7 +205,8 @@ function Test:verify_GENERIC_ERROR_Response_Case(Response)
 	end)
 
 	--mobile side: expect the response
-	EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA", info = "Received invalid data on HMI response"})
+	-- EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA", info = "Received invalid data on HMI response"})
+	EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
 
 end
 
@@ -834,8 +836,8 @@ local function verify_resultCode_parameter()
 
 		--mobile side: expect the response
 		-- TODO: update after APPLINK-14765 is resolved
-		-- EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "Invalid message received from vehicle"})
-		EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
+		EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "Invalid message received from vehicle"})
+		-- EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 
 	end
 
@@ -872,8 +874,8 @@ local function verify_resultCode_parameter()
 
 		--mobile side: expect the response
 		-- TODO: update after APPLINK-14765 is resolved
-		-- EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "Invalid message received from vehicle"})
-		EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
+		EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "Invalid message received from vehicle"})
+		-- EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 
 	end
 	-----------------------------------------------------------------------------------------
@@ -1022,8 +1024,8 @@ local function verify_resultCode_parameter()
 
 			--mobile side: expect the response
 			-- TODO: update after APPLINK-14765 is resolved
-			-- EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "Invalid message received from vehicle"})
-			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
+			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "Invalid message received from vehicle"})
+			-- EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 
 		end
 		-----------------------------------------------------------------------------------------
@@ -1058,8 +1060,8 @@ local function verify_resultCode_parameter()
 
 			--mobile side: expect the response
 			-- TODO: update after APPLINK-14765 is resolved
-			-- EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "Invalid message received from vehicle"})
-			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
+			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "Invalid message received from vehicle"})
+			-- EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 		end
 		-----------------------------------------------------------------------------------------
 
@@ -1364,8 +1366,8 @@ local function verify_info_parameter()
 		self:expectOnHMIStatusWithAudioStateChanged()
 
 		-- TODO: Update after resolving APPLINK-14765
-		-- EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
-		EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA", info = "Received invalid data on HMI response"})
+		EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
+		-- EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA", info = "Received invalid data on HMI response"})
 	end
 	-----------------------------------------------------------------------------------------
 
@@ -2257,8 +2259,8 @@ local function SpecialResponseChecks()
 
 			--mobile side: expect the response
 			-- TODO: update after resolving APPLINK-14765
-			-- EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "Invalid message received from vehicle"})
-			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA", info = "Received invalid data on HMI response"})
+			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "Invalid message received from vehicle"})
+			-- EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA", info = "Received invalid data on HMI response"})
 			:ValidIf (function(_,data)
 				if data.payload.fake then
 					commonFunctions:printError(" SDL resend fake parameter to mobile app ")
