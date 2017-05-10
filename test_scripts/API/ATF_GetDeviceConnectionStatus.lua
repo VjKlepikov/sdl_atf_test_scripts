@@ -26,6 +26,17 @@ local invalid_values_issdlallowed = {
 -- Remove existed snapshot file
 os.execute( "rm -f /tmp/fs/mp/images/ivsu_cache/sdl_snapshot.json" )
 
+-- Get string value of usbTransportStatus
+local function getBooleanValueOFUserSetting(stringValue)
+  if stringValue == "ENABLED" then
+    return '1'
+  elseif stringValue == "DISABLED" then
+    return '0'
+  else
+    return nil
+  end
+end
+
 -- Add records to device table of database
 local function AddRecordsIntoLPT(test_case_name, list_records)
   Test[test_case_name .. "_AddRecordsToDB"] = function(self)
@@ -33,7 +44,9 @@ local function AddRecordsIntoLPT(test_case_name, list_records)
     local policy_file_temp = "/tmp/policy.sqlite"
     os.execute("cp " .. policy_file .. " " .. policy_file_temp)
     for i = 1, #list_records do
-      local sql_query = "INSERT INTO DEVICE (id, hardware, firmware_rev, os, os_version, carrier, max_number_rfcom_ports, connection_type, usb_transport_status, unpaired) Values (" .. tostring(list_records[i].id) ..", ".."'" .. list_records[i].name .. "', 'Name: Linux, Version: 3.4.0-perf', 'Android', '4.4.2', 'Megafon', 1, '" .. list_records[i].transport_type .. "', '" .. list_records[i].usb_transport_status .."', 0);"
+      local sql_query = "INSERT INTO DEVICE (id, hardware, firmware_rev, os, os_version, carrier, max_number_rfcom_ports, connection_type, usb_transport_enabled, unpaired) Values ("
+      .. tostring(list_records[i].id) ..", ".."'" .. list_records[i].name .. "', 'Name: Linux, Version: 3.4.0-perf', 'Android', '4.4.2', 'Megafon', 1, '"
+      .. list_records[i].transport_type .. "', '" .. getBooleanValueOFUserSetting(list_records[i].usb_transport_enabled) .."', 0);"
       ful_sql_query = "sqlite3 " .. policy_file_temp .. " \"" .. sql_query .. "\""
       handler = io.popen(ful_sql_query, 'r')
       handler:close()
@@ -118,11 +131,11 @@ end
 local function GetDeviceConnectionStatusWith1FoundDeviceParam(test_case_name, record, flag)
   Test[test_case_name] = function(self)
     local request_id = self.hmiConnection:SendRequest("SDL.GetDeviceConnectionStatus", {device = {
-          { id = tostring(record.id), name = record.name, transportType = record.transport_type, usbTransportStatus = record.usb_transport_status}
+          { id = tostring(record.id), name = record.name, transportType = record.transport_type, usbTransportStatus = record.usb_transport_enabled }
       }})
     if flag == nil then
       EXPECT_HMIRESPONSE(request_id, {device = {
-            {id = tostring(record.id), name = record.name, transportType = record.transport_type, usbTransportStatus = record.usb_transport_status }
+            {id = tostring(record.id), name = record.name, transportType = record.transport_type, usbTransportStatus = record.usb_transport_enabled }
         }, method = "SDL.GetDeviceConnectionStatus"})
     elseif flag == false then
       EXPECT_HMIRESPONSE(request_id, {device = {
@@ -136,7 +149,7 @@ end
 local function GetDeviceConnectionStatusWith1NotFoundDeviceParam(test_case_name, record)
   Test[test_case_name] = function(self)
     local request_id = self.hmiConnection:SendRequest("SDL.GetDeviceConnectionStatus", {device = {
-          { id = tostring(record.id), name = record.name, transportType = record.transport_type, usbTransportStatus = record.usb_transport_status }
+          { id = tostring(record.id), name = record.name, transportType = record.transport_type, usbTransportStatus = record.usb_transport_enabled }
       }})
     EXPECT_HMIRESPONSE(request_id, {device = {}, method = "SDL.GetDeviceConnectionStatus"})
   end
@@ -154,10 +167,10 @@ local function GetDeviceConnectionStatusWith2DevicesParam(test_case_name, record
       }})
     local list_device = {}
     if notification == false then
-      list_device[1] = {id = tostring(record1.id), name = record1.name, transportType = record1.transport_type, usbTransportStatus = record1.usb_transport_status}
+      list_device[1] = {id = tostring(record1.id), name = record1.name, transportType = record1.transport_type, usbTransportStatus = record1.usb_transport_enabled }
     else
-      list_device[1] = {id = tostring(record1.id), name = record1.name, transportType = record1.transport_type, usbTransportStatus = record1.usb_transport_status}
-      list_device[2] = {id = tostring(record2.id), name = record2.name, transportType = record2.transport_type, usbTransportStatus = record2.usb_transport_status}
+      list_device[1] = {id = tostring(record1.id), name = record1.name, transportType = record1.transport_type, usbTransportStatus = record1.usb_transport_enabled }
+      list_device[2] = {id = tostring(record2.id), name = record2.name, transportType = record2.transport_type, usbTransportStatus = record2.usb_transport_enabled }
     end
     EXPECT_HMIRESPONSE(request_id, {device = list_device, method = "SDL.GetDeviceConnectionStatus"})
   end
@@ -244,16 +257,16 @@ common_steps:StopSDL("StopForUpdateLPT")
 -- Prepare and insert 100 records to DB to check GetDeviceConnectionStatus when there are 100 records in DB
 local one_hundred_records = {}
 for i = 101, 125 do
-  one_hundred_records[i-100] = {id = tostring(i), name = "Samsung", transport_type = "USB_AOA", usb_transport_status = "DISABLED"}
+  one_hundred_records[i-100] = {id = tostring(i), name = "Samsung", transport_type = "USB_AOA", usb_transport_enabled = "DISABLED"}
 end
 for i = 126, 150 do
-  one_hundred_records[i-100] = {id = tostring(i), name = "Samsung", transport_type = "USB_AOA", usb_transport_status = "ENABLED"}
+  one_hundred_records[i-100] = {id = tostring(i), name = "Samsung", transport_type = "USB_AOA", usb_transport_enabled = "ENABLED"}
 end
 for i = 151, 175 do
-  one_hundred_records[i-100] = {id = tostring(i), name = "Samsung", transport_type = "BLUETOOTH", usb_transport_status = "ENABLED"}
+  one_hundred_records[i-100] = {id = tostring(i), name = "Samsung", transport_type = "BLUETOOTH", usb_transport_enabled = "ENABLED"}
 end
 for i = 176, 200 do
-  one_hundred_records[i-100] = {id = tostring(i), name = "Samsung", transport_type = "WIFI", usb_transport_status = "ENABLED"}
+  one_hundred_records[i-100] = {id = tostring(i), name = "Samsung", transport_type = "WIFI", usb_transport_enabled = "ENABLED"}
 end
 
 AddRecordsIntoLPT("Case_1", one_hundred_records)
@@ -300,18 +313,18 @@ common_steps:StopSDL("StopForUpdateLPT")
 delete_query = "DELETE FROM DEVICE"
 common_steps:ModifyLocalPolicyTable("Case_2_DeleteRecordInDeviceTable", delete_query)
 local two_records = {}
-two_records[1] = {id = 1, name = "Samsung", transport_type = "USB_AOA", usb_transport_status = "DISABLED"}
-two_records[2] = {id = 2, name = "Motorola", transport_type = "USB_AOA", usb_transport_status = "ENABLED"}
+two_records[1] = {id = 1, name = "Samsung", transport_type = "USB_AOA", usb_transport_enabled = "DISABLED"}
+two_records[2] = {id = 2, name = "Motorola", transport_type = "USB_AOA", usb_transport_enabled = "ENABLED"}
 AddRecordsIntoLPT("Add_2_records", two_records)
 -- app is registered
 common_steps:PreconditionSteps("Precondition", 6)
 GetDeviceConnectionStatusWith1FoundDeviceParam("Case_2_FirstQuery", {id = "1", name = "Samsung"})
 GetDeviceConnectionStatusWith1FoundDeviceParam("Case_2_SecondQuery", {id = "2", name = "Motorola"})
 GetDeviceConnectionStatusWith1FoundDeviceParam("Case_2_ThirdQuery", {id = "1", name = "Samsung", transport_type = "USB_AOA"})
-GetDeviceConnectionStatusWith1FoundDeviceParam("Case_2_FourthQuery", {id = "2", name = "Motorola", usb_transport_status = "ENABLED"})
-GetDeviceConnectionStatusWith1FoundDeviceParam("Case_2_FifthQuery", {id = "1", name = "Samsung", transport_type = "USB_AOA", usb_transport_status = "DISABLED"})
+GetDeviceConnectionStatusWith1FoundDeviceParam("Case_2_FourthQuery", {id = "2", name = "Motorola", usb_transport_enabled = "ENABLED"})
+GetDeviceConnectionStatusWith1FoundDeviceParam("Case_2_FifthQuery", {id = "1", name = "Samsung", transport_type = "USB_AOA", usb_transport_enabled = "DISABLED"})
 GetDeviceConnectionStatusWith1FoundDeviceParam("Case_2_SixthQuery", {id = "1", name = "Samsung", transport_type = "WIFI"}, false)
-GetDeviceConnectionStatusWith1FoundDeviceParam("Case_2_SeventhQuery", {id = "2", name = "Motorola", usb_transport_status = "DISABLED"}, false)
+GetDeviceConnectionStatusWith1FoundDeviceParam("Case_2_SeventhQuery", {id = "2", name = "Motorola", usb_transport_enabled = "DISABLED"}, false)
 GetDeviceConnectionStatusWith1NotFoundDeviceParam("Case_2_EightthQuery", {id = "3", name = "Sony"})
 GetDeviceConnectionStatusWith1NotFoundDeviceParam("Case_2_NinthQuery", {id = "4", name = "HTC"})
 GetDeviceConnectionStatusWith2DevicesParam("Case_2_TenthQuery", two_records[1], two_records[2], true)

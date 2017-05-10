@@ -42,7 +42,7 @@ APIName = "PerformAudioPassThru" -- use for above required scripts.
 	commonSteps:ActivationApp()
 
 	--5. Update policy to allow request
-	policyTable:Precondition_updatePolicy_By_overwriting_preloaded_pt("files/PTU_OmittedPerformAudioPassThru.json", "files/PTU_ForPerformAudioPassThru.json")
+	policyTable:Precondition_updatePolicy_By_overwriting_preloaded_pt("files/PTU_ForPerformAudioPassThru.json")
 
 ---------------------------------------------------------------------------------------------
 
