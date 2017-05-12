@@ -374,3 +374,5 @@
 ./test_scripts/Smoke_test/ATF_Smoke_testing_Register_App_In_Current_Connection.lua
 ./test_scripts/Smoke_test/ATF_Policy_PTU_Register_App_Not_Listed_In_LocalPT.lua
 ./test_scripts/Smoke_test/ATF_Policy_PM_adds_app_level_and_module_config_to_snapshot.lua
+./test_scripts/Streaming/ATF_Audio_Service_SDL_Sends_END_SERVICE_In_BACK_GROUND.lua
+./test_scripts/Streaming/ATF_Video_Service_SDL_Sends_END_SERVICE_In_BACK_GROUND.lua
