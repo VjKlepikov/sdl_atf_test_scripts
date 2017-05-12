@@ -1,9 +1,10 @@
 # Style guide for Lua code
 ## Introduction
-This document gives coding conventions and some programming recommendations for the Lua code.
+This document defines coding conventions and some recommendations for programming on the Lua language.
 ## Code lay-out
 ### Indentation
 * Use 2 spaces for indentation
+
 ```
 -- bad
 function guide()
@@ -20,12 +21,24 @@ function guide()
 ∙∙local name
 end
 ```
-* Use indenting and line breaks to clarify the logical structure of your code.
-* Use indenting and line breaks to clarify the logical structure of your code.
-* Expressions which nest multiple levels of parentheses or similar structures may begin a new indenting level with each nesting level
-* Avoid vertical alignment in all cases except cases described in Maximum Line Length section.
-* The closing braces/bracket/parenthesis on multi-line constructs may either the last line of list, as in:
+* Use hanging indentation which distinguish current line as continuation line of long statement
+* Use indentation and line breaks to clarify the logical structure of your code.
+* Statements which nest multiple levels of parentheses or similar structures may begin a new indentation level with each nesting level
 ```
+local function printDivisibleValue()
+  for i = 1, 100 do
+    if i % 2 == 0 then
+      print( i .. " is divisible.")
+    end
+  end
+end
+```
+* Avoid vertical alignment in all cases except cases described in Maximum Line Length section.
+* You may create multi-line expressions with any number elements inbound the line length limit described in Maximum Line Length section
+* You may create multi-line expressions to improve code readibility
+* The closing braces/bracket/parenthesis on multi-line expressions may be placed in the last line of list or it may be placed in next line after the multi-line expressions:
+```
+-- good
 my_list = {
   1, 2, 3,
   4, 5, 6}
@@ -33,22 +46,22 @@ my_list = {
 result = someFunctionThatTakesArguments(
   'a', 'b', 'c',
   'd', 'e', 'f')
-```
-or it may be in next line of the multi-line construct, as in:
-```
+
+-- good
 my_list = {
   1, 2, 3,
-  4, 5, 6,
-  }
+  4, 5, 6
+}
 
 result = someFunctionThatTakesArguments(
   'a', 'b', 'c',
-  'd', 'e', 'f',
-  )
+  'd', 'e', 'f'
+)
 ```
 ### Maximum Line Length
 * Limit the length of a single line to 79 characters + newline  character
-* Indent lines if they overflow past the limit
+* Use multiple lines constructions for expressions with length over the limit.
+Each line of expression except first should have hanging indent
 ```
 -- bad
 if test < 1 and do_complicated_function(test) == false or seven == 8 and nine == 10 then doOtherComplicatedFunction(); return false end
@@ -60,28 +73,29 @@ if test < 1 and do_complicated_function(test) == false or
   return false
 end
 ```
-* Continuation lines should align wrapped elements either vertically using Lua's implicit line joining inside parentheses, brackets and braces, or using a hanging indent.
-When using a hanging indent the following should be considered; there should be no arguments on the first line and further indentation should be used to clearly distinguish itself as a continuation line.
+*Long lines should be wrapped to a multiple lines with vertical alignment or using a hanging indent.
+In case of using a vertical alignment you should follow next rules:
+1. wrap only arguments (all or only last part) to next line(s)
+2. align wrapped arguments with open parentheses or first argument
+
+In case of using a hanging indent you should follow next rules:
+1. it should be no arguments on the first line of statement
+2. all lines of statement except first should have hanging indent
 ```
 -- good
--- Aligned with opening delimiter.
+-- Aligned vertically.
 foo = longFunctionName(var_one, var_two,
                        var_three, var_four)
 
--- More indentation included to distinguish this from the rest.
+-- Hanging indent included to distinguish this from the rest.
 function longFunctionName(
         var_one, var_two, var_three,
         var_four)
   print(var_one)
 end
 
--- Hanging indents should add a level.
-foo = longFunctionName(
-    var_one, var_two,
-    var_three, var_four)
-
 -- bad
--- Arguments on first line forbidden when not using vertical alignment.
+-- Arguments on first line are forbidden when not using vertical alignment.
 foo = longFunctionName(var_one, var_two,
     var_three, var_four)
 
@@ -92,7 +106,7 @@ function longFunctionName(
   print(var_one)
 end
 ```
-* Add line break before a operator in multi-line construct
+* Add line break before an operator in multi-line construction
 ```
 -- bad: operators sit far away from their operands
 income = gross_wages +
@@ -133,7 +147,7 @@ local thing = {
 ```
 ### Whitespace
 * Braces and parentheses are placed on the same line as the start of the function and tables.  (1TBS style)
-* Avoid trailing whitespace anywhere. Because it's usually invisible, it can be confusing.
+* Avoid trailing whitespace everywhere. Because it's usually invisible, it can be confusing.
 * Always surround binary operators with a single space on either side:
 	- assignment ( = ),
 	- comparisons ( ==, < , >, ~=, <=, >=),
@@ -183,7 +197,7 @@ if x == 4 then
   print x, y; x, y = y, x
 end
 ```
-3. Immediately before the open parenthesis that starts the argument list of a function for he call and function definition
+3. Immediately before the open parenthesis that starts the argument list of a function for it call or function definition
 ```
 -- bad
 spam (1)
@@ -239,29 +253,69 @@ end
 * All files should have a newline character at the end.
 It makes sense since all other lines have a newline character at the end.
 It makes passing data around in non-binary formats (like diffs) easier.
-Command-line tools like cat and wc don't handle files without one well (or at least, not in the way that 	one would like or expect).
+Command-line tools like cat and wc don't handle files without one well (or at least, not in the way that one would like or expect).
 * Blank lines to split groups of code further into subgroups.
 * Surround top-level function definitions in module with one blank line.
 * Extra blank lines may be used (sparingly) to separate groups of related functions.
 * Use blank lines in functions, sparingly, to indicate logical sections.
+
+Example:
+```
+local function exec(cmd)
+  local function trim(s)
+    return s:gsub("^%s+", ""):gsub("%s+$", "")
+  end
+
+  local ahandle = assert(io.popen(cmd , 'r'))
+  local output = ahandle:read( '*a' )
+  return trim(output)
+end
+
+function dataBaseQuery(db_query)
+  CheckPath()
+
+  -- Storage path
+  local storage_path = config:getValue("storageFolder")
+  if not storage_path or storage_path == "" then
+    storage_path = 'storage'
+  end
+
+  local function querySuccess(output)
+    if output == "" or query_value == " " then return false end
+    local f, l = string.find(output, "Error:")
+    if f == 1 then return false end
+    return true
+  end
+
+  for i=1, 10 do
+    local DBQuery = 'sqlite3 ' .. config.pathToSDL .. StoragePath
+                     .. '/policy.sqlite "' .. tostring(DBQueryV) .. '"'
+    db_query_value = exec(db_query)
+    if querySuccess(db_query_value) then
+      return db_query_value
+    end
+  end
+  return false
+end
+```
 ### Source File Encoding
 * All files should be encoded with UTF-8 without a Byte Order Mark.
 * All files should use Unix-style newlines (single LF character, not a CR+LF combination).
 ## Comments and code documentation
 * For documentation of code use [Ldoc](https://stevedonovan.github.io/ldoc/manual/doc.md.html) tool and Lua comments
-* A comment starts anywhere with a double hyphen `--` and runs until the end of the line.
+* A comment starts everywhere with a double hyphen `--` and runs until the end of the line.
 * Block comments, which start with `--[[` and run until the corresponding `]]`
 * Comments should be complete sentences. If a comment is a phrase or sentence, its first word should be capitalized, unless it is an identifier that begins with a lower case letter (never alter the case of identifiers!).
-* You may add variable description. Especially with global variables, you may wish to include a description of what they contain, how wide they are scopes, and what units are used for values held in them.
+* You may add variable description. Especially with global variables, you may wish to include a description of what they contain, to describe the scopes, and what units are used for their values.
 * You may add comment  to "end" statement. Because "end" is a terminator for many different constructs, it can help the reader (especially in a large block) if a comment is used to clarify which construct is being terminated
 ```
-for i,v in ipairs(t) do
+for i, v in ipairs(t) do
   if type(v) == "string" then
     -- ...lots of code here...
   end -- if string
 end -- for each t
 ```
-* Use a space after --
+* Use a space after `--`
 ```
 -- bad
 return nil  --not found
@@ -279,7 +333,7 @@ Docstrings are not necessary for non-public functions, but you should have a com
 * Lua coders from non-English speaking countries: please write your comments in English, unless you are 120% sure that the code will never be read by people who don't speak your language.
 * Assume your readers already know Lua so try not to teach that to them (it would show that you're really trying to teach it to yourself). But don't tell them that the code "speaks for itself" either because it doesn't.
 * Take time to document the tricky parts of the code.
-* Comments that contradict the code are worse than no comments. Always make a priority of keeping the comments up-to-date when the code changes!
+* Comments that contradict the code are worse than no comments. Always make a priority to keep the comments up-to-date when the code changes!
 ## Naming Conventions
 * Variable names with larger scope should be more descriptive than those with smaller scope
 * Avoid single letter names. Be descriptive with your naming. You can get away with single-letter names when they are variables in loops.
@@ -302,7 +356,7 @@ for      function  if     in        local     nil       not
 repeat   return    then   true      until     while     or
 ```
 * In the standard library, function names consisting of multiple words are simply put together (e.g. setmetatable).
-* Avoid identifiers starting with an underscore followed by one or more uppercase letters. Names starting with an underscore followed by uppercase letters (such as _VERSION) are reserved for internal global variables used by Lua.
+* Avoid identifiers starting with an underscore. Names starting with an underscore followed by uppercase letters (such as _VERSION) are reserved for internal global variables used by Lua.
 * Constants are usually defined on a module level and written in all capital letters with underscores separating words
 ```
 -- bad
@@ -325,7 +379,7 @@ for _, name in pairs(names) do
   -- ...stuff...
 end
 ```
-* Use snake_case when naming primitives, objects and instances.
+* Use `snake_case` when naming primitives, objects and instances (all-lowercase with `_` between words).
 ```
 -- bad
 local OBJEcttsssss = {}
@@ -335,7 +389,7 @@ local this-is-my-object = {}
 -- good
 local this_is_my_object = {}
 ```
-* Use camelCase when naming functions.
+* Use `camelCase` when naming functions (first character in lowercase, each next word starts from uppercase character).
 ```
 -- bad
 local function do_that_thing()
@@ -393,7 +447,7 @@ local function hasCertificate(alignment)
   return is_certificate     -- boolean value
 end
 ```
-* Use PascalCase for factories/classes. If so, acronyms (e.g. XML) might only uppercase the first letter (XmlDocument).
+* Use PascalCase for factories/classes (first character in uppercase, each next word starts from uppercase character). If so, acronyms (e.g. XML) might only uppercase the first letter (XmlDocument).
 ```
 -- bad
 local player = require('player')
@@ -449,6 +503,9 @@ b = 2
 ```
 * Single line blocks are okay only for small statements. It's okay to put an if/for/while with a small body on the same line, never do this for multi-clause statements.
 ```
+-- bad
+if test < 1 and do_complicated_function(test) == false or seven == 8 and nine == 10 then do_other_complicated_function()end
+
 -- good
 if test then return false end
 
@@ -457,8 +514,6 @@ if test then
   return false
 end
 
--- bad
-if test < 1 and do_complicated_function(test) == false or seven == 8 and nine == 10 then do_other_complicated_function()end
 ```
 * Assign variables closer to its use where possible. This makes it easier to understand the code.
 ```
@@ -487,8 +542,21 @@ local function good()
 end
 ```
 * Avoid using the debug library unless necessary, especially if trusted code is being run.
+```
+-- strongly not recommended in production code
+function trace (event, line)
+      local s = debug.getinfo(2).short_src
+      print(s .. ":" .. line)
+    end
+
+    debug.sethook(trace, "l")
+
+```
 ### Strings
-* In Lua, single-quoted strings and double-quoted strings are the same. When a string contains single or double quote characters, however, use the other one to avoid backslashes in the string. It improves readability.
+* In Lua, single-quoted strings and double-quoted strings are the same.
+When a string contains single quote characters, use double quote characters to avoid backslashes in the string.
+And vice versa when a string contains double quote characters, use single quote characters to avoid backslashes in the string.
+It improves readability.
 * Strings longer than 79 characters should be written across multiple lines using concatenation. This allows you to indent nicely.
 ```
 -- bad
@@ -538,6 +606,7 @@ local val = input_value * 1
 local val = tonumber(input_value)
 ```
 * To test whether a variable is `not nil` in a conditional, it is terser to just write the variable name rather than explicitly compare against nil.
+Only `nil` and `false` is considered as `false`, even 0(zero) is considered as `true`.
 ```
 -- ok
 local data
@@ -551,11 +620,12 @@ if data then
 end
 ```
 However, if the variable tested can ever contain false as well, then you will need to be explicit if the two conditions must be differentiated: line == nil v.s. line == false.
+
 ### Functions
-* Each function should perform what's described as a single logical operation. If you write a function that formats a string AND outputs the result, sooner or later you'll need to format the string and then add it on to the end of another string and your original function won't do the job for you.
+* Each function should perform what's described as a single logical operation. If you write a function that formats a string and outputs the result, sooner or later you'll need to format the string and then add it on to the end of another string and your original function won't do the job for you.
 * Prefer lots of small functions to large, complex functions.
 * Try to keep the functional behavior side-effect free.
-* Prefer function syntax over variable syntax. This helps differentiate between named and anonymous functions.
+* Prefer function syntax over variable syntax. This helps to differentiate between named and anonymous functions.
 ```
 -- bad
 local nope = function(name, options)
@@ -684,7 +754,7 @@ local luke = {
 local isJedi = luke['jedi']
 
 -- good
-local isJedi = luke.jedi
+local is_jedi = luke.jedi
 ```
 * Use subscript notation `[]` when accessing properties with a variable or if using a table as a list.
 ```
@@ -698,7 +768,7 @@ local function getProp(prop)
   return luke[prop]
 end
 
-local isJedi = getProp('jedi')
+local is_jedi = getProp('jedi')
 ```
 * Consider `nil` properties when selecting lengths. A good idea is to store an n property on lists that contain the length
 ```
