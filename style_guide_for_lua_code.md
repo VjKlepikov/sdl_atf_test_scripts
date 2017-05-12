@@ -73,7 +73,7 @@ if test < 1 and do_complicated_function(test) == false or
   return false
 end
 ```
-*Long lines should be wrapped to a multiple lines with vertical alignment or using a hanging indent.
+* Long lines should be wrapped to a multiple lines with vertical alignment or using a hanging indent.
 In case of using a vertical alignment you should follow next rules:
 1. wrap only arguments (all or only last part) to next line(s)
 2. align wrapped arguments with open parentheses or first argument
