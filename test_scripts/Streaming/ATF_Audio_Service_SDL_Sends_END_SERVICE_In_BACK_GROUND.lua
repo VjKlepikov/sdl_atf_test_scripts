@@ -26,7 +26,6 @@ require('user_modules/all_common_modules')
 config.defaultProtocolVersion = 3
 local constants = require('protocol_handler/ford_protocol_constants')
 local time_background
-
 local file_name = "files/Kalimba3.mp3"
 
 --[[ Preconditions ]]
