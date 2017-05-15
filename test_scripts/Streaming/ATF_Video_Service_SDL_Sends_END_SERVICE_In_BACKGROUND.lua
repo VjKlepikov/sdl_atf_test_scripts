@@ -34,6 +34,12 @@ local time_background
 common_steps:AddNewTestCasesGroup("Preconditions")
 -- Update ini file contains StopStreamingTimeout = 1000
 common_functions:SetValuesInIniFile("%p?StopStreamingTimeout%s?=%s-[%d]-%s-\n", "StopStreamingTimeout", 1000)
+-- ForceProtectedService is set to Non
+-- 1. Rename ";ForceProtectedService" to ";ForceProtectedService_rename"
+-- to avoid case there are 2 ForceProtectedService keywords
+common_functions:SetValuesInIniFile("%p?;%s-ForceProtectedService%s?=%s-[^\n]-%s-\n", ";ForceProtectedService_rename", "Non")
+-- 2. ForceProtectedService is set to Non
+common_functions:SetValuesInIniFile("%p?ForceProtectedService%s?=%s-[^\n]-%s-\n", "ForceProtectedService", "Non")
 -- Set app1 as NAVIGATION media app
 local app1 = config.application1.registerAppInterfaceParams
 app1.isMediaApplication = true
@@ -43,7 +49,7 @@ common_steps:PreconditionSteps("Preconditions", const.precondition.ACTIVATE_APP)
 local app2 = config.application2.registerAppInterfaceParams
 app2.isMediaApplication = true
 app2.appHMIType = {"NAVIGATION"}
-common_steps:AddMobileSession("Preconditions_AddMobileSession2", _, "mobileSession2")
+common_steps:AddMobileSession("Preconditions_AddMobileSession2", nil, "mobileSession2")
 common_steps:RegisterApplication("Preconditions_RegisterApp2", "mobileSession2", app2)
 
 --[[ Test ]]
@@ -69,14 +75,13 @@ function Test:Change_App1_To_BackGound()
   self.mobileSession2:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
   self.mobileSession:ExpectNotification("OnHMIStatus", {hmiLevel = "BACKGROUND", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
   :Do(function()
-    time_background = timestamp()
-  end)  
+      time_background = timestamp()
+    end)
 end
 
 function Test:SDL_Sends_EndService_Request()
   -- Create an event to catch END_SERVICE event from SDL to mobile
-  local Event = events.Event
-  local event = Event()
+  local event = events.Event()
   event.matches = function(_, data)
     return data.frameType == constants.FRAME_TYPE.CONTROL_FRAME and
     data.serviceType == constants.SERVICE_TYPE.VIDEO and
@@ -88,12 +93,12 @@ function Test:SDL_Sends_EndService_Request()
       local current_time = timestamp()
       local interval = current_time - time_background
       -- timeout is 1000 ms. +/-200 ms is deviation
-      if (interval > 1000 - 200)  and (interval < 1000 + 200) then
+      if (interval > 1000 - 200) and (interval < 1000 + 200) then
         return true
       else
         self:FailTestCase("SDL sends EndService Request to mobile after " .. tostring(interval) .. " ms. Expected timeout is 1000 ms")
       end
-    end)  
+    end)
   :Do(function()
       -- Mobile sends END_SERVICE_ACK
       self.mobileSession:Send(
@@ -104,6 +109,21 @@ function Test:SDL_Sends_EndService_Request()
           sessionId = self.mobileSession.sessionId,
           binaryData = self.mobileSession.hashCode
         })
+    end)
+  local hmi_app_id1 = common_functions:GetHmiAppId(app1.appName, self)
+  EXPECT_HMICALL("Navigation.StopStream", {appID = hmi_app_id1})
+  :ValidIf(function()
+      local current_time = timestamp()
+      local interval = current_time - time_background
+      -- timeout is 1000 ms. +/-200 ms is deviation
+      if (interval > 1000 - 200) and (interval < 1000 + 200) then
+        return true
+      else
+        self:FailTestCase("SDL sends Navigation.StopStream Request to HMI after " .. tostring(interval) .. " ms. Expected timeout is 1000 ms")
+      end
+    end)
+  :Do(function(_,data)
+      self.hmiConnection:SendResponse(data.id, "Navigation.StopStream", "SUCCESS", {})
     end)
 end
 

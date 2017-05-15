@@ -14,7 +14,7 @@
 
 -- Steps:
 -- 1. Enable Audio service.
--- 2. Start Audio streaming (be sure that Stop stream on "BACKGROUND"" checkbox is unchecked).
+-- 2. Start Audio streaming (be sure that Stop stream on "BACKGROUND" checkbox is unchecked).
 -- 3. Change app to background by activating app2
 
 -- Expected result:
@@ -32,6 +32,12 @@ local file_name = "files/Kalimba3.mp3"
 common_steps:AddNewTestCasesGroup("Preconditions")
 -- Update ini file contains StopStreamingTimeout = 1000
 common_functions:SetValuesInIniFile("%p?StopStreamingTimeout%s?=%s-[%d]-%s-\n", "StopStreamingTimeout", 1000)
+-- ForceProtectedService is set to Non
+-- 1. Rename ";ForceProtectedService" to ";ForceProtectedService_rename"
+-- to avoid case there are 2 ForceProtectedService keywords
+common_functions:SetValuesInIniFile("%p?;%s-ForceProtectedService%s?=%s-[^\n]-%s-\n", ";ForceProtectedService_rename", "Non")
+-- 2. ForceProtectedService is set to Non
+common_functions:SetValuesInIniFile("%p?ForceProtectedService%s?=%s-[^\n]-%s-\n", "ForceProtectedService", "Non")
 -- Set app1 as NAVIGATION media app
 local app1 = config.application1.registerAppInterfaceParams
 app1.isMediaApplication = true
@@ -41,7 +47,7 @@ common_steps:PreconditionSteps("Preconditions", const.precondition.ACTIVATE_APP)
 local app2 = config.application2.registerAppInterfaceParams
 app2.isMediaApplication = true
 app2.appHMIType = {"NAVIGATION"}
-common_steps:AddMobileSession("Preconditions_AddMobileSession2", _, "mobileSession2")
+common_steps:AddMobileSession("Preconditions_AddMobileSession2", nil, "mobileSession2")
 common_steps:RegisterApplication("Preconditions_RegisterApp2", "mobileSession2", app2)
 
 --[[ Test ]]
@@ -51,13 +57,13 @@ function Test:App1_StartService()
   self.mobileSession:StartService(constants.SERVICE_TYPE.PCM)
   EXPECT_HMICALL("Navigation.StartAudioStream")
   :Do(function(_,data)
-      self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", { })
+      self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
     end)
 end
 
 function Test:App1_StartStreaming()
   self.mobileSession:StartStreaming(constants.SERVICE_TYPE.PCM, file_name)
-  EXPECT_HMINOTIFICATION("Navigation.OnAudioDataStreaming",{available = true})
+  EXPECT_HMINOTIFICATION("Navigation.OnAudioDataStreaming", {available = true})
 end
 
 function Test:Change_App1_To_BackGound()
@@ -66,15 +72,14 @@ function Test:Change_App1_To_BackGound()
   EXPECT_HMIRESPONSE(cid, {method = "SDL.ActivateApp", code = 0})
   self.mobileSession2:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
   self.mobileSession:ExpectNotification("OnHMIStatus", {hmiLevel = "BACKGROUND", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
-	:Do(function()
-    time_background = timestamp()
-	end)
+  :Do(function()
+      time_background = timestamp()
+    end)
 end
 
 function Test:SDL_Sends_EndService_Request()
   -- Create an event to catch END_SERVICE event from SDL to mobile
-  local Event = events.Event
-  local event = Event()
+  local event = events.Event()
   event.matches = function(_, data)
     return data.frameType == constants.FRAME_TYPE.CONTROL_FRAME and
     data.serviceType == constants.SERVICE_TYPE.PCM and
@@ -86,7 +91,7 @@ function Test:SDL_Sends_EndService_Request()
       local current_time = timestamp()
       local interval = current_time - time_background
       -- timeout is 1000 ms. +/-200 ms is deviation
-      if (interval > 1000 - 200)  and (interval < 1000 + 200) then
+      if (interval > 1000 - 200) and (interval < 1000 + 200) then
         return true
       else
         self:FailTestCase("SDL sends EndService Request to mobile after " .. tostring(interval) .. " ms. Expected timeout is 1000 ms")
@@ -102,6 +107,21 @@ function Test:SDL_Sends_EndService_Request()
           sessionId = self.mobileSession.sessionId,
           binaryData = self.mobileSession.hashCode
         })
+    end)
+  local hmi_app_id1 = common_functions:GetHmiAppId(app1.appName, self)
+  EXPECT_HMICALL("Navigation.StopAudioStream", {appID = hmi_app_id1})
+  :ValidIf(function()
+      local current_time = timestamp()
+      local interval = current_time - time_background
+      -- timeout is 1000 ms. +/-200 ms is deviation
+      if (interval > 1000 - 200) and (interval < 1000 + 200) then
+        return true
+      else
+        self:FailTestCase("SDL sends Navigation.StopAudioStream Request to HMI after " .. tostring(interval) .. " ms. Expected timeout is 1000 ms")
+      end
+    end)
+  :Do(function(_,data)
+      self.hmiConnection:SendResponse(data.id, "Navigation.StopAudioStream", "SUCCESS", {})
     end)
 end
 
