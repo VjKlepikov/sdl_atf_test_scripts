@@ -42,7 +42,7 @@ local function CheckGroup001IsNotConsentedAndGroup002IsNotConsented()
     common_functions:DelayedExp(5000)
   end
 
-end -- function CheckGroup001IsNotConsentedAndGroup002IsNotConsented()
+end
 
 local function CheckGroup001IsConsentedAndGroup002IsConsented()
   --------------------------------------------------------------------------
@@ -78,7 +78,7 @@ local function CheckGroup001IsConsentedAndGroup002IsConsented()
     EXPECT_RESPONSE(cid, {success = true , resultCode = "SUCCESS"})
     EXPECT_NOTIFICATION("OnHashChange")
   end
-end -- function CheckGroup001IsConsentedAndGroup002IsConsented()
+end
 
 local function IgnitionOffOnActivateApp(test_case_name)
   Test["Precondition_Ignition_Off_" .. test_case_name] = function(self)
@@ -116,7 +116,7 @@ end
 --------------------------------------------------------------------------
 -- Test 10.3:
 -- Description: disallowed_by_external_consent_entities_on/off is omitted. HMI -> SDL: OnAppPermissionConsent(externalConsentStatus OFF). Ignition Off then On.
--- Expected Result: externalConsentStatus is kept.
+-- Expected Result: RPC is allowed
 --------------------------------------------------------------------------
 -- Precondition:
 -- Prepare JSON file with consent groups. Add all consent group names into app_polices of applications
