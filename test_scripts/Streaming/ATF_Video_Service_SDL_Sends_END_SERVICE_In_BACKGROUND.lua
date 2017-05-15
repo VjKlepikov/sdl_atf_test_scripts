@@ -65,7 +65,7 @@ end
 
 function Test:App1_StartStreaming()
   self.mobileSession:StartStreaming(constants.SERVICE_TYPE.VIDEO, file_name)
-  EXPECT_HMINOTIFICATION("Navigation.OnVideoDataStreaming",{available = true})
+  EXPECT_HMINOTIFICATION("Navigation.OnVideoDataStreaming", {available = true})
 end
 
 function Test:Change_App1_To_BackGound()
