@@ -9,26 +9,26 @@
 -- SDL first life cycle.
 -- ini file contains StopStreamingTimeout = 1000
 -- Core and HMI Started
+-- 2 media Navi apps are registered (MobileNavi checkbox checked)
+-- Activate Navi app1 on HMI.
 
 -- Steps:
--- 1. Register mobile Navi app (MobileNavi checkbox checked)
--- 2. Activate Navi on HMI.
--- 3. Enable Audio and Video service.
--- 4. Start Video/Audio streaming (be sure that Stop stream on "BACKGROUND"" checkbox is unchecked).
--- 5. From HMI, send OnEventChanged("DEACTIVATE_HMI") to set app switch to BACKGROUND HMI level.
+-- 1. Enable Video service.
+-- 2. Start Audio streaming (be sure that Stop stream on "BACKGROUND"" checkbox is unchecked).
+-- 3. Change app1 to BACKGROUND by activating app2
 
 -- Expected result:
 -- Navi App received BACKGROUND
--- After 1 second SDL should send EndService() requests for 10 and 11 services
+-- After 1 second SDL should send EndService() requests for 11 service
 
 ---------------------------------------------------------------------------------------------
 require('user_modules/all_common_modules')
 config.defaultProtocolVersion = 3
 local constants = require('protocol_handler/ford_protocol_constants')
-local Event = events.Event
 
 --[[ Local variables]]
 local file_name = "files/ELL_PART_5_768k.wmv"
+local time_background
 
 --[[ Preconditions ]]
 common_steps:AddNewTestCasesGroup("Preconditions")
@@ -68,10 +68,14 @@ function Test:Change_App1_To_BackGound()
   EXPECT_HMIRESPONSE(cid, {method = "SDL.ActivateApp", code = 0})
   self.mobileSession2:ExpectNotification("OnHMIStatus", {hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
   self.mobileSession:ExpectNotification("OnHMIStatus", {hmiLevel = "BACKGROUND", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
+  :Do(function()
+    time_background = timestamp()
+  end)  
 end
 
 function Test:SDL_Sends_EndService_Request()
   -- Create an event to catch END_SERVICE event from SDL to mobile
+  local Event = events.Event
   local event = Event()
   event.matches = function(_, data)
     return data.frameType == constants.FRAME_TYPE.CONTROL_FRAME and
@@ -80,7 +84,17 @@ function Test:SDL_Sends_EndService_Request()
     data.sessionId == self.mobileSession.sessionId
   end
   self.mobileSession:ExpectEvent(event, "EndService Request from SDL")
-  :Do(function(_,data)
+  :ValidIf(function()
+      local current_time = timestamp()
+      local interval = current_time - time_background
+      -- timeout is 1000 ms. +/-200 ms is deviation
+      if (interval > 1000 - 200)  and (interval < 1000 + 200) then
+        return true
+      else
+        self:FailTestCase("SDL sends EndService Request to mobile after " .. tostring(interval) .. " ms. Expected timeout is 1000 ms")
+      end
+    end)  
+  :Do(function()
       -- Mobile sends END_SERVICE_ACK
       self.mobileSession:Send(
         {
