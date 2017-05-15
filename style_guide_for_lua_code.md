@@ -28,7 +28,7 @@ end
 local function printDivisibleValue()
   for i = 1, 100 do
     if i % 2 == 0 then
-      print( i .. " is divisible.")
+      print(i .. " is divisible.")
     end
   end
 end
@@ -202,14 +202,14 @@ end
 -- bad
 spam (1)
 
-function spam (text)
+function spam(text)
   -- ...stuff...
 end
 
 -- good
 spam(1)
 
-function spam (text)
+function spam(text)
   -- ...stuff...
 end
 ```
