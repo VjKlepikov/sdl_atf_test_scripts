@@ -20,12 +20,13 @@
 -- Expected result:
 -- Navi App received BACKGROUND
 -- After 1 second SDL should send EndService() requests for 10 service
+-- and SDL should send StopAudioStream to HMI
 
 ---------------------------------------------------------------------------------------------
 require('user_modules/all_common_modules')
 config.defaultProtocolVersion = 3
 local constants = require('protocol_handler/ford_protocol_constants')
-local time_background
+local time_background = 0
 local file_name = "files/Kalimba3.mp3"
 
 --[[ Preconditions ]]
@@ -33,11 +34,7 @@ common_steps:AddNewTestCasesGroup("Preconditions")
 -- Update ini file contains StopStreamingTimeout = 1000
 common_functions:SetValuesInIniFile("%p?StopStreamingTimeout%s?=%s-[%d]-%s-\n", "StopStreamingTimeout", 1000)
 -- ForceProtectedService is set to Non
--- 1. Rename ";ForceProtectedService" to ";ForceProtectedService_rename"
--- to avoid case there are 2 ForceProtectedService keywords
-common_functions:SetValuesInIniFile("%p?;%s-ForceProtectedService%s?=%s-[^\n]-%s-\n", ";ForceProtectedService_rename", "Non")
--- 2. ForceProtectedService is set to Non
-common_functions:SetValuesInIniFile("%p?ForceProtectedService%s?=%s-[^\n]-%s-\n", "ForceProtectedService", "Non")
+common_functions:SetValuesInIniFile("ForceProtectedService%s?=%s-[^\n]-%s-\n", "ForceProtectedService", "Non")
 -- Set app1 as NAVIGATION media app
 local app1 = config.application1.registerAppInterfaceParams
 app1.isMediaApplication = true
@@ -66,7 +63,7 @@ function Test:App1_StartStreaming()
   EXPECT_HMINOTIFICATION("Navigation.OnAudioDataStreaming", {available = true})
 end
 
-function Test:Change_App1_To_BackGound()
+function Test:Change_App1_To_BackGround()
   local hmi_app_id2 = common_functions:GetHmiAppId(app2.appName, self)
   local cid = self.hmiConnection:SendRequest("SDL.ActivateApp", {appID = hmi_app_id2})
   EXPECT_HMIRESPONSE(cid, {method = "SDL.ActivateApp", code = 0})
