@@ -544,7 +544,7 @@ end
 * Avoid using the debug library unless necessary, especially if trusted code is being run.
 ```
 -- strongly not recommended in production code
-function trace (event, line)
+function trace(event, line)
       local s = debug.getinfo(2).short_src
       print(s .. ":" .. line)
     end
