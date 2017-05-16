@@ -3,6 +3,19 @@ local json = require("modules/json")
 local SDL = require('modules/SDL')
 local commonTestCases =  require ('user_modules/shared_testcases_genivi/commonTestCases')
 local commonFunctions =  require ('user_modules/shared_testcases_genivi/commonFunctions')
+local commonPreconditions =  require ('user_modules/shared_testcases_genivi/commonPreconditions')
+
+--[[@GetCountOfRows: Get count of rows in SmartDeviceLinkCore.log file
+--! @parameters: NO
+--]]
+function testCasesForPolicySDLErrorsStops.GetCountOfRows()
+  local fileName = commonPreconditions:GetPathToSDL() .. "SmartDeviceLinkCore.log"
+  local i = 0
+  for _ in io.lines(fileName) do
+    i = i + 1
+  end
+  return i
+end
 
 --The function will check if 'message' is printed in SmartDeviceLinkCore.log
 -- should return:
