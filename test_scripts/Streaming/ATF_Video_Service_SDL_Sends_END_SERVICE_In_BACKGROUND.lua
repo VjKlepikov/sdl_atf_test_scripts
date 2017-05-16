@@ -95,9 +95,8 @@ function Test:SDL_Sends_EndService_Request()
       -- timeout is 1000 ms. +/-200 ms is deviation
       if (interval > 1000 - 200) and (interval < 1000 + 200) then
         return true
-      else
-        self:FailTestCase("SDL sends EndService Request to mobile after " .. tostring(interval) .. " ms. Expected timeout is 1000 ms")
       end
+      self:FailTestCase("SDL sends EndService Request to mobile after " .. tostring(interval) .. " ms. Expected timeout is 1000 ms")
     end)
   :Do(function()
       -- Mobile sends END_SERVICE_ACK
@@ -118,9 +117,8 @@ function Test:SDL_Sends_EndService_Request()
       -- timeout is 1000 ms. +/-200 ms is deviation
       if (interval > 1000 - 200) and (interval < 1000 + 200) then
         return true
-      else
-        self:FailTestCase("SDL sends Navigation.StopStream Request to HMI after " .. tostring(interval) .. " ms. Expected timeout is 1000 ms")
       end
+      self:FailTestCase("SDL sends Navigation.StopStream Request to HMI after " .. tostring(interval) .. " ms. Expected timeout is 1000 ms")
     end)
   :Do(function(_,data)
       self.hmiConnection:SendResponse(data.id, "Navigation.StopStream", "SUCCESS", {})
