@@ -5,7 +5,6 @@
       "exchange_after_x_kilometers": 1800,
       "exchange_after_x_days": 30,
       "timeout_after_x_seconds": 60,
-	  "preloaded_pt":  true,
       "seconds_between_retries": [
         1,
         5,
