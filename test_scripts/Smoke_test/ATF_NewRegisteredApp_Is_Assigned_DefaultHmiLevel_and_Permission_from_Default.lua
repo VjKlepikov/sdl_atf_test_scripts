@@ -26,7 +26,6 @@ require('user_modules/all_common_modules')
 local policy = require('user_modules/shared_testcases/testCasesForPolicyTable')
 
 ------------------------------ Variables and Common Functions -------------------------------
-
 local app = common_functions:CreateRegisterAppParameters(
   {appID = "2", appName = "NAVIGATION", isMediaApplication = false, appHMIType = {"NAVIGATION"}}
 )
@@ -76,31 +75,25 @@ Get_RPCs()
 local parent_default_group = {"policy_table", "app_policies","default","groups"}
 local added_default_group = {"Base-4"}
 
--- ------------------------------------ Precondition -------------------------------------------
+------------------------------------ Precondition -------------------------------------------
 common_steps:BackupFile("Precondition_Backup_PreloadedPT", "sdl_preloaded_pt.json")
 common_functions:AddItemsIntoJsonFile(preloaded_file, parent_default_group, added_default_group)
 common_steps:PreconditionSteps("PreconditionSteps", const.precondition.ACTIVATE_APP)
-
 policy:updatePolicy(copied_preload_file, _, "PreconditionSteps_UpdatePolicy")
 
--- ---------------------------------------- Steps ----------------------------------------------
+---------------------------------------- Steps ----------------------------------------------
 function Test:StartNewSession()
   self.mobileSession1 = mobile_session.MobileSession( self, self.mobileConnection)
   self.mobileSession1:StartService(7)
 end
 
-function Test:Register_NewApp_And_Verify_SDL_Send_Correct_Params_to_HMI()
+function Test:Register_NewApp_Then_Verify_DefaultHMILevel_And_Permission()
   local parent_default_hmi = {"policy_table","app_policies","default","default_hmi"}
   local default_hmi = common_functions:GetParameterValueInJsonFile(preloaded_file, parent_default_hmi)
-
   local cid = self.mobileSession1:SendRPC("RegisterAppInterface", app)
-  common_functions:DelayedExp(3000)
+
   EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", {application = {appName = app.appName}})
   EXPECT_HMINOTIFICATION("SDL.OnStatusUpdate", {status = "UPDATE_NEEDED"})
-  self.hmiConnection:SendNotification("BasicCommunication.OnSystemRequest", { requestType = "PROPRIETARY",
-      fileName = "/tmp/fs/mp/images/ivsu_cache/PolicyTableUpdate" })
-  EXPECT_NOTIFICATION("OnSystemRequest", { requestType = "PROPRIETARY" })
-  self.mobileSession1:ExpectResponse(cid, {success = true, resultCode = "SUCCESS"})
   self.mobileSession1:ExpectNotification("OnHMIStatus", {hmiLevel = default_hmi, audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
   self.mobileSession1:ExpectNotification("OnPermissionsChange")
   :ValidIf(function(exp,data)
@@ -111,6 +104,17 @@ function Test:Register_NewApp_And_Verify_SDL_Send_Correct_Params_to_HMI()
         return false
       end
     end)
+  self.mobileSession1:ExpectResponse(cid, {success = true, resultCode = "SUCCESS"})
+
+end
+
+function Test:Verify_OnSystemRequest()
+  self.hmiConnection:SendNotification("BasicCommunication.OnSystemRequest",
+    {
+      requestType = "PROPRIETARY",
+      fileName = "filename"
+    })
+  EXPECT_NOTIFICATION("OnSystemRequest", { requestType = "PROPRIETARY" })
 end
 
 -------------------------------------------Postconditions-------------------------------------
