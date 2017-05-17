@@ -73,7 +73,7 @@ function Test:Check_Request_Type_Is_Empty_In_SnapShot()
     self:FailTestCase("snapshot does not exist")
     return
   end
-  local snapshot_requestType = common_functions:GetParameterValueInJsonFile(snapshot_file, {"policy_table", "app_policies", "SPT2", "RequestType"})
+  local snapshot_requestType = common_functions:GetParameterValueInJsonFile(snapshot_file, {"policy_table", "app_policies", app.appID, "RequestType"})
 
   if not common_functions:CompareTables(snapshot_requestType,{}) then
     self:FailTestCase("RequestType of " .. app.appID .. " is not empty")
