@@ -94,7 +94,7 @@ function Test:Register_NewApp_And_Verify_SDL_Send_Correct_Params_to_HMI()
   local default_hmi = common_functions:GetParameterValueInJsonFile(preloaded_file, parent_default_hmi)
 
   local cid = self.mobileSession1:SendRPC("RegisterAppInterface", app)
-  common_functions:DelayedExp(1000)
+  common_functions:DelayedExp(3000)
   EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", {application = {appName = app.appName}})
   EXPECT_HMINOTIFICATION("SDL.OnStatusUpdate", {status = "UPDATE_NEEDED"})
   self.hmiConnection:SendNotification("BasicCommunication.OnSystemRequest", { requestType = "PROPRIETARY",
