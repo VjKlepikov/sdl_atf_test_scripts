@@ -24,15 +24,25 @@
 -----------------------------Required Shared Libraries---------------------------------------
 require('user_modules/all_common_modules')
 local policy = require('user_modules/shared_testcases/testCasesForPolicyTable')
---local snapshot = require('user_modules/shared_testcases_genivi/testCasesForPolicyTableSnapshot')
 
 ------------------------------ Variables and Common Functions -------------------------------
+
 local app = common_functions:CreateRegisterAppParameters(
   {appID = "2", appName = "NAVIGATION", isMediaApplication = false, appHMIType = {"NAVIGATION"}}
 )
 local preloaded_file = config.pathToSDL .. "sdl_preloaded_pt.json"
 local copied_preload_file = config.pathToSDL .. "update_sdl_preloaded_pt.json"
 local expectation = {}
+
+-- Copy sdl_preloaded_pt.json to update_sdl_preloaded_pt.json
+os.execute(" cp ".. preloaded_file .. " " .. copied_preload_file)
+function Test:Remove_preloaded_pt_And_preloaded_date()
+  local parent_item = {"policy_table","module_config"}
+  local removed_json_items = {"preloaded_pt"}
+  common_functions:RemoveItemsFromJsonFile(copied_preload_file, parent_item, removed_json_items)
+  removed_json_items = {"preloaded_date"}
+  common_functions:RemoveItemsFromJsonFile(copied_preload_file, parent_item, removed_json_items)
+end
 
 local function Get_RPCs()
   rpcs = common_functions:GetParameterValueInJsonFile(copied_preload_file, {"policy_table", "functional_groupings", "Base-4", "rpcs"})
@@ -84,6 +94,7 @@ function Test:Register_NewApp_And_Verify_SDL_Send_Correct_Params_to_HMI()
   local default_hmi = common_functions:GetParameterValueInJsonFile(preloaded_file, parent_default_hmi)
 
   local cid = self.mobileSession1:SendRPC("RegisterAppInterface", app)
+  common_functions:DelayedExp(1000)
   EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", {application = {appName = app.appName}})
   EXPECT_HMINOTIFICATION("SDL.OnStatusUpdate", {status = "UPDATE_NEEDED"})
   self.hmiConnection:SendNotification("BasicCommunication.OnSystemRequest", { requestType = "PROPRIETARY",
