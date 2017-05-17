@@ -19,6 +19,10 @@ require('user_modules/all_common_modules')
 ---------------------------------------- Steps ----------------------------------------------
 common_steps:StartSDL("StartSDL")
 
+function Test:Delayed2s()
+  common_functions:DelayedExp(2000)
+end
+
 function Test:Check_SDL_Create_Policy_Table()
   local policy_file = config.pathToSDL .. common_functions:GetValueFromIniFile("AppStorageFolder") .. "/policy.sqlite"
   local exist_flag = common_functions:IsFileExist (policy_file)
