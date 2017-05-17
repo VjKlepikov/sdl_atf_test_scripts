@@ -31,7 +31,8 @@ function common_functions:DeleteLogsFiles()
   if self:IsFileExist(config.pathToSDL .. "app_info.dat") then
     os.remove(config.pathToSDL .. "app_info.dat")
   end
-  os.remove(config.pathToSDL .. "*.log")
+
+  os.execute("rm -rf " .. config.pathToSDL .. "*.log") 
 end
 
 -- Check file existence
