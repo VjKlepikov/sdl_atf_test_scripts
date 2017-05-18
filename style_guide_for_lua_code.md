@@ -493,13 +493,25 @@ local power = "SuperPower"
 * Pretty much never put multiple statements on one line
 ```
 -- bad
-local whatever = 'sure';
-a = 1; b = 2
+local whatever = 'sure'; a = 1; b = 2
 
 -- good
 local whatever = 'sure'
 a = 1
 b = 2
+```
+* Avoid to declare more than one variable in row, except cases when these variables get values from function
+```
+-- bad
+local day, month, year
+
+-- good
+local day
+local month
+local year
+
+-- good
+local day, month, year = getDate()
 ```
 * Single line blocks are okay only for small statements. It's okay to put an if/for/while with a small body on the same line, never do this for multi-clause statements.
 ```
