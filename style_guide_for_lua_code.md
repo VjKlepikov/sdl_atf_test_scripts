@@ -202,7 +202,7 @@ end
 -- bad
 spam (1)
 
-function spam(text)
+function spam (text)
   -- ...stuff...
 end
 
@@ -769,16 +769,6 @@ local function getProp(prop)
 end
 
 local is_jedi = getProp('jedi')
-```
-* Consider `nil` properties when selecting lengths. A good idea is to store an n property on lists that contain the length
-```
--- nils don't count
-local list = {}
-list[0] = nil
-list[1] = 'item'
-
-print(#list) -- 0
-print(select('#', list)) -1
 ```
 ### Modules
 * Note that modules are loaded as singletons and therefore should usually be factories (a function returning a new instance of a table) unless static (like utility libraries.)
