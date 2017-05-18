@@ -88,7 +88,7 @@ function common_functions:SetValuesInIniFile(FindExpression, parameterName, Valu
       f = assert(io.open(SDLini, "w"))
       f:write(fileContentUpdated)
     else
-      common_functions:userPrint(31, "Finding of '" .. tostring(parameterName) .. " = value' is failed. Expect string finding and replacing the value to " .. tostring(ValueToUpdate))
+      common_functions:UserPrint(31, "Finding of '" .. tostring(parameterName) .. " = value' is failed. Expect string finding and replacing the value to " .. tostring(ValueToUpdate))
     end
     f:close()
   end

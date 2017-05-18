@@ -406,6 +406,8 @@
 ./test_scripts/Smoke_test/ATF_Smoke_testing_Register_App_In_Current_Connection.lua
 ./test_scripts/Smoke_test/ATF_Policy_PTU_Register_App_Not_Listed_In_LocalPT.lua
 ./test_scripts/Smoke_test/ATF_Policy_PM_adds_app_level_and_module_config_to_snapshot.lua
+./test_scripts/Streaming/ATF_Audio_Service_SDL_Sends_END_SERVICE_In_BACKGROUND.lua [APPLINK-11672]
+./test_scripts/Streaming/ATF_Video_Service_SDL_Sends_END_SERVICE_In_BACKGROUND.lua [APPLINK-11672]
 ./test_scripts/Polices/Validation_of_PolicyTables/ATF_Policies_PTU_RequestType_array_is_empty.lua
 ./test_scripts/Policies/External_Consent_OFF/ATF_Policies_External_Consent_missing.lua
 ./test_scripts/Policies/External_Consent_OFF/ATF_Policies_External_Consent_OFF_through_ignition_cycles_disallowed_by_external_consent_entities_omitted.lua
@@ -416,4 +418,3 @@
 ./test_scripts/Polices/Policies_Security/002_ATF_P_TC_existing_navi_app_no_certificate.lua [APPLINK-34488]
 ./test_scripts/Polices/Policies_Security/003_ATF_N_TC_new_navi_app_certificate_exist.lua [APPLINK-34488]
 ./test_scripts/Polices/Policies_Security/004_ATF_N_TC_existing_navi_app_certificate_exist.lua [APPLINK-34488]
-
