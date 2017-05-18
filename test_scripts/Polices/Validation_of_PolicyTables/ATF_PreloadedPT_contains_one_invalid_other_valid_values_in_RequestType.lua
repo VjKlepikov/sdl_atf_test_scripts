@@ -40,12 +40,12 @@ local requestType_after_cut_off = {
 common_steps:AddNewTestCasesGroup("Preconditions")
 common_steps:BackupFile("PreconditionSteps_Backup_sdl_preloaded_pt.json", "sdl_preloaded_pt.json")
 
-function Test:PreconditionSteps_Update_RequestType_has_IVSU_In_PreloadedPT_file()
+function Test.PreconditionSteps_Update_RequestType_has_IVSU_In_PreloadedPT_file()
   common_functions:AddItemsIntoJsonFile(
     config.pathToSDL .. "sdl_preloaded_pt.json", parent_item, requestType_before_cut_off)
 end
 
-function Test:PreconditionSteps_Remove_Existed_Snapshot_File()
+function Test.PreconditionSteps_Remove_Existed_Snapshot_File()
   if common_steps:FileExisted(snapshot_file) then
     os.execute( "rm -f " .. snapshot_file)
   end
@@ -55,7 +55,7 @@ common_steps:PreconditionSteps("PreconditionSteps", const.precondition.ACTIVATE_
 
 --[[ Test ]]
 common_steps:AddNewTestCasesGroup("Test")
-function Test:Check_SDL_cuts_off_IVSU_from_RequestType()
+function Test.Check_SDL_cuts_off_IVSU_from_RequestType()
   local count_sleep = 1
   while not common_steps:FileExisted(snapshot_file) and count_sleep < 9 do
     os.execute("sleep 1")
