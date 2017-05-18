@@ -16,8 +16,6 @@
 require('user_modules/all_common_modules')
 
 --[[ Local Variables ]]
-local strIvsu_cacheFolder = common_functions:GetValueFromIniFile("SystemFilesPath") .. "/"
-local snapshot_file = strIvsu_cacheFolder .. "sdl_snapshot.json"
 local parent_item = {"policy_table", "app_policies", "default", "RequestType"}
 local requestType = {
   "ABC"
