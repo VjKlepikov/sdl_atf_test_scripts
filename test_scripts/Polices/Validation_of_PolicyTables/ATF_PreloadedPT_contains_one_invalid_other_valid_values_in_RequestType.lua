@@ -74,16 +74,12 @@ function Test.Check_SDL_cuts_off_IVSU_from_RequestType()
 end
 
 function Test:Check_SDL_continue_working()
-  local CorIdPutFile = self.mobileSession:SendRPC(
-    "PutFile",
-    {
-      syncFileName = "icon.png",
-      fileType = "GRAPHIC_PNG",
-      persistentFile = false,
-      systemFile = false,
-    }, "files/icon.png")
-
-  EXPECT_RESPONSE(CorIdPutFile, { success = true, resultCode = "SUCCESS"})
+  os.execute(" sleep 1 ")
+  local status = sdl:CheckStatusSDL()
+  if (status == 1) then
+    return true
+  end
+  self:FailTestCase("SDL has already stopped.")
 end
 
 --[[ Postconditions ]]
