@@ -37,13 +37,14 @@ common_steps:PreconditionSteps("PreconditionSteps", const.precondition.START_SDL
 --[[ Test ]]
 common_steps:AddNewTestCasesGroup("Test")
 
-function Test.Check_SDL_is_shutdown()
+function Test:Check_SDL_is_shutdown()
   os.execute(" sleep 1 ")
   -- Remove sdl.pid file on ATF folder in case SDL is stopped not by script.
   os.execute("rm sdl.pid")
   local status = sdl:CheckStatusSDL()
   if (status == 1) then
     self:FailTestCase("SDL is not shut down")
+    StopSDL()
     return false
   end
   return true
