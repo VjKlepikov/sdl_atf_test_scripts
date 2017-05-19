@@ -1,19 +1,24 @@
 --[[ Description ]]
+-- Requirement summary:
 -- [APPLINK-23968]: [Policies] PreloadPT the only one invalid value in "RequestType" array
+
 -- Description:
 -- In case PreloadedPT has only one value in "RequestType" array and this value is invalid
 -- SDL must log this error and shut SDL down
+
 -- Preconditions:
 -- -- 1. Preloaded PT exists at the path defined in .ini file
 
 -- Steps:
 -- -- 1. Policies manager checks PreloadedPT
 -- -- 2. PreloadedPT-> "app_policies" -> "default" -> RequestType has only one invalid value
+
 -- Expected result:
 -- -- 1. SDL logs error internally and shuts down
 
 --[[ Generic precondition ]]
 require('user_modules/all_common_modules')
+config.ExitOnCrash = false
 
 --[[ Local Variables ]]
 -- local parent_item = {"policy_table", "app_policies", "default", "RequestType"}
@@ -35,9 +40,7 @@ common_steps:PreconditionSteps("PreconditionSteps", const.precondition.START_SDL
 common_steps:AddNewTestCasesGroup("Test")
 
 function Test:Check_SDL_is_shutdown()
-  os.execute(" sleep 1 ")
-  -- Remove sdl.pid file on ATF folder in case SDL is stopped not by script.
-  os.execute("rm sdl.pid")
+  os.execute(" sleep 5 ")
   local status = sdl:CheckStatusSDL()
   if (status == 1) then
     self:FailTestCase("SDL is not shut down")
