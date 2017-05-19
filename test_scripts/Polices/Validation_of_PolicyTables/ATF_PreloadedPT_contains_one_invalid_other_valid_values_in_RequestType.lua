@@ -1,5 +1,7 @@
 --[[ Description ]]
+-- Requirement summary:
 -- [APPLINK-23970]: [Policies] PreloadPT one invalid and other valid values in "RequestType" array
+
 -- Description:
 -- In case PreloadedPT has several values in "RequestType" array and one of them is invalid
 -- SDL must:cut off this invalid value treat such PreloadedPT as valid continue working.
@@ -20,17 +22,18 @@
 require('user_modules/all_common_modules')
 
 --[[ Local Variables ]]
-local strIvsu_cacheFolder = common_functions:GetValueFromIniFile("SystemFilesPath") .. "/"
-local snapshot_file = strIvsu_cacheFolder .. "sdl_snapshot.json"
+local ivsu_cache_folder = common_functions:GetValueFromIniFile("SystemFilesPath") .. "/"
+local snapshot_file = ivsu_cache_folder .. "sdl_snapshot.json"
 local parent_item = {"policy_table", "app_policies", "default", "RequestType"}
-local requestType_before_cut_off = {
+
+local request_type_before_cut_off = {
   "TRAFFIC_MESSAGE_CHANNEL",
   "HTTP",
   "PROPRIETARY",
   "IVSU"
 }
 
-local requestType_after_cut_off = {
+local request_type_after_cut_off = {
   "TRAFFIC_MESSAGE_CHANNEL",
   "HTTP",
   "PROPRIETARY"
@@ -42,10 +45,10 @@ common_steps:BackupFile("PreconditionSteps_Backup_sdl_preloaded_pt.json", "sdl_p
 
 function Test.PreconditionSteps_Update_RequestType_has_IVSU_In_PreloadedPT_file()
   common_functions:AddItemsIntoJsonFile(
-    config.pathToSDL .. "sdl_preloaded_pt.json", parent_item, requestType_before_cut_off)
+    config.pathToSDL .. "sdl_preloaded_pt.json", parent_item, request_type_before_cut_off)
 end
 
-function Test.PreconditionSteps_Remove_Existed_Snapshot_File()
+function Test.PreconditionSteps_Remove_Existing_Snapshot_File()
   if common_steps:FileExisted(snapshot_file) then
     os.execute( "rm -f " .. snapshot_file)
   end
@@ -55,7 +58,7 @@ common_steps:PreconditionSteps("PreconditionSteps", const.precondition.ACTIVATE_
 
 --[[ Test ]]
 common_steps:AddNewTestCasesGroup("Test")
-function Test.Check_SDL_cuts_off_IVSU_from_RequestType()
+function Test:Check_SDL_cuts_off_IVSU_from_RequestType()
   local count_sleep = 1
   while not common_steps:FileExisted(snapshot_file) and count_sleep < 9 do
     os.execute("sleep 1")
@@ -64,19 +67,18 @@ function Test.Check_SDL_cuts_off_IVSU_from_RequestType()
 
   if not common_steps:FileExisted(snapshot_file) then
     self:FailTestCase("snapshot does not exist")
-    return
   end
   local snapshot_requestType = common_functions:GetParameterValueInJsonFile(snapshot_file, parent_item)
 
-  if not common_functions:CompareTablesNotSorted(snapshot_requestType, requestType_after_cut_off) then
+  if not common_functions:CompareTablesNotSorted(snapshot_requestType, request_type_after_cut_off) then
     self:FailTestCase("RequestType in snapshot is incorrect. Please check!")
   end
 end
 
 function Test:Check_SDL_continue_working()
-  os.execute(" sleep 1 ")
+  os.execute(" sleep 5 ")
   local status = sdl:CheckStatusSDL()
-  if (status == 1) then
+  if (status == sdl.RUNNING) then
     return true
   end
   self:FailTestCase("SDL has already stopped.")
