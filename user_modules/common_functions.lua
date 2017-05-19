@@ -18,21 +18,21 @@ function common_functions:DeletePolicyTable()
   common_functions:CheckSdlPath()
   local policy_file = config.pathToSDL .. common_functions:GetValueFromIniFile("AppStorageFolder") .. "/policy.sqlite"
   if common_functions:IsFileExist(policy_file) then
-    os.remove(policy_file)
+    os.execute("rm -f " .. policy_file)
   end
   policy_file = config.pathToSDL .. "policy.sqlite"
   if common_functions:IsFileExist(policy_file) then
-    os.remove(policy_file)
+    os.execute("rm -f " .. policy_file)
   end
 end
 
 function common_functions:DeleteLogsFiles()
   common_functions:CheckSdlPath()
   if self:IsFileExist(config.pathToSDL .. "app_info.dat") then
-    os.remove(config.pathToSDL .. "app_info.dat")
+    os.execute("rm -f " .. config.pathToSDL .. "app_info.dat")
   end
 
-  os.execute("rm -rf " .. config.pathToSDL .. "*.log") 
+  os.execute("rm -f " .. config.pathToSDL .. "*.log") 
 end
 
 -- Check file existence
