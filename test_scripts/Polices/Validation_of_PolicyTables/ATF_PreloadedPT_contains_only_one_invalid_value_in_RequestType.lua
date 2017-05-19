@@ -16,16 +16,15 @@
 require('user_modules/all_common_modules')
 
 --[[ Local Variables ]]
-local parent_item = {"policy_table", "app_policies", "default", "RequestType"}
-local requestType = {
-  "ABC"
-}
+-- local parent_item = {"policy_table", "app_policies", "default", "RequestType"}
+local parent_item = {"policy_table", "app_policies", "default"}
+local requestType = {RequestType = {"ABC"}}
 
 --[[ Specific Precondition ]]
 common_steps:AddNewTestCasesGroup("Preconditions")
 common_steps:BackupFile("PreconditionSteps_Backup_sdl_preloaded_pt.json", "sdl_preloaded_pt.json")
 
-function Test.PreconditionSteps_Update_RequestType_has_IVSU_In_PreloadedPT_file()
+function Test.PreconditionSteps_Update_RequestType_has_only_one_invalid_In_PreloadedPT_file()
   common_functions:AddItemsIntoJsonFile(
     config.pathToSDL .. "sdl_preloaded_pt.json", parent_item, requestType)
 end
@@ -48,7 +47,7 @@ function Test:Check_SDL_is_shutdown()
   return true
 end
 
-function Test.Check_SDL_logs_error_internally()
+function Test:Check_SDL_logs_error_internally()
   local logFileContent = io.open(tostring(config.pathToSDL) .. "SmartDeviceLinkCore.log", "r")
   :read("*all")
   if not string.find(logFileContent, "default policy invalid RequestTypes will be cleaned")
