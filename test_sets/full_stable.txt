@@ -424,6 +424,7 @@
 ./test_scripts/Smoke_test/ATF_Policy_PTU_Register_App_Not_Listed_In_LocalPT.lua [APPLINK-34488]
 ./test_scripts/Smoke_test/ATF_Policy_PM_adds_app_specific_info_to_snapshot.lua [APPLINK-34488]
 ./test_scripts/Smoke_test/ATF_Policy_PM_adds_app_level_and_module_config_to_snapshot.lua [APPLINK-34488]
+./test_scripts/Polices/user_consent_of_Policies/ATF_Consents_after_Factory_Defaults.lua
 ./test_scripts/Polices/Policies_Security/001_ATF_P_TC_new_navi_app_no_certificate.lua [APPLINK-34488]
 ./test_scripts/Polices/Policies_Security/002_ATF_P_TC_existing_navi_app_no_certificate.lua [APPLINK-34488]
 ./test_scripts/Polices/Policies_Security/003_ATF_N_TC_new_navi_app_certificate_exist.lua [APPLINK-34488]
