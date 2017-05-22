@@ -18,12 +18,12 @@
 
 --[[ Generic precondition ]]
 require('user_modules/all_common_modules')
+local testCasesForPolicySDLErrorsStops = require('user_modules/shared_testcases_genivi/testCasesForPolicySDLErrorsStops')
 config.ExitOnCrash = false
 
 --[[ Local Variables ]]
--- local parent_item = {"policy_table", "app_policies", "default", "RequestType"}
 local parent_item = {"policy_table", "app_policies", "default"}
-local requestType = {RequestType = {"ABC"}}
+local request_type = {RequestType = {"ABC"}}
 
 --[[ Specific Precondition ]]
 common_steps:AddNewTestCasesGroup("Preconditions")
@@ -31,7 +31,7 @@ common_steps:BackupFile("PreconditionSteps_Backup_sdl_preloaded_pt.json", "sdl_p
 
 function Test.PreconditionSteps_Update_RequestType_has_only_one_invalid_In_PreloadedPT_file()
   common_functions:AddItemsIntoJsonFile(
-    config.pathToSDL .. "sdl_preloaded_pt.json", parent_item, requestType)
+    config.pathToSDL .. "sdl_preloaded_pt.json", parent_item, request_type)
 end
 
 common_steps:PreconditionSteps("PreconditionSteps", const.precondition.START_SDL)
@@ -55,7 +55,12 @@ function Test:Check_SDL_logs_error_internally()
   :read("*all")
   if not string.find(logFileContent, "default policy invalid RequestTypes will be cleaned")
   or not string.find(logFileContent, "ERROR(.+)default policy RequestTypes is empty after clean.up") then
-    self:FailTestCase("Nothing error written in log")
+    self:FailTestCase("No errors in log file")
+  end
+
+  result = testCasesForPolicySDLErrorsStops.ReadSpecificMessage("DCHECK")
+  if (result == true) then
+    self:FailTestCase("'DCHECK' is observed in smartDeviceLink.log.")
   end
 end
 
