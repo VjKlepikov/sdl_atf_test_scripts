@@ -1286,7 +1286,7 @@ end
 			--Requirement id in JAMA:
 				--SDLAQ-CRS-479
 				--APPLINK-8585
---[[TODO: update according to APPLINK-13849
+
 			--Verification criteria:
 				-- no UI response during SDL`s watchdog.
 				function Test:DeleteInteractionChoiceSet_NoResponseFromHMI()
@@ -1303,7 +1303,7 @@ end
 					})
 
 					--mobile side: expect response
-					EXPECT_RESPONSE(cid, {  success = false, resultCode = "GENERIC_ERROR"})
+					EXPECT_RESPONSE(cid, {  success = false, resultCode = "GENERIC_ERROR", info = "VR component does not respond"})
 					:Timeout(12000)
 
 					--mobile side: expect OnHashChange notification is not send to mobile
@@ -1313,7 +1313,7 @@ end
 				end
 
 		--End Test case HMINegativeCheck.1
-
+--[[TODO: update according to APPLINK-13849
 		-----------------------------------------------------------------------------------------
 
 		--Begin Test case HMINegativeCheck.2

@@ -2,7 +2,7 @@
 local commonSteps   = require('user_modules/shared_testcases/commonSteps')
 local commonPreconditions = require('user_modules/shared_testcases/commonPreconditions')
 
-  
+
 function DeleteLog_app_info_dat_policy()
     commonSteps:CheckSDLPath()
     local SDLStoragePath = config.pathToSDL .. "storage/"
@@ -33,7 +33,7 @@ function UpdatePolicy()
     commonPreconditions:BackupFile("sdl_preloaded_pt.json")
     local src_preloaded_json = config.pathToSDL .."sdl_preloaded_pt.json"
     local dest               = "files/SetGlobalProperties_DISALLOWED.json"
-    
+
     local filecopy = "cp " .. dest .."  " .. src_preloaded_json
 
     os.execute(filecopy)
@@ -73,20 +73,20 @@ local strAppFolder = config.pathToSDL .. "storage/" ..config.application1.regist
 ---------------------------------------------------------------------------------------------
 function Check_menuIconParams(data, type_icon, value)
 
-	
+
 	if( (value == nil) or (#value == 0) ) then value = "action.png" end
 	if(type_icon == nil) then type_icon = "DYNAMIC" end
 
 	local result = true
 	local path  = "bin/storage/"..config.application1.registerAppInterfaceParams.appID.. "_" .. config.deviceMAC.. "/"
 	local value_Icon = value--"action.png"
-	
+
 	if (type_icon == "DYNAMIC") then
 		value_Icon = path .. value--"action.png"
 	end
-	
 
-        
+
+
     --if (data.params.menuIcon.imageType ~= "DYNAMIC") then
     if (data.params.menuIcon.imageType ~= type_icon) then
     	print("\27[31m imageType of menuIcon is WRONG. Expected: ".. type_icon.."; Real: " .. data.params.menuIcon.imageType .. "\27[0m")
@@ -124,7 +124,7 @@ end
 ---------------------------------------------------------------------------------------------
 -------------------------------------------Preconditions-------------------------------------
 ---------------------------------------------------------------------------------------------
-	
+
 	--1. Activate application
 	commonSteps:ActivationApp()
 
@@ -134,7 +134,7 @@ end
 	-- function Test:Precondition_PolicyUpdate()
 	-- 	--hmi side: sending SDL.GetURLS request
 	-- 	local RequestIdGetURLS = self.hmiConnection:SendRequest("SDL.GetURLS", { service = 7 })
-		
+
 	-- 	--hmi side: expect SDL.GetURLS response from HMI
 	-- 	EXPECT_HMIRESPONSE(RequestIdGetURLS,{result = {code = 0, method = "SDL.GetURLS", urls = {{url = "https://policies.telematics.ford.com/api/policies"}}}})
 	-- 	:Do(function(_,data)
@@ -146,25 +146,25 @@ end
 	-- 				fileName = "filename"
 	-- 			}
 	-- 		)
-	-- 		--mobile side: expect OnSystemRequest notification 
+	-- 		--mobile side: expect OnSystemRequest notification
 	-- 		EXPECT_NOTIFICATION("OnSystemRequest", { requestType = "PROPRIETARY" })
 	-- 		:Do(function(_,data)
 	-- 			--print("OnSystemRequest notification is received")
-	-- 			--mobile side: sending SystemRequest request 
+	-- 			--mobile side: sending SystemRequest request
 	-- 			local CorIdSystemRequest = self.mobileSession:SendRPC("SystemRequest",
 	-- 				{
 	-- 					fileName = "PolicyTableUpdate",
 	-- 					requestType = "PROPRIETARY"
 	-- 				},
 	-- 			"files/ptu_general.json")
-				
+
 	-- 			local systemRequestId
 	-- 			--hmi side: expect SystemRequest request
 	-- 			EXPECT_HMICALL("BasicCommunication.SystemRequest")
 	-- 			:Do(function(_,data)
 	-- 				systemRequestId = data.id
 	-- 				--print("BasicCommunication.SystemRequest is received")
-					
+
 	-- 				--hmi side: sending BasicCommunication.OnSystemRequest request to SDL
 	-- 				self.hmiConnection:SendNotification("SDL.OnReceivedPolicyUpdate",
 	-- 					{
@@ -175,14 +175,14 @@ end
 	-- 					--hmi side: sending SystemRequest response
 	-- 					self.hmiConnection:SendResponse(systemRequestId,"BasicCommunication.SystemRequest", "SUCCESS", {})
 	-- 				end
-					
+
 	-- 				RUN_AFTER(to_run, 500)
 	-- 			end)
-				
+
 	-- 			--hmi side: expect SDL.OnStatusUpdate
 	-- 			EXPECT_HMINOTIFICATION("SDL.OnStatusUpdate")
 	-- 			:ValidIf(function(exp,data)
-	-- 				if 
+	-- 				if
 	-- 					exp.occurences == 1 and
 	-- 					data.params.status == "UP_TO_DATE" then
 	-- 						return true
@@ -194,8 +194,8 @@ end
 	-- 					exp.occurences == 2 and
 	-- 					data.params.status == "UP_TO_DATE" then
 	-- 						return true
-	-- 				else 
-	-- 					if 
+	-- 				else
+	-- 					if
 	-- 						exp.occurences == 1 then
 	-- 							print ("\27[31m SDL.OnStatusUpdate came with wrong values. Expected in first occurrences status 'UP_TO_DATE' or 'UPDATING', got '" .. tostring(data.params.status) .. "' \27[0m")
 	-- 					elseif exp.occurences == 2 then
@@ -205,32 +205,32 @@ end
 	-- 				end
 	-- 			end)
 	-- 			:Times(Between(1,2))
-				
+
 	-- 			--mobile side: expect SystemRequest response
 	-- 			EXPECT_RESPONSE(CorIdSystemRequest, { success = true, resultCode = "SUCCESS"})
 	-- 			:Do(function(_,data)
 	-- 				--print("SystemRequest is received")
 	-- 				--hmi side: sending SDL.GetUserFriendlyMessage request to SDL
 	-- 				local RequestIdGetUserFriendlyMessage = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", {language = "EN-US", messageCodes = {"StatusUpToDate"}})
-					
+
 	-- 				--hmi side: expect SDL.GetUserFriendlyMessage response
 	-- 				-- TODO: update after resolving APPLINK-16094 EXPECT_HMIRESPONSE(RequestIdGetUserFriendlyMessage,{result = {code = 0, method = "SDL.GetUserFriendlyMessage", messages = {{line1 = "Up-To-Date", messageCode = "StatusUpToDate", textBody = "Up-To-Date"}}}})
 	-- 				EXPECT_HMIRESPONSE(RequestIdGetUserFriendlyMessage)
 	-- 				:Do(function(_,data)
-	-- 					print("SDL.GetUserFriendlyMessage is received")			
+	-- 					print("SDL.GetUserFriendlyMessage is received")
 	-- 				end)
 	-- 			end)
-				
+
 	-- 		end)
 	-- 	end)
 	-- end
 
-	--3. PutFiles	
+	--3. PutFiles
 	commonSteps:PutFile("PutFile_MinLength", "a")
 	commonSteps:PutFile("PutFile_action.png", "action.png")
-	commonSteps:PutFile("PutFile_MaxLength_255Characters", strMaxLengthFileName255)	
+	commonSteps:PutFile("PutFile_MaxLength_255Characters", strMaxLengthFileName255)
 	commonSteps:PutFile("Putfile_SpaceBefore", " SpaceBefore")
-	
+
 ---------------------------------------------------------------------------------------------
 -----------------------------------------I TEST BLOCK----------------------------------------
 --CommonRequestCheck: Check of mandatory/conditional request's parameters (mobile protocol)--
@@ -261,23 +261,23 @@ end
 	--Description: Check request with all parameters
 
 		function Test:SetGlobalProperties_PositiveCase_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -285,12 +285,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -298,11 +298,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -310,19 +310,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -336,18 +336,18 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[[ TODO: update after resolving APPLINK-16052
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -356,19 +356,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -388,7 +388,7 @@ end
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-			
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -401,7 +401,7 @@ end
 	--Description: Check request with only mandatory parameters
 
 		--There is no mandatory parameter.
-		
+
 	--End test case CommonRequestCheck.2
 	-----------------------------------------------------------------------------------------
 
@@ -409,18 +409,18 @@ end
 	--Description: Check request with one by one conditional parameters: vrHelpTitle
 
 		function Test:SetGlobalProperties_WithOnlyOneParameter_vrHelpTitle_REJECTED()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				vrHelpTitle = "VR help title"
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "REJECTED"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -433,13 +433,13 @@ end
 	--Description: Check request with one by one conditional parameters: menuTitle
 
 		function Test:SetGlobalProperties_WithOnlyOneParameter_menuTitle_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title"
 			})
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
@@ -452,12 +452,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -471,23 +471,23 @@ end
 		--Verification criteria: Set optional icon to draw on an app menu button (for certain touchscreen platforms).
 
 		function Test:SetGlobalProperties_WithOnlyOneParameter_menuIcon_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				}
 			})
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
@@ -502,12 +502,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -519,15 +519,15 @@ end
 	--Description: Check request with one by one conditional parameters: keyboardProperties
 
 		function Test:SetGlobalProperties_WithOnlyOneParameter_keyboardProperties_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -535,17 +535,17 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[[ TODO: update after resolving APPLINK-16047
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]]
@@ -559,12 +559,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -577,15 +577,15 @@ end
 
 
 		function Test:SetGlobalProperties_WithOnlyOneParameter_vrHelp_REJECTED()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -594,12 +594,12 @@ end
 					}
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "REJECTED"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -612,11 +612,11 @@ end
 	--Description: Check request with one by one conditional parameters: helpPrompt
 
 		function Test:SetGlobalProperties_WithOnlyOneParameter_helpPrompt_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -627,12 +627,12 @@ end
 				--"valid SetGlobalproperties_request with "timeoutPrompt" and/or "helpPrompt" and at least one other valid parameter"
 				menuTitle = "Menu Title"
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -660,12 +660,12 @@ end
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -677,11 +677,11 @@ end
 	--Description: Check request with one by one conditional parameters: timeoutPrompt
 
 		function Test:SetGlobalProperties_WithOnlyOneParameter_timeoutPrompt_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 													{
-														timeoutPrompt = 
+														timeoutPrompt =
 														{
 															{
 																text = "Timeout prompt",
@@ -692,12 +692,12 @@ end
 														--"valid SetGlobalproperties_request with "timeoutPrompt" and/or "helpPrompt" and at least one other valid parameter"
 														menuTitle = "Menu Title"
 													})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 							{
-								timeoutPrompt = 
+								timeoutPrompt =
 								{
 									{
 										text = "Timeout prompt",
@@ -728,7 +728,7 @@ end
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 				:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -744,7 +744,7 @@ end
 		--Verification criteria: SDL response INVALID_DATA in case mandatory parameters are not provided
 
 		commonTestCases:VerifyRequestIsMissedAllParameters()
-		
+
 	--End test case CommonRequestCheck.10
 	-----------------------------------------------------------------------------------------
 
@@ -754,16 +754,16 @@ end
 		--Requirement id in JAMA/or Jira ID: APPLINK-4518
 
 		--Verification criteria: According to xml tests by Ford team all fake parameters should be ignored by SDL...
-		
+
 		--Check fake parameter
 		function Test:SetGlobalProperties_FakeParameters_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
 				fakeparameter = "fakeparameters",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						fakeparameter1 = "fakeparameter",
@@ -771,12 +771,12 @@ end
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						fakeparameter2 = "fakeparameter",
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -784,13 +784,13 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					fakeparameter3 = "fakeparameter",
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						fakeparameter4 = "fakeparameter",
@@ -799,12 +799,12 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					fakeparameter5 = "fakeparameter",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -818,14 +818,14 @@ end
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -841,28 +841,28 @@ end
 						then
 								print(" SDL re-sends fakeParameters to HMI in UI.SetAppIcon request")
 								return false
-						else 
+						else
 							return true
 						end
 					end)
-					
+
 			:Do(function(_,data)
 				--hmi side: sending UI.SetGlobalProperties response
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-	
-	
+
+
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -871,18 +871,18 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--TODO: update after resolving APPLINK-16047 - Still NOK
-					-- limitedCharacterList = 
+					-- limitedCharacterList =
 					-- {
 					-- 	"a"
 					-- },
@@ -902,33 +902,33 @@ end
 						then
 								print(" SDL re-sends fakeParameters to HMI in UI.SetAppIcon request")
 								return false
-						else 
+						else
 							return true
 						end
 					end)
-					
+
 			:Do(function(_,data)
 				--hmi side: sending UI.SetGlobalProperties response
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-			end)			
+			end)
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
 
 		--Check request with parameter of other request
 		function Test:SetGlobalProperties_ParametersAnotherAPI_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
 				syncFileName = "action.png",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						syncFileName = "action.png",
@@ -936,12 +936,12 @@ end
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						syncFileName = "action.png",
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -949,13 +949,13 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					syncFileName = "action.png",
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						syncFileName = "action.png",
@@ -964,12 +964,12 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					syncFileName = "action.png",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -982,14 +982,14 @@ end
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -1005,28 +1005,28 @@ end
 						then
 								print(" SDL re-sends syncFileName parameter to HMI in UI.SetAppIcon request")
 								return false
-						else 
+						else
 							return true
 						end
 					end)
-					
+
 			:Do(function(_,data)
 				--hmi side: sending UI.SetGlobalProperties response
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
-			
-			
+
+
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -1035,19 +1035,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -1059,7 +1059,7 @@ end
 				return Check_menuIconParams(data)
       		end)
 			:Timeout(iTimeout)
-			:ValidIf(function(_,data) 
+			:ValidIf(function(_,data)
 						if data.params.syncFileName or
 							data.params.vrHelp[1].syncFileName or
 							data.params.menuIcon.syncFileName or
@@ -1067,25 +1067,25 @@ end
 						then
 								print(" SDL re-sends syncFileName parameter to HMI in UI.SetAppIcon request")
 								return false
-						else 
+						else
 							return true
 						end
 					end)
-					
+
 			:Do(function(_,data)
 				--hmi side: sending UI.SetGlobalProperties response
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-			end)			
+			end)
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
 
-		
+
 	--End test case CommonRequestCheck.11
 	-----------------------------------------------------------------------------------------
 
@@ -1095,10 +1095,10 @@ end
 		--Requirement id in JAMA: SDLAQ-CRS-11, SDLAQ-CRS-383
 
 		--Verification criteria: SDL responses INVALID_DATA
-		
+
 		--change ":" by "="
 		local Payload = '{"helpPrompt"=[{"type":"TEXT","text":"Help prompt 1"},{"type":"TEXT","text":"Second help prompt"}],"timeoutPrompt":{{"type":"TEXT","text":"First timeout prompt"},{"type":"TEXT","text":"Another timeout prompt"}}}'
-		
+
 		commonTestCases:VerifyInvalidJsonRequest(12, Payload)
 
 	--End test case CommonRequestCheck.12
@@ -1108,23 +1108,23 @@ end
 	--Description: Check missing helpPrompt parameter is not mandatory
 
 		function Test:SetGlobalProperties_helpPrompt_isMissing_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -1132,17 +1132,17 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -1150,12 +1150,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
@@ -1169,19 +1169,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -1190,18 +1190,18 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--TODO: update after resolving APPLINK-16047 - Still NOK
-					-- limitedCharacterList = 
+					-- limitedCharacterList =
 					-- {
 					-- 	"a"
 					-- },
@@ -1222,7 +1222,7 @@ end
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -1234,16 +1234,16 @@ end
 	--Description: Check missing timeoutPrompt parameter is not mandatory
 
 		function Test:SetGlobalProperties_timeoutPrompt_isMissing_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -1251,12 +1251,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -1264,11 +1264,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -1276,12 +1276,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -1295,19 +1295,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -1316,19 +1316,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -1348,7 +1348,7 @@ end
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -1364,23 +1364,23 @@ end
 		--Verification criteria: "3. SDL rejects the request with REJECTED resultCode when vrHelpTitle is omitted and the vrHelpItems are provided at the same time."
 
 		function Test:SetGlobalProperties_vrHelpTitle_isMissing_REJECTED()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -1388,23 +1388,23 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
 						type = "TEXT"
 					}
 				},
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -1412,12 +1412,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "REJECTED"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -1434,24 +1434,24 @@ end
 		--Verification criteria: SDL rejects the request with REJECTED resultCode when vrHelpItems are omitted and the vrHelpTitle is provided at the same time.
 
 		function Test:SetGlobalProperties_vrHelp_isMissing_REJECTED()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -1459,11 +1459,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -1471,12 +1471,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "REJECTED"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -1489,22 +1489,22 @@ end
 	--Description: Check missing menuTitle parameter is not mandatory
 
 		function Test:SetGlobalProperties_menuTitle_isMissing_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -1512,12 +1512,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -1525,11 +1525,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -1537,19 +1537,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -1563,24 +1563,24 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -1588,13 +1588,13 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				},
 				vrHelpTitle = "VR help title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -1612,12 +1612,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -1630,23 +1630,23 @@ end
 	--Description: Check missing menuIcon parameter is not mandatory
 
 		function Test:SetGlobalProperties_menuIcon_isMissing_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -1654,7 +1654,7 @@ end
 						text = "VR help item"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -1662,11 +1662,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -1674,19 +1674,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -1700,19 +1700,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -1720,13 +1720,13 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				},
 				vrHelpTitle = "VR help title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -1744,7 +1744,7 @@ end
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -1756,23 +1756,23 @@ end
 	--Description: Check missing keyboardProperties parameter is not mandatory
 
 		function Test:SetGlobalProperties_keyboardProperties_isMissing_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -1780,12 +1780,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -1794,19 +1794,19 @@ end
 				},
 				vrHelpTitle = "VR help title"
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -1820,26 +1820,26 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -1860,7 +1860,7 @@ end
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -1877,23 +1877,23 @@ end
 		--Verification criteria: The response comes with SUCCESS result code.
 
 		function Test:SetGlobalProperties_CorrelationID_Duplicated_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt duplicate",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -1901,12 +1901,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -1914,11 +1914,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -1926,7 +1926,7 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties")
@@ -1936,7 +1936,7 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties")
@@ -1946,30 +1946,30 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 			:Do(function(exp,data)
-				if exp.occurences == 1 then 
-					local msg = 
+				if exp.occurences == 1 then
+					local msg =
 						{
 							serviceType      = 7,
 							frameInfo        = 0,
 							rpcType          = 0,
-							rpcFunctionId    = 3, --SetGlobalPropertiesID  
+							rpcFunctionId    = 3, --SetGlobalPropertiesID
 							rpcCorrelationId = cid,
 							payload          = '{"vrHelp":[{"image":{"imageType":"DYNAMIC","value":"action.png"},"position":1,"text":"VR help item"}],"helpPrompt":[{"type":"TEXT","text":"Help prompt"}],"menuTitle":"Menu Title","vrHelpTitle":"VR help title","timeoutPrompt":[{"type":"TEXT","text":"Timeout prompt duplicate"}],"menuIcon":{"imageType":"DYNAMIC","value":"action.png"}}'
 						}
-			
+
 					self.mobileSession:Send(msg)
 				end
 
 				--hmi side: sending UI.SetGlobalProperties response
-				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})					
-				
+				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
+
 			end)
-				
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Times(2)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(2)
@@ -1989,7 +1989,7 @@ end
 	commonSteps:PutFile("Precondition_Putfile_SpaceAfter", "SpaceAfter ")
 	commonSteps:PutFile("Precondition_Putfile_SpaceInTheMiddle", "Space In The Middle")
 	commonSteps:PutFile("Precondition_Putfile_SpacesEveryWhere", " Space Every Where ")
-	
+
 	--=================================================================================--
 	--------------------------------Positive request check-------------------------------
 	--=================================================================================--
@@ -2005,23 +2005,23 @@ end
 	--Description: Check helpPrompt parameter is lower bound
 
 		function Test:SetGlobalProperties_helpPrompt_Array_minsize_1_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -2029,12 +2029,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -2042,11 +2042,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -2054,19 +2054,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -2080,19 +2080,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -2101,19 +2101,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -2132,8 +2132,8 @@ end
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -2145,23 +2145,23 @@ end
 	--Description: Check helpPrompt parameter is upper bound
 
 		function Test:SetGlobalProperties_helpPrompt_Array_maxsize_100_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -2169,12 +2169,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt_001",
@@ -2578,11 +2578,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -2590,19 +2590,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt_001",
@@ -3012,19 +3012,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -3033,19 +3033,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -3064,8 +3064,8 @@ end
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -3077,7 +3077,7 @@ end
 	--Description: Check helpPrompt: type parameter is valid data (TEXT)
 
 		--It is covered by SetGlobalProperties_PositiveCase_SUCCESS
-		
+
 	--End test case PositiveResponseCheck.1.3
 	-----------------------------------------------------------------------------------------
 
@@ -3085,23 +3085,23 @@ end
 	--Description: Check helpPrompt: type parameter is valid data (SAPI_PHONEMES)
 
 		function Test:SetGlobalProperties_helpPrompt_type_SAPI_PHONEMES_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -3109,12 +3109,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -3122,11 +3122,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -3134,19 +3134,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -3160,19 +3160,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -3181,19 +3181,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -3212,8 +3212,8 @@ end
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -3225,23 +3225,23 @@ end
 	--Description: Check helpPrompt: type parameter is valid data (LHPLUS_PHONEMES)
 
 		function Test:SetGlobalProperties_helpPrompt_type_LHPLUS_PHONEMES_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -3249,12 +3249,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -3262,11 +3262,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -3274,19 +3274,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -3300,19 +3300,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -3321,19 +3321,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -3350,12 +3350,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -3367,23 +3367,23 @@ end
 	--Description: Check helpPrompt: type parameter is valid data (PRE_RECORDED)
 
 		function Test:SetGlobalProperties_helpPrompt_type_PRE_RECORDED_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -3391,12 +3391,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -3404,11 +3404,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -3416,19 +3416,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -3442,19 +3442,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -3463,19 +3463,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -3492,12 +3492,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -3509,23 +3509,23 @@ end
 	--Description: Check helpPrompt: type parameter is valid data (SILENCE)
 
 		function Test:SetGlobalProperties_helpPrompt_type_SILENCE_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -3533,12 +3533,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -3546,11 +3546,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -3558,19 +3558,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -3584,19 +3584,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -3605,19 +3605,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -3634,12 +3634,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -3651,23 +3651,23 @@ end
 	--Description: Check helpPrompt: text parameter is lower bound
 
 		function Test:SetGlobalProperties_helpPrompt_text_IsLowerBound_1_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -3675,12 +3675,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "q",
@@ -3688,11 +3688,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -3700,19 +3700,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "q",
@@ -3726,19 +3726,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -3747,19 +3747,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -3776,12 +3776,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -3793,23 +3793,23 @@ end
 	--Description: Check helpPrompt: text parameter is upper bound
 
 		function Test:SetGlobalProperties_helpPrompt_text_IsUpperBound_500_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -3817,12 +3817,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_",
@@ -3830,11 +3830,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -3842,19 +3842,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_",
@@ -3868,19 +3868,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -3889,19 +3889,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -3918,12 +3918,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -3935,23 +3935,23 @@ end
 	--Description: Check helpPrompt: text parameter contains space characters _SpaceCharacter_SpaceBefore
 
 		function Test:SetGlobalProperties_helpPrompt_text__SpaceCharacter_SpaceBefore_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -3959,12 +3959,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = " SpaceBefore",
@@ -3972,11 +3972,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -3984,19 +3984,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = " SpaceBefore",
@@ -4010,19 +4010,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -4031,19 +4031,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -4060,12 +4060,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -4077,23 +4077,23 @@ end
 	--Description: Check helpPrompt: text parameter contains space characters SpaceAfter_SpaceCharacter_
 
 		function Test:SetGlobalProperties_helpPrompt_text_SpaceAfter_SpaceCharacter__SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -4101,12 +4101,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "SpaceAfter ",
@@ -4114,11 +4114,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -4126,19 +4126,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "SpaceAfter ",
@@ -4152,19 +4152,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -4173,19 +4173,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -4202,12 +4202,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -4219,23 +4219,23 @@ end
 	--Description: Check helpPrompt: text parameter contains space characters Space_SpaceCharacter_In_SpaceCharacter_The_SpaceCharacter_Middle
 
 		function Test:SetGlobalProperties_helpPrompt_text_Space_SpaceCharacter_In_SpaceCharacter_The_SpaceCharacter_Middle_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -4243,12 +4243,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Space In The Middle",
@@ -4256,11 +4256,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -4268,19 +4268,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Space In The Middle",
@@ -4294,19 +4294,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -4315,19 +4315,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -4344,12 +4344,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -4361,23 +4361,23 @@ end
 	--Description: Check helpPrompt: text parameter contains space characters _SpaceCharacter_Space_SpaceCharacter_Every_SpaceCharacter_Where_SpaceCharacter_
 
 		function Test:SetGlobalProperties_helpPrompt_text__SpaceCharacter_Space_SpaceCharacter_Every_SpaceCharacter_Where_SpaceCharacter__SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -4385,12 +4385,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = " Space Every Where ",
@@ -4398,11 +4398,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -4410,19 +4410,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = " Space Every Where ",
@@ -4436,19 +4436,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -4457,19 +4457,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -4486,12 +4486,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -4503,23 +4503,23 @@ end
 	--Description: Check timeoutPrompt parameter is lower bound
 
 		function Test:SetGlobalProperties_timeoutPrompt_Array_minsize_1_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -4527,12 +4527,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -4540,11 +4540,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -4552,19 +4552,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -4578,19 +4578,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -4599,19 +4599,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -4628,12 +4628,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -4645,12 +4645,12 @@ end
 	--Description: Check timeoutPrompt parameter is upper bound
 
 		function Test:SetGlobalProperties_timeoutPrompt_Array_maxsize_100_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt_001",
@@ -5053,11 +5053,11 @@ end
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -5065,12 +5065,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -5078,11 +5078,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -5090,12 +5090,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt_001",
@@ -5498,7 +5498,7 @@ end
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -5512,19 +5512,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -5533,19 +5533,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -5562,12 +5562,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -5579,23 +5579,23 @@ end
 	--Description: Check timeoutPrompt: type parameter is valid data (TEXT)
 
 		function Test:SetGlobalProperties_timeoutPrompt_type_TEXT_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -5603,12 +5603,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -5616,11 +5616,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -5628,19 +5628,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -5654,19 +5654,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -5675,19 +5675,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -5704,12 +5704,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -5721,23 +5721,23 @@ end
 	--Description: Check timeoutPrompt: type parameter is valid data (SAPI_PHONEMES)
 
 		function Test:SetGlobalProperties_timeoutPrompt_type_SAPI_PHONEMES_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "SAPI_PHONEMES"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -5745,12 +5745,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -5758,11 +5758,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -5770,19 +5770,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "SAPI_PHONEMES"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -5796,19 +5796,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -5817,19 +5817,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -5846,12 +5846,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -5863,23 +5863,23 @@ end
 	--Description: Check timeoutPrompt: type parameter is valid data (LHPLUS_PHONEMES)
 
 		function Test:SetGlobalProperties_timeoutPrompt_type_LHPLUS_PHONEMES_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "LHPLUS_PHONEMES"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -5887,12 +5887,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -5900,11 +5900,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -5912,19 +5912,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "LHPLUS_PHONEMES"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -5938,19 +5938,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -5959,19 +5959,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -5988,12 +5988,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -6005,23 +6005,23 @@ end
 	--Description: Check timeoutPrompt: type parameter is valid data (PRE_RECORDED)
 
 		function Test:SetGlobalProperties_timeoutPrompt_type_PRE_RECORDED_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "PRE_RECORDED"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -6029,12 +6029,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -6042,11 +6042,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -6054,19 +6054,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "PRE_RECORDED"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -6080,19 +6080,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -6101,19 +6101,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -6130,12 +6130,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -6147,23 +6147,23 @@ end
 	--Description: Check timeoutPrompt: type parameter is valid data (SILENCE)
 
 		function Test:SetGlobalProperties_timeoutPrompt_type_SILENCE_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "SILENCE"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -6171,12 +6171,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -6184,11 +6184,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -6196,19 +6196,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "SILENCE"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -6222,19 +6222,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -6243,19 +6243,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -6272,12 +6272,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -6289,23 +6289,23 @@ end
 	--Description: Check timeoutPrompt: text parameter is lower bound
 
 		function Test:SetGlobalProperties_timeoutPrompt_text_IsLowerBound_1_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "q",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -6313,12 +6313,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -6326,11 +6326,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -6338,19 +6338,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "q",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -6364,19 +6364,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -6385,19 +6385,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -6414,12 +6414,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -6431,23 +6431,23 @@ end
 	--Description: Check timeoutPrompt: text parameter is upper bound
 
 		function Test:SetGlobalProperties_timeoutPrompt_text_IsUpperBound_500_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -6455,12 +6455,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -6468,11 +6468,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -6480,19 +6480,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -6506,19 +6506,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -6527,19 +6527,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -6556,12 +6556,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -6573,23 +6573,23 @@ end
 	--Description: Check timeoutPrompt: text parameter contains space characters _SpaceCharacter_SpaceBefore
 
 		function Test:SetGlobalProperties_timeoutPrompt_text__SpaceCharacter_SpaceBefore_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = " SpaceBefore",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -6597,12 +6597,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -6610,11 +6610,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -6622,19 +6622,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = " SpaceBefore",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -6648,19 +6648,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -6669,19 +6669,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -6698,12 +6698,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -6715,23 +6715,23 @@ end
 	--Description: Check timeoutPrompt: text parameter contains space characters SpaceAfter_SpaceCharacter_
 
 		function Test:SetGlobalProperties_timeoutPrompt_text_SpaceAfter_SpaceCharacter__SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "SpaceAfter ",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -6739,12 +6739,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -6752,11 +6752,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -6764,19 +6764,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "SpaceAfter ",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -6790,19 +6790,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -6811,19 +6811,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -6840,12 +6840,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -6857,23 +6857,23 @@ end
 	--Description: Check timeoutPrompt: text parameter contains space characters Space_SpaceCharacter_In_SpaceCharacter_The_SpaceCharacter_Middle
 
 		function Test:SetGlobalProperties_timeoutPrompt_text_Space_SpaceCharacter_In_SpaceCharacter_The_SpaceCharacter_Middle_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Space In The Middle",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -6881,12 +6881,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -6894,11 +6894,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -6906,19 +6906,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Space In The Middle",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -6932,19 +6932,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -6953,19 +6953,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -6982,12 +6982,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -6999,23 +6999,23 @@ end
 	--Description: Check timeoutPrompt: text parameter contains space characters _SpaceCharacter_Space_SpaceCharacter_Every_SpaceCharacter_Where_SpaceCharacter_
 
 		function Test:SetGlobalProperties_timeoutPrompt_text__SpaceCharacter_Space_SpaceCharacter_Every_SpaceCharacter_Where_SpaceCharacter__SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = " Space Every Where ",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -7023,12 +7023,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -7036,11 +7036,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -7048,19 +7048,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = " Space Every Where ",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -7074,19 +7074,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -7095,19 +7095,19 @@ end
 					}
 				},
 				--checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -7124,12 +7124,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -7141,23 +7141,23 @@ end
 	--Description: Check vrHelpTitle parameter is lower bound
 
 		function Test:SetGlobalProperties_vrHelpTitle_IsLowerBound_1_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -7165,12 +7165,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -7178,11 +7178,11 @@ end
 					}
 				},
 				vrHelpTitle = "q",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -7190,19 +7190,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -7216,19 +7216,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -7237,19 +7237,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "q",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -7266,12 +7266,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -7283,23 +7283,23 @@ end
 	--Description: Check vrHelpTitle parameter is upper bound
 
 		function Test:SetGlobalProperties_vrHelpTitle_IsUpperBound_500_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -7307,12 +7307,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -7320,11 +7320,11 @@ end
 					}
 				},
 				vrHelpTitle = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -7332,19 +7332,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -7358,19 +7358,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -7379,19 +7379,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -7408,12 +7408,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -7425,23 +7425,23 @@ end
 	--Description: Check vrHelpTitle parameter contains space characters _SpaceCharacter_SpaceBefore
 
 		function Test:SetGlobalProperties_vrHelpTitle__SpaceCharacter_SpaceBefore_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -7449,12 +7449,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -7462,11 +7462,11 @@ end
 					}
 				},
 				vrHelpTitle = " SpaceBefore",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -7474,19 +7474,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -7500,19 +7500,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -7521,19 +7521,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = " SpaceBefore",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -7550,12 +7550,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -7567,23 +7567,23 @@ end
 	--Description: Check vrHelpTitle parameter contains space characters SpaceAfter_SpaceCharacter_
 
 		function Test:SetGlobalProperties_vrHelpTitle_SpaceAfter_SpaceCharacter__SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -7591,12 +7591,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -7604,11 +7604,11 @@ end
 					}
 				},
 				vrHelpTitle = "SpaceAfter ",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -7616,19 +7616,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -7642,19 +7642,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -7663,19 +7663,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "SpaceAfter ",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -7692,12 +7692,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -7709,23 +7709,23 @@ end
 	--Description: Check vrHelpTitle parameter contains space characters Space_SpaceCharacter_In_SpaceCharacter_The_SpaceCharacter_Middle
 
 		function Test:SetGlobalProperties_vrHelpTitle_Space_SpaceCharacter_In_SpaceCharacter_The_SpaceCharacter_Middle_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -7733,12 +7733,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -7746,11 +7746,11 @@ end
 					}
 				},
 				vrHelpTitle = "Space In The Middle",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -7758,19 +7758,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -7784,19 +7784,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -7805,19 +7805,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "Space In The Middle",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -7834,12 +7834,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -7851,23 +7851,23 @@ end
 	--Description: Check vrHelpTitle parameter contains space characters _SpaceCharacter_Space_SpaceCharacter_Every_SpaceCharacter_Where_SpaceCharacter_
 
 		function Test:SetGlobalProperties_vrHelpTitle__SpaceCharacter_Space_SpaceCharacter_Every_SpaceCharacter_Where_SpaceCharacter__SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -7875,12 +7875,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -7888,11 +7888,11 @@ end
 					}
 				},
 				vrHelpTitle = " Space Every Where ",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -7900,19 +7900,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -7926,19 +7926,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -7947,19 +7947,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = " Space Every Where ",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -7976,12 +7976,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -7993,23 +7993,23 @@ end
 	--Description: Check vrHelp parameter is lower bound
 
 		function Test:SetGlobalProperties_vrHelp_Array_minsize_1_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8017,12 +8017,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -8030,11 +8030,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -8042,19 +8042,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -8068,19 +8068,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -8089,19 +8089,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -8118,12 +8118,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -8135,23 +8135,23 @@ end
 	--Description: Check vrHelp parameter is upper bound
 
 		function Test:SetGlobalProperties_vrHelp_Array_maxsize_100_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8160,7 +8160,7 @@ end
 					},
 					{
 						position = 2,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8169,7 +8169,7 @@ end
 					},
 					{
 						position = 3,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8178,7 +8178,7 @@ end
 					},
 					{
 						position = 4,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8187,7 +8187,7 @@ end
 					},
 					{
 						position = 5,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8196,7 +8196,7 @@ end
 					},
 					{
 						position = 6,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8205,7 +8205,7 @@ end
 					},
 					{
 						position = 7,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8214,7 +8214,7 @@ end
 					},
 					{
 						position = 8,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8223,7 +8223,7 @@ end
 					},
 					{
 						position = 9,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8232,7 +8232,7 @@ end
 					},
 					{
 						position = 10,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8241,7 +8241,7 @@ end
 					},
 					{
 						position = 11,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8250,7 +8250,7 @@ end
 					},
 					{
 						position = 12,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8259,7 +8259,7 @@ end
 					},
 					{
 						position = 13,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8268,7 +8268,7 @@ end
 					},
 					{
 						position = 14,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8277,7 +8277,7 @@ end
 					},
 					{
 						position = 15,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8286,7 +8286,7 @@ end
 					},
 					{
 						position = 16,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8295,7 +8295,7 @@ end
 					},
 					{
 						position = 17,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8304,7 +8304,7 @@ end
 					},
 					{
 						position = 18,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8313,7 +8313,7 @@ end
 					},
 					{
 						position = 19,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8322,7 +8322,7 @@ end
 					},
 					{
 						position = 20,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8331,7 +8331,7 @@ end
 					},
 					{
 						position = 21,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8340,7 +8340,7 @@ end
 					},
 					{
 						position = 22,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8349,7 +8349,7 @@ end
 					},
 					{
 						position = 23,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8358,7 +8358,7 @@ end
 					},
 					{
 						position = 24,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8367,7 +8367,7 @@ end
 					},
 					{
 						position = 25,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8376,7 +8376,7 @@ end
 					},
 					{
 						position = 26,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8385,7 +8385,7 @@ end
 					},
 					{
 						position = 27,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8394,7 +8394,7 @@ end
 					},
 					{
 						position = 28,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8403,7 +8403,7 @@ end
 					},
 					{
 						position = 29,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8412,7 +8412,7 @@ end
 					},
 					{
 						position = 30,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8421,7 +8421,7 @@ end
 					},
 					{
 						position = 31,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8430,7 +8430,7 @@ end
 					},
 					{
 						position = 32,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8439,7 +8439,7 @@ end
 					},
 					{
 						position = 33,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8448,7 +8448,7 @@ end
 					},
 					{
 						position = 34,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8457,7 +8457,7 @@ end
 					},
 					{
 						position = 35,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8466,7 +8466,7 @@ end
 					},
 					{
 						position = 36,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8475,7 +8475,7 @@ end
 					},
 					{
 						position = 37,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8484,7 +8484,7 @@ end
 					},
 					{
 						position = 38,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8493,7 +8493,7 @@ end
 					},
 					{
 						position = 39,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8502,7 +8502,7 @@ end
 					},
 					{
 						position = 40,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8511,7 +8511,7 @@ end
 					},
 					{
 						position = 41,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8520,7 +8520,7 @@ end
 					},
 					{
 						position = 42,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8529,7 +8529,7 @@ end
 					},
 					{
 						position = 43,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8538,7 +8538,7 @@ end
 					},
 					{
 						position = 44,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8547,7 +8547,7 @@ end
 					},
 					{
 						position = 45,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8556,7 +8556,7 @@ end
 					},
 					{
 						position = 46,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8565,7 +8565,7 @@ end
 					},
 					{
 						position = 47,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8574,7 +8574,7 @@ end
 					},
 					{
 						position = 48,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8583,7 +8583,7 @@ end
 					},
 					{
 						position = 49,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8592,7 +8592,7 @@ end
 					},
 					{
 						position = 50,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8601,7 +8601,7 @@ end
 					},
 					{
 						position = 51,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8610,7 +8610,7 @@ end
 					},
 					{
 						position = 52,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8619,7 +8619,7 @@ end
 					},
 					{
 						position = 53,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8628,7 +8628,7 @@ end
 					},
 					{
 						position = 54,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8637,7 +8637,7 @@ end
 					},
 					{
 						position = 55,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8646,7 +8646,7 @@ end
 					},
 					{
 						position = 56,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8655,7 +8655,7 @@ end
 					},
 					{
 						position = 57,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8664,7 +8664,7 @@ end
 					},
 					{
 						position = 58,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8673,7 +8673,7 @@ end
 					},
 					{
 						position = 59,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8682,7 +8682,7 @@ end
 					},
 					{
 						position = 60,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8691,7 +8691,7 @@ end
 					},
 					{
 						position = 61,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8700,7 +8700,7 @@ end
 					},
 					{
 						position = 62,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8709,7 +8709,7 @@ end
 					},
 					{
 						position = 63,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8718,7 +8718,7 @@ end
 					},
 					{
 						position = 64,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8727,7 +8727,7 @@ end
 					},
 					{
 						position = 65,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8736,7 +8736,7 @@ end
 					},
 					{
 						position = 66,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8745,7 +8745,7 @@ end
 					},
 					{
 						position = 67,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8754,7 +8754,7 @@ end
 					},
 					{
 						position = 68,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8763,7 +8763,7 @@ end
 					},
 					{
 						position = 69,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8772,7 +8772,7 @@ end
 					},
 					{
 						position = 70,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8781,7 +8781,7 @@ end
 					},
 					{
 						position = 71,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8790,7 +8790,7 @@ end
 					},
 					{
 						position = 72,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8799,7 +8799,7 @@ end
 					},
 					{
 						position = 73,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8808,7 +8808,7 @@ end
 					},
 					{
 						position = 74,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8817,7 +8817,7 @@ end
 					},
 					{
 						position = 75,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8826,7 +8826,7 @@ end
 					},
 					{
 						position = 76,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8835,7 +8835,7 @@ end
 					},
 					{
 						position = 77,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8844,7 +8844,7 @@ end
 					},
 					{
 						position = 78,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8853,7 +8853,7 @@ end
 					},
 					{
 						position = 79,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8862,7 +8862,7 @@ end
 					},
 					{
 						position = 80,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8871,7 +8871,7 @@ end
 					},
 					{
 						position = 81,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8880,7 +8880,7 @@ end
 					},
 					{
 						position = 82,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8889,7 +8889,7 @@ end
 					},
 					{
 						position = 83,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8898,7 +8898,7 @@ end
 					},
 					{
 						position = 84,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8907,7 +8907,7 @@ end
 					},
 					{
 						position = 85,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8916,7 +8916,7 @@ end
 					},
 					{
 						position = 86,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8925,7 +8925,7 @@ end
 					},
 					{
 						position = 87,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8934,7 +8934,7 @@ end
 					},
 					{
 						position = 88,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8943,7 +8943,7 @@ end
 					},
 					{
 						position = 89,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8952,7 +8952,7 @@ end
 					},
 					{
 						position = 90,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8961,7 +8961,7 @@ end
 					},
 					{
 						position = 91,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8970,7 +8970,7 @@ end
 					},
 					{
 						position = 92,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8979,7 +8979,7 @@ end
 					},
 					{
 						position = 93,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8988,7 +8988,7 @@ end
 					},
 					{
 						position = 94,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -8997,7 +8997,7 @@ end
 					},
 					{
 						position = 95,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -9006,7 +9006,7 @@ end
 					},
 					{
 						position = 96,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -9015,7 +9015,7 @@ end
 					},
 					{
 						position = 97,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -9024,7 +9024,7 @@ end
 					},
 					{
 						position = 98,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -9033,7 +9033,7 @@ end
 					},
 					{
 						position = 99,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -9042,7 +9042,7 @@ end
 					},
 					{
 						position = 100,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -9050,12 +9050,12 @@ end
 						text = "VR help item_100"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -9063,11 +9063,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -9075,19 +9075,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -9101,19 +9101,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9124,7 +9124,7 @@ end
 						position = 2,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9135,7 +9135,7 @@ end
 						position = 3,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9146,7 +9146,7 @@ end
 						position = 4,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9157,7 +9157,7 @@ end
 						position = 5,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9168,7 +9168,7 @@ end
 						position = 6,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9179,7 +9179,7 @@ end
 						position = 7,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9190,7 +9190,7 @@ end
 						position = 8,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9201,7 +9201,7 @@ end
 						position = 9,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9212,7 +9212,7 @@ end
 						position = 10,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9223,7 +9223,7 @@ end
 						position = 11,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9234,7 +9234,7 @@ end
 						position = 12,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9245,7 +9245,7 @@ end
 						position = 13,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9256,7 +9256,7 @@ end
 						position = 14,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9267,7 +9267,7 @@ end
 						position = 15,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9278,7 +9278,7 @@ end
 						position = 16,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9289,7 +9289,7 @@ end
 						position = 17,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9300,7 +9300,7 @@ end
 						position = 18,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9311,7 +9311,7 @@ end
 						position = 19,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9322,7 +9322,7 @@ end
 						position = 20,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9333,7 +9333,7 @@ end
 						position = 21,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9344,7 +9344,7 @@ end
 						position = 22,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9355,7 +9355,7 @@ end
 						position = 23,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9366,7 +9366,7 @@ end
 						position = 24,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9377,7 +9377,7 @@ end
 						position = 25,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9388,7 +9388,7 @@ end
 						position = 26,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9399,7 +9399,7 @@ end
 						position = 27,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9410,7 +9410,7 @@ end
 						position = 28,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9421,7 +9421,7 @@ end
 						position = 29,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9432,7 +9432,7 @@ end
 						position = 30,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9443,7 +9443,7 @@ end
 						position = 31,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9454,7 +9454,7 @@ end
 						position = 32,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9465,7 +9465,7 @@ end
 						position = 33,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9476,7 +9476,7 @@ end
 						position = 34,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9487,7 +9487,7 @@ end
 						position = 35,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9498,7 +9498,7 @@ end
 						position = 36,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9509,7 +9509,7 @@ end
 						position = 37,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9520,7 +9520,7 @@ end
 						position = 38,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9531,7 +9531,7 @@ end
 						position = 39,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9542,7 +9542,7 @@ end
 						position = 40,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9553,7 +9553,7 @@ end
 						position = 41,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9564,7 +9564,7 @@ end
 						position = 42,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9575,7 +9575,7 @@ end
 						position = 43,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9586,7 +9586,7 @@ end
 						position = 44,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9597,7 +9597,7 @@ end
 						position = 45,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9608,7 +9608,7 @@ end
 						position = 46,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9619,7 +9619,7 @@ end
 						position = 47,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9630,7 +9630,7 @@ end
 						position = 48,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9641,7 +9641,7 @@ end
 						position = 49,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9652,7 +9652,7 @@ end
 						position = 50,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9663,7 +9663,7 @@ end
 						position = 51,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9674,7 +9674,7 @@ end
 						position = 52,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9685,7 +9685,7 @@ end
 						position = 53,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9696,7 +9696,7 @@ end
 						position = 54,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9707,7 +9707,7 @@ end
 						position = 55,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9718,7 +9718,7 @@ end
 						position = 56,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9729,7 +9729,7 @@ end
 						position = 57,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9740,7 +9740,7 @@ end
 						position = 58,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9751,7 +9751,7 @@ end
 						position = 59,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9762,7 +9762,7 @@ end
 						position = 60,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9773,7 +9773,7 @@ end
 						position = 61,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9784,7 +9784,7 @@ end
 						position = 62,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9795,7 +9795,7 @@ end
 						position = 63,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9806,7 +9806,7 @@ end
 						position = 64,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9817,7 +9817,7 @@ end
 						position = 65,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9828,7 +9828,7 @@ end
 						position = 66,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9839,7 +9839,7 @@ end
 						position = 67,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9850,7 +9850,7 @@ end
 						position = 68,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9861,7 +9861,7 @@ end
 						position = 69,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9872,7 +9872,7 @@ end
 						position = 70,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9883,7 +9883,7 @@ end
 						position = 71,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9894,7 +9894,7 @@ end
 						position = 72,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9905,7 +9905,7 @@ end
 						position = 73,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9916,7 +9916,7 @@ end
 						position = 74,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9927,7 +9927,7 @@ end
 						position = 75,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9938,7 +9938,7 @@ end
 						position = 76,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9949,7 +9949,7 @@ end
 						position = 77,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9960,7 +9960,7 @@ end
 						position = 78,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9971,7 +9971,7 @@ end
 						position = 79,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9982,7 +9982,7 @@ end
 						position = 80,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -9993,7 +9993,7 @@ end
 						position = 81,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10004,7 +10004,7 @@ end
 						position = 82,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10015,7 +10015,7 @@ end
 						position = 83,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10026,7 +10026,7 @@ end
 						position = 84,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10037,7 +10037,7 @@ end
 						position = 85,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10048,7 +10048,7 @@ end
 						position = 86,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10059,7 +10059,7 @@ end
 						position = 87,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10070,7 +10070,7 @@ end
 						position = 88,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10081,7 +10081,7 @@ end
 						position = 89,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10092,7 +10092,7 @@ end
 						position = 90,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10103,7 +10103,7 @@ end
 						position = 91,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10114,7 +10114,7 @@ end
 						position = 92,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10125,7 +10125,7 @@ end
 						position = 93,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10136,7 +10136,7 @@ end
 						position = 94,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10147,7 +10147,7 @@ end
 						position = 95,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10158,7 +10158,7 @@ end
 						position = 96,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10169,7 +10169,7 @@ end
 						position = 97,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10180,7 +10180,7 @@ end
 						position = 98,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10191,7 +10191,7 @@ end
 						position = 99,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10202,7 +10202,7 @@ end
 						position = 100,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10211,19 +10211,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -10240,12 +10240,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -10257,23 +10257,23 @@ end
 	--Description: Check vrHelpposition parameter is lower bound
 
 		function Test:SetGlobalProperties_vrHelp_position_IsLowerBound_1_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -10281,12 +10281,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -10294,11 +10294,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -10306,19 +10306,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -10332,19 +10332,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10353,19 +10353,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -10382,12 +10382,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -10399,23 +10399,23 @@ end
 	--Description: Check vrHelpposition parameter is upper bound
 
 		function Test:SetGlobalProperties_vrHelp_position_IsUpperBound_100_REJECTED()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 100,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -10423,12 +10423,12 @@ end
 						text = "VR help item 100"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -10436,11 +10436,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -10449,12 +10449,12 @@ end
 				}
 			})
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "REJECTED"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -10467,23 +10467,23 @@ end
 	--Description: Check vrHelptext parameter is lower bound
 
 		function Test:SetGlobalProperties_vrHelp_text_IsLowerBound_1_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -10491,12 +10491,12 @@ end
 						text = "q"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -10504,11 +10504,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -10516,19 +10516,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -10542,19 +10542,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10563,19 +10563,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -10592,12 +10592,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)							
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -10609,23 +10609,23 @@ end
 	--Description: Check vrHelptext parameter is upper bound
 
 		function Test:SetGlobalProperties_vrHelp_text_IsUpperBound_500_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -10633,12 +10633,12 @@ end
 						text = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -10646,11 +10646,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -10658,19 +10658,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -10684,19 +10684,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10705,19 +10705,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -10734,12 +10734,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)							
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -10751,23 +10751,23 @@ end
 	--Description: Check vrHelptext parameter contains space characters _SpaceCharacter_SpaceBefore
 
 		function Test:SetGlobalProperties_vrHelp_text__SpaceCharacter_SpaceBefore_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -10775,12 +10775,12 @@ end
 						text = " SpaceBefore"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -10788,11 +10788,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -10800,19 +10800,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -10826,19 +10826,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10847,19 +10847,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -10876,12 +10876,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)							
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -10893,23 +10893,23 @@ end
 	--Description: Check vrHelptext parameter contains space characters SpaceAfter_SpaceCharacter_
 
 		function Test:SetGlobalProperties_vrHelp_text_SpaceAfter_SpaceCharacter__SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -10917,12 +10917,12 @@ end
 						text = "SpaceAfter "
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -10930,11 +10930,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -10942,19 +10942,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -10968,19 +10968,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -10989,19 +10989,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -11018,12 +11018,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)							
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -11035,23 +11035,23 @@ end
 	--Description: Check vrHelptext parameter contains space characters Space_SpaceCharacter_In_SpaceCharacter_The_SpaceCharacter_Middle
 
 		function Test:SetGlobalProperties_vrHelp_text_Space_SpaceCharacter_In_SpaceCharacter_The_SpaceCharacter_Middle_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -11059,12 +11059,12 @@ end
 						text = "Space In The Middle"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -11072,11 +11072,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -11084,19 +11084,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -11110,19 +11110,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -11131,19 +11131,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -11160,12 +11160,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)							
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -11177,23 +11177,23 @@ end
 	--Description: Check vrHelptext parameter contains space characters _SpaceCharacter_Space_SpaceCharacter_Every_SpaceCharacter_Where_SpaceCharacter_
 
 		function Test:SetGlobalProperties_vrHelp_text__SpaceCharacter_Space_SpaceCharacter_Every_SpaceCharacter_Where_SpaceCharacter__SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -11201,12 +11201,12 @@ end
 						text = " Space Every Where "
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -11214,11 +11214,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -11226,19 +11226,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -11252,19 +11252,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -11273,19 +11273,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -11302,12 +11302,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)							
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -11319,23 +11319,23 @@ end
 	--Description: Check image: imageType parameter is valid data (STATIC)
 
 		function Test:SetGlobalProperties_vrHelp_image_imageType_STATIC_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "STATIC"
@@ -11343,12 +11343,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -11356,11 +11356,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -11368,19 +11368,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -11394,19 +11394,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "STATIC",
 							value = "action.png"
@@ -11415,19 +11415,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -11444,12 +11444,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)							
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -11461,23 +11461,23 @@ end
 	--Description: Check image: imageType parameter is valid data (DYNAMIC)
 
 		function Test:SetGlobalProperties_vrHelp_image_imageType_DYNAMIC_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -11485,12 +11485,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -11498,11 +11498,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -11510,19 +11510,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -11536,19 +11536,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -11557,19 +11557,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -11586,12 +11586,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)							
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -11603,23 +11603,23 @@ end
 	--Description: Check image: value parameter is lower bound
 
 		function Test:SetGlobalProperties_vrHelp_image_value_IsLowerBound_0_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "",
 							imageType = "DYNAMIC"
@@ -11627,12 +11627,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -11640,11 +11640,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -11652,12 +11652,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -11669,34 +11669,34 @@ end
 	--Reason: can not put file with file name length is 65535
 	--Begin test case PositiveResponseCheck.1.46
 	--Description: Check image: value parameter is upper bound
-		
+
 		--It is not able to test because max-length of file name is 255.
-	
+
 	--End test case PositiveResponseCheck.1.45
 	-----------------------------------------------------------------------------------------
 
-	
+
 	--Begin test case PositiveResponseCheck.1.47
 	--Description: Check image: value parameter contains space character _SpaceCharacter_SpaceBefore
 
 		function Test:SetGlobalProperties_vrHelp_image_value__SpaceCharacter_SpaceBefore_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = " SpaceBefore",
 							imageType = "DYNAMIC"
@@ -11704,12 +11704,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -11717,11 +11717,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -11729,19 +11729,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -11755,19 +11755,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. " SpaceBefore"
@@ -11776,19 +11776,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -11805,12 +11805,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -11822,23 +11822,23 @@ end
 	--Description: Check image: value parameter contains space character SpaceAfter_SpaceCharacter_
 
 		function Test:SetGlobalProperties_vrHelp_image_value_SpaceAfter_SpaceCharacter__SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "SpaceAfter ",
 							imageType = "DYNAMIC"
@@ -11846,12 +11846,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -11859,11 +11859,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -11871,19 +11871,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -11897,19 +11897,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "SpaceAfter "
@@ -11918,19 +11918,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -11947,12 +11947,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -11964,23 +11964,23 @@ end
 	--Description: Check image: value parameter contains space character Space_SpaceCharacter_In_SpaceCharacter_The_SpaceCharacter_Middle
 
 		function Test:SetGlobalProperties_vrHelp_image_value_Space_SpaceCharacter_In_SpaceCharacter_The_SpaceCharacter_Middle_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "Space In The Middle",
 							imageType = "DYNAMIC"
@@ -11988,12 +11988,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -12001,11 +12001,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -12013,19 +12013,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -12039,19 +12039,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "Space In The Middle"
@@ -12060,19 +12060,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -12089,12 +12089,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -12106,23 +12106,23 @@ end
 	--Description: Check image: value parameter contains space character _SpaceCharacter_Space_SpaceCharacter_Every_SpaceCharacter_Where_SpaceCharacter_
 
 		function Test:SetGlobalProperties_vrHelp_image_value__SpaceCharacter_Space_SpaceCharacter_Every_SpaceCharacter_Where_SpaceCharacter__SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = " Space Every Where ",
 							imageType = "DYNAMIC"
@@ -12130,12 +12130,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -12143,11 +12143,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -12155,19 +12155,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -12181,19 +12181,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. " Space Every Where "
@@ -12202,19 +12202,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -12231,12 +12231,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -12248,23 +12248,23 @@ end
 	--Description: Check image: value parameter is lower bound of an existing file
 
 		function Test:SetGlobalProperties_vrHelp_image_value_IsLowerBoundOfRealImageName_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "a",
 							imageType = "DYNAMIC"
@@ -12272,12 +12272,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -12285,11 +12285,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -12297,19 +12297,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -12323,19 +12323,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "a"
@@ -12344,19 +12344,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -12373,12 +12373,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -12390,23 +12390,23 @@ end
 	--Description: Check image: value parameter is upper bound of an existing file
 
 		function Test:SetGlobalProperties_vrHelp_image_value_IsUpperBoundOfRealImageName_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = strMaxLengthFileName255,
 							imageType = "DYNAMIC"
@@ -12414,12 +12414,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -12427,11 +12427,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -12439,19 +12439,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -12465,19 +12465,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. strMaxLengthFileName255
@@ -12486,19 +12486,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -12515,12 +12515,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -12532,23 +12532,23 @@ end
 	--Description: Check menuTitle parameter is lower bound
 
 		function Test:SetGlobalProperties_menuTitle_IsLowerBound_1_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "q",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -12556,12 +12556,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -12569,11 +12569,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -12581,19 +12581,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -12607,19 +12607,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "q",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -12628,19 +12628,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -12657,12 +12657,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -12674,23 +12674,23 @@ end
 	--Description: Check menuTitle parameter is upper bound
 
 		function Test:SetGlobalProperties_menuTitle_IsUpperBound_500_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -12698,12 +12698,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -12711,11 +12711,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -12723,19 +12723,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -12749,19 +12749,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -12770,19 +12770,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -12799,12 +12799,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -12816,23 +12816,23 @@ end
 	--Description: Check menuTitle parameter contains space characters _SpaceCharacter_SpaceBefore
 
 		function Test:SetGlobalProperties_menuTitle__SpaceCharacter_SpaceBefore_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = " SpaceBefore",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -12840,12 +12840,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -12853,11 +12853,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -12865,19 +12865,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -12891,19 +12891,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = " SpaceBefore",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -12912,19 +12912,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -12941,12 +12941,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -12958,23 +12958,23 @@ end
 	--Description: Check menuTitle parameter contains space characters SpaceAfter_SpaceCharacter_
 
 		function Test:SetGlobalProperties_menuTitle_SpaceAfter_SpaceCharacter__SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "SpaceAfter ",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -12982,12 +12982,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -12995,11 +12995,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -13007,19 +13007,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -13033,19 +13033,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "SpaceAfter ",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -13054,19 +13054,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -13083,12 +13083,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -13100,23 +13100,23 @@ end
 	--Description: Check menuTitle parameter contains space characters Space_SpaceCharacter_In_SpaceCharacter_The_SpaceCharacter_Middle
 
 		function Test:SetGlobalProperties_menuTitle_Space_SpaceCharacter_In_SpaceCharacter_The_SpaceCharacter_Middle_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Space In The Middle",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -13124,12 +13124,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -13137,11 +13137,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -13149,19 +13149,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -13175,19 +13175,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Space In The Middle",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -13196,19 +13196,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -13225,12 +13225,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -13242,23 +13242,23 @@ end
 	--Description: Check menuTitle parameter contains space characters _SpaceCharacter_Space_SpaceCharacter_Every_SpaceCharacter_Where_SpaceCharacter_
 
 		function Test:SetGlobalProperties_menuTitle__SpaceCharacter_Space_SpaceCharacter_Every_SpaceCharacter_Where_SpaceCharacter__SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = " Space Every Where ",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -13266,12 +13266,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -13279,11 +13279,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -13291,19 +13291,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -13317,19 +13317,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = " Space Every Where ",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -13338,19 +13338,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -13367,12 +13367,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -13384,23 +13384,23 @@ end
 	--Description: Check menuIcon: imageType parameter is valid data (STATIC)
 
 		function Test:SetGlobalProperties_menuIcon_imageType_STATIC_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -13408,12 +13408,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "STATIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -13421,11 +13421,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -13433,19 +13433,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -13459,19 +13459,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -13480,19 +13480,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "STATIC",
 				-- 	value = "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -13509,12 +13509,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -13526,23 +13526,23 @@ end
 	--Description: Check menuIcon: imageType parameter is valid data (DYNAMIC)
 
 		function Test:SetGlobalProperties_menuIcon_imageType_DYNAMIC_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -13550,12 +13550,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -13563,11 +13563,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -13575,19 +13575,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -13601,19 +13601,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -13622,19 +13622,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -13651,12 +13651,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -13668,23 +13668,23 @@ end
 	--Description: Check menuIcon: value parameter is lower bound
 
 		function Test:SetGlobalProperties_menuIcon_value_IsLowerBound_0_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -13692,12 +13692,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -13705,11 +13705,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -13717,12 +13717,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -13739,28 +13739,28 @@ end
 
 	--End test case PositiveResponseCheck.1.62
 	-----------------------------------------------------------------------------------------
-	
+
 	--Begin test case PositiveResponseCheck.1.63
 	--Description: Check menuIcon: value parameter contains space character _SpaceCharacter_SpaceBefore
 
 		function Test:SetGlobalProperties_menuIcon_value__SpaceCharacter_SpaceBefore_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -13768,12 +13768,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = " SpaceBefore",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -13781,11 +13781,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -13793,19 +13793,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -13819,19 +13819,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -13840,19 +13840,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. " SpaceBefore"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -13869,12 +13869,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -13886,23 +13886,23 @@ end
 	--Description: Check menuIcon: value parameter contains space character SpaceAfter_SpaceCharacter_
 
 		function Test:SetGlobalProperties_menuIcon_value_SpaceAfter_SpaceCharacter__SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -13910,12 +13910,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "SpaceAfter ",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -13923,11 +13923,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -13935,19 +13935,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -13961,19 +13961,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -13982,19 +13982,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "SpaceAfter "
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -14011,12 +14011,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -14028,23 +14028,23 @@ end
 	--Description: Check menuIcon: value parameter contains space character Space_SpaceCharacter_In_SpaceCharacter_The_SpaceCharacter_Middle
 
 		function Test:SetGlobalProperties_menuIcon_value_Space_SpaceCharacter_In_SpaceCharacter_The_SpaceCharacter_Middle_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -14052,12 +14052,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "Space In The Middle",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -14065,11 +14065,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -14077,19 +14077,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -14103,19 +14103,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -14124,19 +14124,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "Space In The Middle"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -14153,12 +14153,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -14170,23 +14170,23 @@ end
 	--Description: Check menuIcon: value parameter contains space character _SpaceCharacter_Space_SpaceCharacter_Every_SpaceCharacter_Where_SpaceCharacter_
 
 		function Test:SetGlobalProperties_menuIcon_value__SpaceCharacter_Space_SpaceCharacter_Every_SpaceCharacter_Where_SpaceCharacter__SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -14194,12 +14194,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = " Space Every Where ",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -14207,11 +14207,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -14219,19 +14219,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -14245,19 +14245,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -14266,19 +14266,19 @@ end
 					}
 				},
 				--checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. " Space Every Where "
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -14295,12 +14295,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -14312,23 +14312,23 @@ end
 	--Description: Check menuIcon: value parameter is lower bound of an existing file
 
 		function Test:SetGlobalProperties_menuIcon_value_IsLowerBoundOfRealImageName_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -14336,12 +14336,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "a",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -14349,11 +14349,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -14361,19 +14361,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -14387,19 +14387,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -14408,19 +14408,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "a"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -14437,12 +14437,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -14454,23 +14454,23 @@ end
 	--Description: Check menuIcon: value parameter is upper bound of an existing file
 
 		function Test:SetGlobalProperties_menuIcon_value_IsUpperBoundOfRealImageName_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -14478,12 +14478,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = strMaxLengthFileName255,
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -14491,11 +14491,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -14503,19 +14503,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -14529,19 +14529,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -14550,19 +14550,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. strMaxLengthFileName255
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -14579,12 +14579,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -14594,33 +14594,33 @@ end
 
 	--Begin test case PositiveResponseCheck.1.69-1.91
 	--Description: Check keyboardPropertieslanguage parameter is valid data
-	--Note: During SDL-HMI starting SDL should request HMI UI.GetSupportedLanguages, VR.GetSupportedLanguages, TTS.GetSupportedLanguages and HMI should respond with all languages 
-	--specified in this test (added new languages which should be supported by SDL - CRQ APPLINK-13745: "NL-BE", "EL-GR", "HU-HU", "FI-FI", "SK-SK") 
+	--Note: During SDL-HMI starting SDL should request HMI UI.GetSupportedLanguages, VR.GetSupportedLanguages, TTS.GetSupportedLanguages and HMI should respond with all languages
+	--specified in this test (added new languages which should be supported by SDL - CRQ APPLINK-13745: "NL-BE", "EL-GR", "HU-HU", "FI-FI", "SK-SK")
 			local Languages = {"AR-SA", "CS-CZ", "DA-DK", "DE-DE", "EN-AU",
-										"EN-GB", "EN-US", "ES-ES", "ES-MX", "FR-CA", 
-										"FR-FR", "IT-IT", "JA-JP", "KO-KR", "NL-NL", 
-										"NO-NO", "PL-PL", "PT-PT", "PT-BR", "RU-RU", 
+										"EN-GB", "EN-US", "ES-ES", "ES-MX", "FR-CA",
+										"FR-FR", "IT-IT", "JA-JP", "KO-KR", "NL-NL",
+										"NO-NO", "PL-PL", "PT-PT", "PT-BR", "RU-RU",
 										"SV-SE", "TR-TR", "ZH-CN", "ZH-TW", "NL-BE",
 										"EL-GR", "HU-HU", "FI-FI", "SK-SK"}
 		for i = 1, #Languages do
 			Test["SetGlobalProperties_keyboardProperties_language_" .. Languages[i] .. "_SUCCESS"]  = function(self)
-			
+
 				--mobile side: sending SetGlobalProperties request
 				local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 				{
 					menuTitle = "Menu Title",
-					timeoutPrompt = 
+					timeoutPrompt =
 					{
 						{
 							text = "Timeout prompt",
 							type = "TEXT"
 						}
 					},
-					vrHelp = 
+					vrHelp =
 					{
 						{
 							position = 1,
-							image = 
+							image =
 							{
 								value = "action.png",
 								imageType = "DYNAMIC"
@@ -14628,12 +14628,12 @@ end
 							text = "VR help item"
 						}
 					},
-					menuIcon = 
+					menuIcon =
 					{
 						value = "action.png",
 						imageType = "DYNAMIC"
 					},
-					helpPrompt = 
+					helpPrompt =
 					{
 						{
 							text = "Help prompt",
@@ -14641,11 +14641,11 @@ end
 						}
 					},
 					vrHelpTitle = "VR help title",
-					keyboardProperties = 
+					keyboardProperties =
 					{
 						keyboardLayout = "QWERTY",
 						keypressMode = "SINGLE_KEYPRESS",
-						limitedCharacterList = 
+						limitedCharacterList =
 						{
 							"a"
 						},
@@ -14653,19 +14653,19 @@ end
 						autoCompleteText = "Daemon, Freedom"
 					}
 				})
-			
+
 
 				--hmi side: expect TTS.SetGlobalProperties request
 				EXPECT_HMICALL("TTS.SetGlobalProperties",
 				{
-					timeoutPrompt = 
+					timeoutPrompt =
 					{
 						{
 							text = "Timeout prompt",
 							type = "TEXT"
 						}
 					},
-					helpPrompt = 
+					helpPrompt =
 					{
 						{
 							text = "Help prompt",
@@ -14679,19 +14679,19 @@ end
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
 
-			
+
 
 				--hmi side: expect UI.SetGlobalProperties request
 				EXPECT_HMICALL("UI.SetGlobalProperties",
 				{
 					menuTitle = "Menu Title",
-					vrHelp = 
+					vrHelp =
 					{
 						{
 							position = 1,
 							--[=[ TODO: update after resolving APPLINK-16052
 
-							image = 
+							image =
 							{
 								imageType = "DYNAMIC",
 								value = strAppFolder .. "action.png"
@@ -14700,19 +14700,19 @@ end
 						}
 					},
 					--Checked below
-					-- menuIcon = 
+					-- menuIcon =
 					-- {
 					-- 	imageType = "DYNAMIC",
 					-- 	value = strAppFolder .. "action.png"
 					-- },
 					vrHelpTitle = "VR help title",
-					keyboardProperties = 
+					keyboardProperties =
 					{
 						keyboardLayout = "QWERTY",
 						keypressMode = "SINGLE_KEYPRESS",
 						--[=[ TODO: update after resolving APPLINK-16047
 
-						limitedCharacterList = 
+						limitedCharacterList =
 						{
 							"a"
 						},]=]
@@ -14729,16 +14729,16 @@ end
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
 
-			
+
 
 				--mobile side: expect SetGlobalProperties response
 				EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-				:Timeout(iTimeout)									
-			
+				:Timeout(iTimeout)
+
 				--mobile side: expect OnHashChange notification
 				EXPECT_NOTIFICATION("OnHashChange")
 			end
-			
+
 		end
 	--End test case PositiveResponseCheck.1.69-1.91
 	-----------------------------------------------------------------------------------------
@@ -14748,23 +14748,23 @@ end
 	--Description: Check keyboardPropertieskeyboardLayout parameter is valid data
 
 		function Test:SetGlobalProperties_keyboardProperties_keyboardLayout_QWERTY_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -14772,12 +14772,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -14785,11 +14785,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -14797,19 +14797,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -14823,19 +14823,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -14844,19 +14844,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -14873,12 +14873,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -14890,23 +14890,23 @@ end
 	--Description: Check keyboardPropertieskeyboardLayout parameter is valid data
 
 		function Test:SetGlobalProperties_keyboardProperties_keyboardLayout_QWERTZ_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -14914,12 +14914,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -14927,11 +14927,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTZ",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -14939,19 +14939,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -14965,19 +14965,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -14986,19 +14986,19 @@ end
 					}
 				},
 				--checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTZ",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -15015,12 +15015,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -15032,23 +15032,23 @@ end
 	--Description: Check keyboardPropertieskeyboardLayout parameter is valid data
 
 		function Test:SetGlobalProperties_keyboardProperties_keyboardLayout_AZERTY_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -15056,12 +15056,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -15069,11 +15069,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "AZERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -15081,19 +15081,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -15107,19 +15107,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -15128,19 +15128,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "AZERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -15157,12 +15157,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -15174,23 +15174,23 @@ end
 	--Description: Check keyboardPropertieskeypressMode parameter is valid data
 
 		function Test:SetGlobalProperties_keyboardProperties_keypressMode_SINGLE_KEYPRESS_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -15198,12 +15198,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -15211,11 +15211,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -15223,19 +15223,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -15249,19 +15249,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -15270,19 +15270,19 @@ end
 					}
 				},
 				--checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -15299,12 +15299,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -15316,23 +15316,23 @@ end
 	--Description: Check keyboardProperties keypressMode parameter is valid data
 
 		function Test:SetGlobalProperties_keyboardProperties_keypressMode_QUEUE_KEYPRESSES_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -15340,12 +15340,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -15353,11 +15353,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "QUEUE_KEYPRESSES",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -15365,19 +15365,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -15391,19 +15391,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -15412,19 +15412,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "QUEUE_KEYPRESSES",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -15441,12 +15441,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -15458,23 +15458,23 @@ end
 	--Description: Check keyboardPropertieskeypressMode parameter is valid data
 
 		function Test:SetGlobalProperties_keyboardProperties_keypressMode_RESEND_CURRENT_ENTRY_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -15482,12 +15482,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -15495,11 +15495,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "RESEND_CURRENT_ENTRY",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -15507,19 +15507,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -15533,19 +15533,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -15554,19 +15554,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "RESEND_CURRENT_ENTRY",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -15583,12 +15583,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -15600,23 +15600,23 @@ end
 	--Description: Check limitedCharacterList parameter is lower bound
 
 		function Test:SetGlobalProperties_keyboardProperties_limitedCharacterList_Array_IsLowerBound_Length_IsLowerUpperBound_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -15624,12 +15624,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -15637,10 +15637,10 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"q"
 					},
@@ -15648,19 +15648,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -15674,19 +15674,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -15695,19 +15695,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					language = "EN-US",
 					keyboardLayout = "QWERTY",
 					autoCompleteText = "Daemon, Freedom",
 					--[=[ TODO: update after resolving APPLINK-16047
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"q"
 					}]=]
@@ -15722,12 +15722,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -15739,23 +15739,23 @@ end
 	--Description: Check limitedCharacterList parameter is upper bound
 
 		function Test:SetGlobalProperties_keyboardProperties_limitedCharacterList_Array_IsUpperBound_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -15763,12 +15763,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -15776,10 +15776,10 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"q",
 						"q",
@@ -15882,24 +15882,24 @@ end
 						"q",
 						"q"
 					},
-					
+
 					language = "EN-US",
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -15913,19 +15913,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -15934,19 +15934,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					language = "EN-US",
 					keyboardLayout = "QWERTY",
 					autoCompleteText = "Daemon, Freedom",
 					--[=[ TODO: update after resolving APPLINK-16047
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"q",
 						"q",
@@ -16060,12 +16060,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -16077,23 +16077,23 @@ end
 	--Description: Check keyboardProperties.limitedCharacterList parameter is lower/upper bound
 
 		function Test:SetGlobalProperties_keyboardProperties_limitedCharacterList_IsLowerUpperBound_1_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -16101,12 +16101,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -16114,11 +16114,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"q"
 					},
@@ -16126,19 +16126,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -16152,19 +16152,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -16173,19 +16173,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"q"
 					},]=]
@@ -16202,40 +16202,40 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
 
 	--End test case PositiveResponseCheck.1.100
 	-----------------------------------------------------------------------------------------
-	
+
 	--Begin test case PositiveResponseCheck.1.101
 	--Description: Check keyboardPropertiesautoCompleteText parameter is lower bound
 
 		function Test:SetGlobalProperties_keyboardProperties_autoCompleteText_IsLowerBound_1_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -16243,12 +16243,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -16256,11 +16256,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -16268,19 +16268,19 @@ end
 					autoCompleteText = "q"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -16294,19 +16294,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -16315,19 +16315,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -16344,12 +16344,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -16361,23 +16361,23 @@ end
 	--Description: Check keyboardPropertiesautoCompleteText parameter is upper bound
 
 		function Test:SetGlobalProperties_keyboardProperties_autoCompleteText_IsUpperBound_1000_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -16385,12 +16385,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -16398,11 +16398,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -16410,19 +16410,19 @@ end
 					autoCompleteText = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_cB6_vA7_bB8_nA9_mB0_qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -16436,19 +16436,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -16457,19 +16457,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -16486,12 +16486,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -16503,23 +16503,23 @@ end
 	--Description: Check keyboardPropertiesautoCompleteText parameter contains space characters _SpaceCharacter_SpaceBefore
 
 		function Test:SetGlobalProperties_keyboardProperties_autoCompleteText__SpaceCharacter_SpaceBefore_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -16527,12 +16527,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -16540,11 +16540,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -16552,19 +16552,19 @@ end
 					autoCompleteText = " SpaceBefore"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -16578,19 +16578,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -16599,19 +16599,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -16628,12 +16628,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -16645,23 +16645,23 @@ end
 	--Description: Check keyboardPropertiesautoCompleteText parameter contains space characters SpaceAfter_SpaceCharacter_
 
 		function Test:SetGlobalProperties_keyboardProperties_autoCompleteText_SpaceAfter_SpaceCharacter__SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -16669,12 +16669,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -16682,11 +16682,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -16694,19 +16694,19 @@ end
 					autoCompleteText = "SpaceAfter "
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -16720,19 +16720,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -16741,19 +16741,19 @@ end
 					}
 				},
 				--checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -16770,12 +16770,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -16787,23 +16787,23 @@ end
 	--Description: Check keyboardPropertiesautoCompleteText parameter contains space characters Space_SpaceCharacter_In_SpaceCharacter_The_SpaceCharacter_Middle
 
 		function Test:SetGlobalProperties_keyboardProperties_autoCompleteText_Space_SpaceCharacter_In_SpaceCharacter_The_SpaceCharacter_Middle_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -16811,12 +16811,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -16824,11 +16824,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -16836,19 +16836,19 @@ end
 					autoCompleteText = "Space In The Middle"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -16862,19 +16862,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -16883,19 +16883,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -16912,12 +16912,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -16929,23 +16929,23 @@ end
 	--Description: Check keyboardPropertiesautoCompleteText parameter contains space characters _SpaceCharacter_Space_SpaceCharacter_Every_SpaceCharacter_Where_SpaceCharacter_
 
 		function Test:SetGlobalProperties_keyboardProperties_autoCompleteText__SpaceCharacter_Space_SpaceCharacter_Every_SpaceCharacter_Where_SpaceCharacter__SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -16953,12 +16953,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -16966,11 +16966,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -16978,19 +16978,19 @@ end
 					autoCompleteText = " Space Every Where "
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -17004,19 +17004,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -17025,19 +17025,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -17054,40 +17054,40 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
 
 	--End test case PositiveResponseCheck.1.106
 	-----------------------------------------------------------------------------------------
-	
+
 	--Begin test case PositiveResponseCheck.1.107
 	--Description: Check timeoutPrompt: type parameter (ttsChunks) is not supported data (SAPI_PHONEMES)
 
 		function Test:SetGlobalProperties_timeoutPrompt_type_SAPI_PHONEMES_WARNINGS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "SAPI_PHONEMES"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -17095,12 +17095,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -17108,11 +17108,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -17120,19 +17120,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "SAPI_PHONEMES"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -17146,19 +17146,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "WARNINGS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -17167,19 +17167,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -17196,12 +17196,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "WARNINGS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -17213,23 +17213,23 @@ end
 	--Description: Check timeoutPrompt: type parameter (ttsChunks) is not supported data (LHPLUS_PHONEMES)
 
 		function Test:SetGlobalProperties_timeoutPrompt_type_LHPLUS_PHONEMES_WARNINGS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "LHPLUS_PHONEMES"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -17237,12 +17237,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -17250,11 +17250,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -17262,19 +17262,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "LHPLUS_PHONEMES"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -17288,19 +17288,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "WARNINGS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -17309,19 +17309,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -17338,12 +17338,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "WARNINGS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -17353,9 +17353,9 @@ end
 
 	--Begin test case PositiveResponseCheck.1.109
 	--Description: Check timeoutPrompt: type parameter (ttsChunks) is not supported data (PRE_RECORDED)
-	
+
 		--SetGlobalProperties_timeoutPrompt_type_PRE_RECORDED_WARNINGS(): This case is already covered by ResultCodeCheck.3
-		
+
 	--End test case PositiveResponseCheck.1.109
 	-----------------------------------------------------------------------------------------
 
@@ -17363,23 +17363,23 @@ end
 	--Description: Check timeoutPrompt: type parameter (ttsChunks) is not supported data (SILENCE)
 
 		function Test:SetGlobalProperties_timeoutPrompt_type_SILENCE_WARNINGS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "SILENCE"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -17387,12 +17387,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -17400,11 +17400,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -17412,19 +17412,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "SILENCE"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -17438,19 +17438,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "WARNINGS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -17459,19 +17459,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -17488,41 +17488,41 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "WARNINGS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
-			
+
 		end
 
 	--End test case PositiveResponseCheck.1.110
 	-----------------------------------------------------------------------------------------
-	
+
 	--Begin test case PositiveResponseCheck.1.111
 	--Description: Check helpPrompt: type parameter (ttsChunks) is not supported data (SAPI_PHONEMES)
 
 		function Test:SetGlobalProperties_helpPrompt_type_SAPI_PHONEMES_WARNINGS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -17530,12 +17530,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -17543,11 +17543,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -17555,19 +17555,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -17581,19 +17581,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "WARNINGS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -17602,19 +17602,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -17633,10 +17633,10 @@ end
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "WARNINGS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
-		
+
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
 	--End test case PositiveResponseCheck.1.111
@@ -17646,23 +17646,23 @@ end
 	--Description: Check helpPrompt: type parameter (ttsChunks) is not supported data (LHPLUS_PHONEMES)
 
 		function Test:SetGlobalProperties_helpPrompt_type_LHPLUS_PHONEMES_WARNINGS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -17670,12 +17670,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -17683,11 +17683,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -17695,19 +17695,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -17721,19 +17721,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "WARNINGS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -17742,19 +17742,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -17771,12 +17771,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "WARNINGS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -17788,23 +17788,23 @@ end
 	--Description: Check helpPrompt: type parameter (ttsChunks) is not supported data (PRE_RECORDED)
 
 		function Test:SetGlobalProperties_helpPrompt_type_PRE_RECORDED_WARNINGS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -17812,12 +17812,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -17825,11 +17825,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -17837,19 +17837,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -17863,19 +17863,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "WARNINGS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -17884,19 +17884,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -17913,12 +17913,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "WARNINGS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -17930,23 +17930,23 @@ end
 	--Description: Check helpPrompt: type parameter (ttsChunks) is not supported data (SILENCE)
 
 		function Test:SetGlobalProperties_helpPrompt_type_SILENCE_WARNINGS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -17954,12 +17954,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -17967,11 +17967,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -17979,19 +17979,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -18005,19 +18005,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "WARNINGS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -18026,19 +18026,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -18055,39 +18055,39 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "WARNINGS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
 
 	--End test case PositiveResponseCheck.1.114
 	-----------------------------------------------------------------------------------------
-	
+
 	--Begin test case PositiveResponseCheck.1.115
 	--Description: Check request the value of with menuIcon image = JPG
 		commonSteps:PutFile("PutFile_MenuIcon.jpg", "MenuIcon.jpg")
-		function Test:SetGlobalProperties_MenuIconJPG()			
+		function Test:SetGlobalProperties_MenuIconJPG()
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "MenuIcon.jpg",
 							imageType = "DYNAMIC"
@@ -18095,12 +18095,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "MenuIcon.jpg",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -18108,11 +18108,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -18120,19 +18120,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -18146,18 +18146,18 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[[ TODO: update after resolving APPLINK-16052
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -18166,19 +18166,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "MenuIcon.jpg"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -18198,7 +18198,7 @@ end
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-			
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -18208,24 +18208,24 @@ end
 	--Begin test case PositiveResponseCheck.1.116
 	--Description: Check request the value of with menuIcon image = BMP
 		commonSteps:PutFile("PutFile_MenuIcon.bmp", "MenuIcon.bmp")
-		function Test:SetGlobalProperties_MenuIconBMP()			
+		function Test:SetGlobalProperties_MenuIconBMP()
 			--mobile side: sending SetGlobalProperties request
-						
+
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "MenuIcon.bmp",
 							imageType = "DYNAMIC"
@@ -18233,12 +18233,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "MenuIcon.bmp",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -18246,11 +18246,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -18258,19 +18258,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -18284,18 +18284,18 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[[ TODO: update after resolving APPLINK-16052
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -18304,19 +18304,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "MenuIcon.bmp"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -18336,7 +18336,7 @@ end
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-			
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -18346,24 +18346,24 @@ end
 	--Begin test case PositiveResponseCheck.1.117
 	--Description: Check request the value of with menuIcon image = GIF
 		commonSteps:PutFile("PutFile_MenuIcon.gif", "MenuIcon.gif")
-		function Test:SetGlobalProperties_MenuIconGIF()			
+		function Test:SetGlobalProperties_MenuIconGIF()
 			--mobile side: sending SetGlobalProperties request
-						
+
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "MenuIcon.gif",
 							imageType = "DYNAMIC"
@@ -18371,12 +18371,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "MenuIcon.gif",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -18384,11 +18384,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -18396,19 +18396,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -18422,18 +18422,18 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[[ TODO: update after resolving APPLINK-16052
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -18442,19 +18442,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "MenuIcon.gif"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -18474,33 +18474,33 @@ end
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-			
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
-	
+
 	--End test case PositiveResponseCheck.1.117
 	---------------------------------------------------------------------------------
 	--Begin test case PositiveResponseCheck.1.118
 	--Description: Check request all parameters's values are lower bound
-		
-		function Test:SetGlobalProperties_All_Parameters_LowerBound()			
+
+		function Test:SetGlobalProperties_All_Parameters_LowerBound()
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "m",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "t",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "a",
 							imageType = "DYNAMIC"
@@ -18508,12 +18508,12 @@ end
 						text = "t"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "a",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "t",
@@ -18521,11 +18521,11 @@ end
 					}
 				},
 				vrHelpTitle = "v",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -18533,19 +18533,19 @@ end
 					autoCompleteText = "I"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "t",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "t",
@@ -18559,18 +18559,18 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "m",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[[ TODO: update after resolving APPLINK-16052
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -18579,19 +18579,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "a"
 				-- },
 				vrHelpTitle = "v",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -18611,7 +18611,7 @@ end
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-			
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -18621,12 +18621,12 @@ end
 	--Description: Check request all parameters's values are upper bound
 
 		function Test:SetGlobalProperties_All_Parameters_UpperBound()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4__001",
@@ -19029,11 +19029,11 @@ end
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19042,7 +19042,7 @@ end
 					},
 					{
 						position = 2,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19051,7 +19051,7 @@ end
 					},
 					{
 						position = 3,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19060,7 +19060,7 @@ end
 					},
 					{
 						position = 4,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19069,7 +19069,7 @@ end
 					},
 					{
 						position = 5,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19078,7 +19078,7 @@ end
 					},
 					{
 						position = 6,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19087,7 +19087,7 @@ end
 					},
 					{
 						position = 7,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19096,7 +19096,7 @@ end
 					},
 					{
 						position = 8,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19105,7 +19105,7 @@ end
 					},
 					{
 						position = 9,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19114,7 +19114,7 @@ end
 					},
 					{
 						position = 10,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19123,7 +19123,7 @@ end
 					},
 					{
 						position = 11,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19132,7 +19132,7 @@ end
 					},
 					{
 						position = 12,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19141,7 +19141,7 @@ end
 					},
 					{
 						position = 13,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19150,7 +19150,7 @@ end
 					},
 					{
 						position = 14,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19159,7 +19159,7 @@ end
 					},
 					{
 						position = 15,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19168,7 +19168,7 @@ end
 					},
 					{
 						position = 16,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19177,7 +19177,7 @@ end
 					},
 					{
 						position = 17,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19186,7 +19186,7 @@ end
 					},
 					{
 						position = 18,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19195,7 +19195,7 @@ end
 					},
 					{
 						position = 19,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19204,7 +19204,7 @@ end
 					},
 					{
 						position = 20,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19213,7 +19213,7 @@ end
 					},
 					{
 						position = 21,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19222,7 +19222,7 @@ end
 					},
 					{
 						position = 22,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19231,7 +19231,7 @@ end
 					},
 					{
 						position = 23,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19240,7 +19240,7 @@ end
 					},
 					{
 						position = 24,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19249,7 +19249,7 @@ end
 					},
 					{
 						position = 25,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19258,7 +19258,7 @@ end
 					},
 					{
 						position = 26,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19267,7 +19267,7 @@ end
 					},
 					{
 						position = 27,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19276,7 +19276,7 @@ end
 					},
 					{
 						position = 28,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19285,7 +19285,7 @@ end
 					},
 					{
 						position = 29,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19294,7 +19294,7 @@ end
 					},
 					{
 						position = 30,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19303,7 +19303,7 @@ end
 					},
 					{
 						position = 31,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19312,7 +19312,7 @@ end
 					},
 					{
 						position = 32,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19321,7 +19321,7 @@ end
 					},
 					{
 						position = 33,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19330,7 +19330,7 @@ end
 					},
 					{
 						position = 34,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19339,7 +19339,7 @@ end
 					},
 					{
 						position = 35,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19348,7 +19348,7 @@ end
 					},
 					{
 						position = 36,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19357,7 +19357,7 @@ end
 					},
 					{
 						position = 37,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19366,7 +19366,7 @@ end
 					},
 					{
 						position = 38,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19375,7 +19375,7 @@ end
 					},
 					{
 						position = 39,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19384,7 +19384,7 @@ end
 					},
 					{
 						position = 40,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19393,7 +19393,7 @@ end
 					},
 					{
 						position = 41,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19402,7 +19402,7 @@ end
 					},
 					{
 						position = 42,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19411,7 +19411,7 @@ end
 					},
 					{
 						position = 43,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19420,7 +19420,7 @@ end
 					},
 					{
 						position = 44,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19429,7 +19429,7 @@ end
 					},
 					{
 						position = 45,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19438,7 +19438,7 @@ end
 					},
 					{
 						position = 46,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19447,7 +19447,7 @@ end
 					},
 					{
 						position = 47,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19456,7 +19456,7 @@ end
 					},
 					{
 						position = 48,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19465,7 +19465,7 @@ end
 					},
 					{
 						position = 49,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19474,7 +19474,7 @@ end
 					},
 					{
 						position = 50,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19483,7 +19483,7 @@ end
 					},
 					{
 						position = 51,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19492,7 +19492,7 @@ end
 					},
 					{
 						position = 52,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19501,7 +19501,7 @@ end
 					},
 					{
 						position = 53,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19510,7 +19510,7 @@ end
 					},
 					{
 						position = 54,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19519,7 +19519,7 @@ end
 					},
 					{
 						position = 55,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19528,7 +19528,7 @@ end
 					},
 					{
 						position = 56,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19537,7 +19537,7 @@ end
 					},
 					{
 						position = 57,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19546,7 +19546,7 @@ end
 					},
 					{
 						position = 58,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19555,7 +19555,7 @@ end
 					},
 					{
 						position = 59,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19564,7 +19564,7 @@ end
 					},
 					{
 						position = 60,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19573,7 +19573,7 @@ end
 					},
 					{
 						position = 61,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19582,7 +19582,7 @@ end
 					},
 					{
 						position = 62,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19591,7 +19591,7 @@ end
 					},
 					{
 						position = 63,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19600,7 +19600,7 @@ end
 					},
 					{
 						position = 64,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19609,7 +19609,7 @@ end
 					},
 					{
 						position = 65,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19618,7 +19618,7 @@ end
 					},
 					{
 						position = 66,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19627,7 +19627,7 @@ end
 					},
 					{
 						position = 67,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19636,7 +19636,7 @@ end
 					},
 					{
 						position = 68,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19645,7 +19645,7 @@ end
 					},
 					{
 						position = 69,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19654,7 +19654,7 @@ end
 					},
 					{
 						position = 70,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19663,7 +19663,7 @@ end
 					},
 					{
 						position = 71,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19672,7 +19672,7 @@ end
 					},
 					{
 						position = 72,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19681,7 +19681,7 @@ end
 					},
 					{
 						position = 73,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19690,7 +19690,7 @@ end
 					},
 					{
 						position = 74,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19699,7 +19699,7 @@ end
 					},
 					{
 						position = 75,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19708,7 +19708,7 @@ end
 					},
 					{
 						position = 76,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19717,7 +19717,7 @@ end
 					},
 					{
 						position = 77,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19726,7 +19726,7 @@ end
 					},
 					{
 						position = 78,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19735,7 +19735,7 @@ end
 					},
 					{
 						position = 79,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19744,7 +19744,7 @@ end
 					},
 					{
 						position = 80,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19753,7 +19753,7 @@ end
 					},
 					{
 						position = 81,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19762,7 +19762,7 @@ end
 					},
 					{
 						position = 82,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19771,7 +19771,7 @@ end
 					},
 					{
 						position = 83,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19780,7 +19780,7 @@ end
 					},
 					{
 						position = 84,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19789,7 +19789,7 @@ end
 					},
 					{
 						position = 85,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19798,7 +19798,7 @@ end
 					},
 					{
 						position = 86,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19807,7 +19807,7 @@ end
 					},
 					{
 						position = 87,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19816,7 +19816,7 @@ end
 					},
 					{
 						position = 88,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19825,7 +19825,7 @@ end
 					},
 					{
 						position = 89,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19834,7 +19834,7 @@ end
 					},
 					{
 						position = 90,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19843,7 +19843,7 @@ end
 					},
 					{
 						position = 91,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19852,7 +19852,7 @@ end
 					},
 					{
 						position = 92,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19861,7 +19861,7 @@ end
 					},
 					{
 						position = 93,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19870,7 +19870,7 @@ end
 					},
 					{
 						position = 94,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19879,7 +19879,7 @@ end
 					},
 					{
 						position = 95,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19888,7 +19888,7 @@ end
 					},
 					{
 						position = 96,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19897,7 +19897,7 @@ end
 					},
 					{
 						position = 97,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19906,7 +19906,7 @@ end
 					},
 					{
 						position = 98,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19915,7 +19915,7 @@ end
 					},
 					{
 						position = 99,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19924,7 +19924,7 @@ end
 					},
 					{
 						position = 100,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -19932,13 +19932,13 @@ end
 						text = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4__100"
 					}
 				},
-		
-				menuIcon = 
+
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4__001",
@@ -20342,11 +20342,11 @@ end
 					}
 				},
 				vrHelpTitle = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"q",
 						"q",
@@ -20449,17 +20449,17 @@ end
 						"q",
 						"q"
 					},
-					
+
 					language = "EN-US",
 					autoCompleteText = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_cB6_vA7_bB8_nA9_mB0_qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4__001",
@@ -20862,7 +20862,7 @@ end
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4__001",
@@ -21272,19 +21272,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21295,7 +21295,7 @@ end
 						position = 2,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21306,7 +21306,7 @@ end
 						position = 3,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21317,7 +21317,7 @@ end
 						position = 4,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21328,7 +21328,7 @@ end
 						position = 5,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21339,7 +21339,7 @@ end
 						position = 6,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21350,7 +21350,7 @@ end
 						position = 7,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21361,7 +21361,7 @@ end
 						position = 8,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21372,7 +21372,7 @@ end
 						position = 9,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21383,7 +21383,7 @@ end
 						position = 10,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21394,7 +21394,7 @@ end
 						position = 11,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21405,7 +21405,7 @@ end
 						position = 12,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21416,7 +21416,7 @@ end
 						position = 13,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21427,7 +21427,7 @@ end
 						position = 14,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21438,7 +21438,7 @@ end
 						position = 15,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21449,7 +21449,7 @@ end
 						position = 16,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21460,7 +21460,7 @@ end
 						position = 17,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21471,7 +21471,7 @@ end
 						position = 18,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21482,7 +21482,7 @@ end
 						position = 19,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21493,7 +21493,7 @@ end
 						position = 20,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21504,7 +21504,7 @@ end
 						position = 21,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21515,7 +21515,7 @@ end
 						position = 22,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21526,7 +21526,7 @@ end
 						position = 23,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21537,7 +21537,7 @@ end
 						position = 24,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21548,7 +21548,7 @@ end
 						position = 25,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21559,7 +21559,7 @@ end
 						position = 26,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21570,7 +21570,7 @@ end
 						position = 27,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21581,7 +21581,7 @@ end
 						position = 28,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21592,7 +21592,7 @@ end
 						position = 29,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21603,7 +21603,7 @@ end
 						position = 30,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21614,7 +21614,7 @@ end
 						position = 31,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21625,7 +21625,7 @@ end
 						position = 32,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21636,7 +21636,7 @@ end
 						position = 33,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21647,7 +21647,7 @@ end
 						position = 34,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21658,7 +21658,7 @@ end
 						position = 35,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21669,7 +21669,7 @@ end
 						position = 36,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21680,7 +21680,7 @@ end
 						position = 37,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21691,7 +21691,7 @@ end
 						position = 38,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21702,7 +21702,7 @@ end
 						position = 39,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21713,7 +21713,7 @@ end
 						position = 40,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21724,7 +21724,7 @@ end
 						position = 41,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21735,7 +21735,7 @@ end
 						position = 42,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21746,7 +21746,7 @@ end
 						position = 43,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21757,7 +21757,7 @@ end
 						position = 44,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21768,7 +21768,7 @@ end
 						position = 45,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21779,7 +21779,7 @@ end
 						position = 46,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21790,7 +21790,7 @@ end
 						position = 47,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21801,7 +21801,7 @@ end
 						position = 48,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21812,7 +21812,7 @@ end
 						position = 49,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21823,7 +21823,7 @@ end
 						position = 50,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21834,7 +21834,7 @@ end
 						position = 51,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21845,7 +21845,7 @@ end
 						position = 52,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21856,7 +21856,7 @@ end
 						position = 53,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21867,7 +21867,7 @@ end
 						position = 54,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21878,7 +21878,7 @@ end
 						position = 55,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21889,7 +21889,7 @@ end
 						position = 56,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21900,7 +21900,7 @@ end
 						position = 57,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21911,7 +21911,7 @@ end
 						position = 58,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21922,7 +21922,7 @@ end
 						position = 59,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21933,7 +21933,7 @@ end
 						position = 60,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21944,7 +21944,7 @@ end
 						position = 61,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21955,7 +21955,7 @@ end
 						position = 62,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21966,7 +21966,7 @@ end
 						position = 63,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21977,7 +21977,7 @@ end
 						position = 64,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21988,7 +21988,7 @@ end
 						position = 65,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -21999,7 +21999,7 @@ end
 						position = 66,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22010,7 +22010,7 @@ end
 						position = 67,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22021,7 +22021,7 @@ end
 						position = 68,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22032,7 +22032,7 @@ end
 						position = 69,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22043,7 +22043,7 @@ end
 						position = 70,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22054,7 +22054,7 @@ end
 						position = 71,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22065,7 +22065,7 @@ end
 						position = 72,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22076,7 +22076,7 @@ end
 						position = 73,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22087,7 +22087,7 @@ end
 						position = 74,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22098,7 +22098,7 @@ end
 						position = 75,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22109,7 +22109,7 @@ end
 						position = 76,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22120,7 +22120,7 @@ end
 						position = 77,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22131,7 +22131,7 @@ end
 						position = 78,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22142,7 +22142,7 @@ end
 						position = 79,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22153,7 +22153,7 @@ end
 						position = 80,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22164,7 +22164,7 @@ end
 						position = 81,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22175,7 +22175,7 @@ end
 						position = 82,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22186,7 +22186,7 @@ end
 						position = 83,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22197,7 +22197,7 @@ end
 						position = 84,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22208,7 +22208,7 @@ end
 						position = 85,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22219,7 +22219,7 @@ end
 						position = 86,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22230,7 +22230,7 @@ end
 						position = 87,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22241,7 +22241,7 @@ end
 						position = 88,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22252,7 +22252,7 @@ end
 						position = 89,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22263,7 +22263,7 @@ end
 						position = 90,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22274,7 +22274,7 @@ end
 						position = 91,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22285,7 +22285,7 @@ end
 						position = 92,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22296,7 +22296,7 @@ end
 						position = 93,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22307,7 +22307,7 @@ end
 						position = 94,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22318,7 +22318,7 @@ end
 						position = 95,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22329,7 +22329,7 @@ end
 						position = 96,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22340,7 +22340,7 @@ end
 						position = 97,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22351,7 +22351,7 @@ end
 						position = 98,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22362,7 +22362,7 @@ end
 						position = 99,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -22373,28 +22373,28 @@ end
 						position = 100,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
 						},]=]
 						text = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4__100"
 					}
-				},				
+				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"q",
 						"q",
@@ -22512,8 +22512,8 @@ end
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)						
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -22576,23 +22576,23 @@ end
 	--Description: Check helpPrompt parameter is wrong type
 
 		function Test:SetGlobalProperties_helpPrompt_Array_WrongType_123_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -22600,18 +22600,18 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
 				helpPrompt = 123,
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -22619,12 +22619,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -22637,23 +22637,23 @@ end
 	--Description: Check helpPrompt parameter is out lower bound
 
 		function Test:SetGlobalProperties_helpPrompt_Array_Outminsize_0_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -22661,21 +22661,21 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -22683,12 +22683,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -22701,23 +22701,23 @@ end
 	--Description: Check helpPrompt parameter is out upper bound
 
 		function Test:SetGlobalProperties_helpPrompt_Array_Outmaxsize_101_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -22725,12 +22725,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt_001",
@@ -23138,11 +23138,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -23150,12 +23150,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -23168,23 +23168,23 @@ end
 	--Description: Check helpPrompt parameter contains an array with only one empty item
 
 		function Test:SetGlobalProperties_helpPrompt_Array_ContainAnEmptyItem_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -23192,23 +23192,23 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -23216,12 +23216,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -23234,7 +23234,7 @@ end
 	--Description: Check helpPrompt parameter is empty (missed all child items)
 
 		--It is covered by SetGlobalProperties_helpPrompt_Array_ContainAnEmptyItem_INVALID_DATA
-		
+
 	--End test case NegativeRequestCheck.1.5
 	-----------------------------------------------------------------------------------------
 
@@ -23242,23 +23242,23 @@ end
 	--Description: Check helpPrompt parameter is wrong type
 
 		function Test:SetGlobalProperties_helpPrompt_WrongType_123_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -23266,21 +23266,21 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					123
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -23288,12 +23288,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -23306,23 +23306,23 @@ end
 	--Description: Check helpPrompt: type parameter is missed
 
 		function Test:SetGlobalProperties_helpPrompt_type_IsMising_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -23330,23 +23330,23 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt"
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -23354,12 +23354,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -23372,23 +23372,23 @@ end
 	--Description: Check helpPrompt: type parameter is wrong value
 
 		function Test:SetGlobalProperties_helpPrompt_type_WrongValue_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -23396,12 +23396,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -23409,11 +23409,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -23421,12 +23421,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -23439,23 +23439,23 @@ end
 	--Description: Check helpPrompt: text parameter is missed
 
 		function Test:SetGlobalProperties_helpPrompt_text_IsMising_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -23463,23 +23463,23 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						type = "TEXT"
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -23487,12 +23487,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -23505,23 +23505,23 @@ end
 	--Description: Check helpPrompt: text parameter is wrong type
 
 		function Test:SetGlobalProperties_helpPrompt_text_IsWrongType_123_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -23529,12 +23529,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = 123,
@@ -23542,11 +23542,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -23554,12 +23554,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -23576,23 +23576,23 @@ end
 		--Verification criteria: "1. In case the mobile application sends any RPC with 'text:""' (empty string) of 'ttsChunk' structure and other valid parameters, SDL must consider such RPC as valid and transfer it to HMI"
 
 		function Test:SetGlobalProperties_helpPrompt_text_IsOutLowerBound_0_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -23600,12 +23600,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "",
@@ -23613,11 +23613,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -23625,19 +23625,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "",
@@ -23651,19 +23651,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -23672,19 +23672,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -23701,14 +23701,14 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
-			EXPECT_NOTIFICATION("OnHashChange")			
+			EXPECT_NOTIFICATION("OnHashChange")
 		end
 
 	--End test case NegativeRequestCheck.1.11
@@ -23718,23 +23718,23 @@ end
 	--Description: Check helpPrompt: text parameter is out upper bound
 
 		function Test:SetGlobalProperties_helpPrompt_text_IsOutUpperBound_501_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -23742,12 +23742,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_c",
@@ -23755,11 +23755,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -23767,12 +23767,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -23785,23 +23785,23 @@ end
 	--Description: Check helpPrompt: text parameter contains escape characters _NewLineCharacter_
 
 		function Test:SetGlobalProperties_helpPrompt_text__NewLineCharacter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -23809,12 +23809,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "\n",
@@ -23822,11 +23822,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -23834,12 +23834,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -23852,23 +23852,23 @@ end
 	--Description: Check helpPrompt: text parameter contains escape characters _TabChacracter_
 
 		function Test:SetGlobalProperties_helpPrompt_text__TabChacracter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -23876,12 +23876,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "\t",
@@ -23889,11 +23889,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -23901,12 +23901,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -23919,23 +23919,23 @@ end
 	--Description: Check helpPrompt: text parameter contains escape characters _SpaceCharacter_
 
 		function Test:SetGlobalProperties_helpPrompt_text__SpaceCharacter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -23943,12 +23943,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = " ",
@@ -23956,11 +23956,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -23968,12 +23968,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -23986,17 +23986,17 @@ end
 	--Description: Check timeoutPrompt parameter is wrong type
 
 		function Test:SetGlobalProperties_timeoutPrompt_Array_WrongType_123_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
 				timeoutPrompt = 123,
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -24004,12 +24004,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -24017,11 +24017,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -24029,12 +24029,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -24047,20 +24047,20 @@ end
 	--Description: Check timeoutPrompt parameter is out lower bound
 
 		function Test:SetGlobalProperties_timeoutPrompt_Array_Outminsize_0_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -24068,12 +24068,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -24081,11 +24081,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -24093,12 +24093,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -24111,12 +24111,12 @@ end
 	--Description: Check timeoutPrompt parameter is out upper bound
 
 		function Test:SetGlobalProperties_timeoutPrompt_Array_Outmaxsize_101_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt_001",
@@ -24523,11 +24523,11 @@ end
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -24535,12 +24535,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -24548,11 +24548,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -24560,12 +24560,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -24578,22 +24578,22 @@ end
 	--Description: Check timeoutPrompt parameter contains an array with only one empty item
 
 		function Test:SetGlobalProperties_timeoutPrompt_Array_ContainAnEmptyItem_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -24601,12 +24601,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -24614,11 +24614,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -24626,12 +24626,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -24644,7 +24644,7 @@ end
 	--Description: Check timeoutPrompt parameter is empty (missed all child items
 
 		--It is covered by SetGlobalProperties_timeoutPrompt_Array_ContainAnEmptyItem
-		
+
 	--End test case NegativeRequestCheck.1.20
 	-----------------------------------------------------------------------------------------
 
@@ -24652,20 +24652,20 @@ end
 	--Description: Check timeoutPrompt parameter is wrong type
 
 		function Test:SetGlobalProperties_timeoutPrompt_WrongType_123_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					123
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -24673,12 +24673,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -24686,11 +24686,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -24698,12 +24698,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -24716,22 +24716,22 @@ end
 	--Description: Check timeoutPrompt: type parameter is missed
 
 		function Test:SetGlobalProperties_timeoutPrompt_type_IsMising_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -24739,12 +24739,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -24752,11 +24752,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -24764,12 +24764,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -24782,23 +24782,23 @@ end
 	--Description: Check timeoutPrompt: type parameter is wrong value
 
 		function Test:SetGlobalProperties_timeoutPrompt_type_WrongValue_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "Wrong Value"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -24806,12 +24806,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -24819,11 +24819,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -24831,12 +24831,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -24849,22 +24849,22 @@ end
 	--Description: Check timeoutPrompt: text parameter is missed
 
 		function Test:SetGlobalProperties_timeoutPrompt_text_IsMising_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -24872,12 +24872,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -24885,11 +24885,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -24897,12 +24897,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -24915,23 +24915,23 @@ end
 	--Description: Check timeoutPrompt: text parameter is wrong type
 
 		function Test:SetGlobalProperties_timeoutPrompt_text_IsWrongType_123_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = 123,
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -24939,12 +24939,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -24952,11 +24952,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -24964,12 +24964,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -24982,23 +24982,23 @@ end
 	--Description: Check timeoutPrompt: text parameter is lower bound
 
 		function Test:SetGlobalProperties_timeoutPrompt_text_IsOutLowerBound_0_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25006,12 +25006,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -25020,19 +25020,19 @@ end
 				},
 				vrHelpTitle = "VR help title"
 			})
-		
+
 
 				--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -25046,7 +25046,7 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties")
@@ -25056,12 +25056,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
-			:Timeout(iTimeout)									
-			
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -25073,23 +25073,23 @@ end
 	--Description: Check timeoutPrompt: text parameter is out upper bound
 
 		function Test:SetGlobalProperties_timeoutPrompt_text_IsOutUpperBound_501_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_c",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25097,12 +25097,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -25110,11 +25110,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -25122,12 +25122,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -25140,23 +25140,23 @@ end
 	--Description: Check timeoutPrompt: text parameter contains escape characters _NewLineCharacter_
 
 		function Test:SetGlobalProperties_timeoutPrompt_text__NewLineCharacter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "\n",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25164,12 +25164,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -25177,11 +25177,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -25189,12 +25189,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -25207,23 +25207,23 @@ end
 	--Description: Check timeoutPrompt: text parameter contains escape characters _TabChacracter_
 
 		function Test:SetGlobalProperties_timeoutPrompt_text__TabChacracter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "\t",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25231,12 +25231,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -25244,11 +25244,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -25256,12 +25256,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -25274,23 +25274,23 @@ end
 	--Description: Check timeoutPrompt: text parameter contains escape characters _SpaceCharacter_
 
 		function Test:SetGlobalProperties_timeoutPrompt_text__SpaceCharacter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = " ",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25298,12 +25298,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -25311,11 +25311,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -25323,12 +25323,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -25341,23 +25341,23 @@ end
 	--Description: Check vrHelpTitle parameter is wrong type
 
 		function Test:SetGlobalProperties_vrHelpTitle_IsWrongType_123_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25365,12 +25365,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -25378,11 +25378,11 @@ end
 					}
 				},
 				vrHelpTitle = 123,
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -25390,12 +25390,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -25408,23 +25408,23 @@ end
 	--Description: Check vrHelpTitle parameter is lower bound
 
 		function Test:SetGlobalProperties_vrHelpTitle_IsOutLowerBound_0_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25432,12 +25432,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -25445,11 +25445,11 @@ end
 					}
 				},
 				vrHelpTitle = "",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -25457,12 +25457,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -25475,23 +25475,23 @@ end
 	--Description: Check vrHelpTitle parameter is out upper bound
 
 		function Test:SetGlobalProperties_vrHelpTitle_IsOutUpperBound_501_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25499,12 +25499,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -25512,11 +25512,11 @@ end
 					}
 				},
 				vrHelpTitle = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_c",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -25524,12 +25524,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -25542,23 +25542,23 @@ end
 	--Description: Check vrHelpTitle parameter contains escape characters (new line)
 
 		function Test:SetGlobalProperties_vrHelpTitle__NewLineCharacter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25566,12 +25566,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -25579,11 +25579,11 @@ end
 					}
 				},
 				vrHelpTitle = "\n",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -25591,12 +25591,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -25609,23 +25609,23 @@ end
 	--Description: Check vrHelpTitle parameter contains escape characters (tab)
 
 		function Test:SetGlobalProperties_vrHelpTitle__TabChacracter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25633,12 +25633,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -25646,11 +25646,11 @@ end
 					}
 				},
 				vrHelpTitle = "\t",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -25658,12 +25658,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -25676,23 +25676,23 @@ end
 	--Description: Check vrHelpTitle parameter contains escape characters (spaces)
 
 		function Test:SetGlobalProperties_vrHelpTitle__SpaceCharacter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25700,12 +25700,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -25713,11 +25713,11 @@ end
 					}
 				},
 				vrHelpTitle = " ",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -25725,12 +25725,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -25743,12 +25743,12 @@ end
 	--Description: Check vrHelp parameter is wrong type
 
 		function Test:SetGlobalProperties_vrHelp_Array_WrongType_123_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
@@ -25756,12 +25756,12 @@ end
 					}
 				},
 				vrHelp = 123,
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -25769,11 +25769,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -25781,12 +25781,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -25799,28 +25799,28 @@ end
 	--Description: Check vrHelp parameter is out lower bound
 
 		function Test:SetGlobalProperties_vrHelp_Array_Outminsize_0_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -25828,11 +25828,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -25840,12 +25840,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -25858,23 +25858,23 @@ end
 	--Description: Check vrHelp parameter is out upper bound
 
 		function Test:SetGlobalProperties_vrHelp_Array_Outmaxsize_101_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25883,7 +25883,7 @@ end
 					},
 					{
 						position = 2,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25892,7 +25892,7 @@ end
 					},
 					{
 						position = 3,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25901,7 +25901,7 @@ end
 					},
 					{
 						position = 4,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25910,7 +25910,7 @@ end
 					},
 					{
 						position = 5,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25919,7 +25919,7 @@ end
 					},
 					{
 						position = 6,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25928,7 +25928,7 @@ end
 					},
 					{
 						position = 7,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25937,7 +25937,7 @@ end
 					},
 					{
 						position = 8,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25946,7 +25946,7 @@ end
 					},
 					{
 						position = 9,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25955,7 +25955,7 @@ end
 					},
 					{
 						position = 10,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25964,7 +25964,7 @@ end
 					},
 					{
 						position = 11,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25973,7 +25973,7 @@ end
 					},
 					{
 						position = 12,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25982,7 +25982,7 @@ end
 					},
 					{
 						position = 13,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -25991,7 +25991,7 @@ end
 					},
 					{
 						position = 14,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26000,7 +26000,7 @@ end
 					},
 					{
 						position = 15,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26009,7 +26009,7 @@ end
 					},
 					{
 						position = 16,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26018,7 +26018,7 @@ end
 					},
 					{
 						position = 17,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26027,7 +26027,7 @@ end
 					},
 					{
 						position = 18,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26036,7 +26036,7 @@ end
 					},
 					{
 						position = 19,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26045,7 +26045,7 @@ end
 					},
 					{
 						position = 20,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26054,7 +26054,7 @@ end
 					},
 					{
 						position = 21,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26063,7 +26063,7 @@ end
 					},
 					{
 						position = 22,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26072,7 +26072,7 @@ end
 					},
 					{
 						position = 23,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26081,7 +26081,7 @@ end
 					},
 					{
 						position = 24,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26090,7 +26090,7 @@ end
 					},
 					{
 						position = 25,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26099,7 +26099,7 @@ end
 					},
 					{
 						position = 26,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26108,7 +26108,7 @@ end
 					},
 					{
 						position = 27,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26117,7 +26117,7 @@ end
 					},
 					{
 						position = 28,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26126,7 +26126,7 @@ end
 					},
 					{
 						position = 29,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26135,7 +26135,7 @@ end
 					},
 					{
 						position = 30,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26144,7 +26144,7 @@ end
 					},
 					{
 						position = 31,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26153,7 +26153,7 @@ end
 					},
 					{
 						position = 32,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26162,7 +26162,7 @@ end
 					},
 					{
 						position = 33,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26171,7 +26171,7 @@ end
 					},
 					{
 						position = 34,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26180,7 +26180,7 @@ end
 					},
 					{
 						position = 35,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26189,7 +26189,7 @@ end
 					},
 					{
 						position = 36,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26198,7 +26198,7 @@ end
 					},
 					{
 						position = 37,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26207,7 +26207,7 @@ end
 					},
 					{
 						position = 38,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26216,7 +26216,7 @@ end
 					},
 					{
 						position = 39,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26225,7 +26225,7 @@ end
 					},
 					{
 						position = 40,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26234,7 +26234,7 @@ end
 					},
 					{
 						position = 41,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26243,7 +26243,7 @@ end
 					},
 					{
 						position = 42,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26252,7 +26252,7 @@ end
 					},
 					{
 						position = 43,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26261,7 +26261,7 @@ end
 					},
 					{
 						position = 44,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26270,7 +26270,7 @@ end
 					},
 					{
 						position = 45,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26279,7 +26279,7 @@ end
 					},
 					{
 						position = 46,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26288,7 +26288,7 @@ end
 					},
 					{
 						position = 47,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26297,7 +26297,7 @@ end
 					},
 					{
 						position = 48,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26306,7 +26306,7 @@ end
 					},
 					{
 						position = 49,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26315,7 +26315,7 @@ end
 					},
 					{
 						position = 50,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26324,7 +26324,7 @@ end
 					},
 					{
 						position = 51,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26333,7 +26333,7 @@ end
 					},
 					{
 						position = 52,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26342,7 +26342,7 @@ end
 					},
 					{
 						position = 53,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26351,7 +26351,7 @@ end
 					},
 					{
 						position = 54,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26360,7 +26360,7 @@ end
 					},
 					{
 						position = 55,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26369,7 +26369,7 @@ end
 					},
 					{
 						position = 56,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26378,7 +26378,7 @@ end
 					},
 					{
 						position = 57,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26387,7 +26387,7 @@ end
 					},
 					{
 						position = 58,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26396,7 +26396,7 @@ end
 					},
 					{
 						position = 59,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26405,7 +26405,7 @@ end
 					},
 					{
 						position = 60,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26414,7 +26414,7 @@ end
 					},
 					{
 						position = 61,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26423,7 +26423,7 @@ end
 					},
 					{
 						position = 62,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26432,7 +26432,7 @@ end
 					},
 					{
 						position = 63,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26441,7 +26441,7 @@ end
 					},
 					{
 						position = 64,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26450,7 +26450,7 @@ end
 					},
 					{
 						position = 65,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26459,7 +26459,7 @@ end
 					},
 					{
 						position = 66,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26468,7 +26468,7 @@ end
 					},
 					{
 						position = 67,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26477,7 +26477,7 @@ end
 					},
 					{
 						position = 68,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26486,7 +26486,7 @@ end
 					},
 					{
 						position = 69,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26495,7 +26495,7 @@ end
 					},
 					{
 						position = 70,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26504,7 +26504,7 @@ end
 					},
 					{
 						position = 71,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26513,7 +26513,7 @@ end
 					},
 					{
 						position = 72,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26522,7 +26522,7 @@ end
 					},
 					{
 						position = 73,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26531,7 +26531,7 @@ end
 					},
 					{
 						position = 74,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26540,7 +26540,7 @@ end
 					},
 					{
 						position = 75,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26549,7 +26549,7 @@ end
 					},
 					{
 						position = 76,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26558,7 +26558,7 @@ end
 					},
 					{
 						position = 77,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26567,7 +26567,7 @@ end
 					},
 					{
 						position = 78,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26576,7 +26576,7 @@ end
 					},
 					{
 						position = 79,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26585,7 +26585,7 @@ end
 					},
 					{
 						position = 80,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26594,7 +26594,7 @@ end
 					},
 					{
 						position = 81,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26603,7 +26603,7 @@ end
 					},
 					{
 						position = 82,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26612,7 +26612,7 @@ end
 					},
 					{
 						position = 83,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26621,7 +26621,7 @@ end
 					},
 					{
 						position = 84,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26630,7 +26630,7 @@ end
 					},
 					{
 						position = 85,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26639,7 +26639,7 @@ end
 					},
 					{
 						position = 86,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26648,7 +26648,7 @@ end
 					},
 					{
 						position = 87,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26657,7 +26657,7 @@ end
 					},
 					{
 						position = 88,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26666,7 +26666,7 @@ end
 					},
 					{
 						position = 89,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26675,7 +26675,7 @@ end
 					},
 					{
 						position = 90,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26684,7 +26684,7 @@ end
 					},
 					{
 						position = 91,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26693,7 +26693,7 @@ end
 					},
 					{
 						position = 92,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26702,7 +26702,7 @@ end
 					},
 					{
 						position = 93,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26711,7 +26711,7 @@ end
 					},
 					{
 						position = 94,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26720,7 +26720,7 @@ end
 					},
 					{
 						position = 95,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26729,7 +26729,7 @@ end
 					},
 					{
 						position = 96,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26738,7 +26738,7 @@ end
 					},
 					{
 						position = 97,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26747,7 +26747,7 @@ end
 					},
 					{
 						position = 98,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26756,7 +26756,7 @@ end
 					},
 					{
 						position = 99,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26765,7 +26765,7 @@ end
 					},
 					{
 						position = 100,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26774,7 +26774,7 @@ end
 					},
 					{
 						position = 101,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26782,12 +26782,12 @@ end
 						text = "VR help item_101"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -26795,11 +26795,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -26807,12 +26807,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -26825,30 +26825,30 @@ end
 	--Description: Check vrHelp parameter contains an array with only one empty item
 
 		function Test:SetGlobalProperties_vrHelp_Array_ContainAnEmptyItem_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -26856,11 +26856,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -26868,12 +26868,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -26886,28 +26886,28 @@ end
 	--Description: Check vrHelp parameter is wrong type
 
 		function Test:SetGlobalProperties_vrHelp_WrongType_123_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					123
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -26915,11 +26915,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -26927,12 +26927,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -26945,22 +26945,22 @@ end
 	--Description: Check vrHelp: position parameter is missed
 
 		function Test:SetGlobalProperties_vrHelp_position_IsMising_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -26968,12 +26968,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -26981,11 +26981,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -26993,12 +26993,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -27011,23 +27011,23 @@ end
 	--Description: Check vrHelpposition parameter is wrong type
 
 		function Test:SetGlobalProperties_vrHelp_position_IsWrongType_123_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = "123",
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -27035,12 +27035,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -27048,11 +27048,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -27060,12 +27060,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -27078,23 +27078,23 @@ end
 	--Description: Check vrHelpposition parameter is out lower bound
 
 		function Test:SetGlobalProperties_vrHelp_position_IsOutLowerBound_0_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 0,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -27102,12 +27102,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -27115,11 +27115,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -27127,12 +27127,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -27145,23 +27145,23 @@ end
 	--Description: Check vrHelpposition parameter is out upper bound
 
 		function Test:SetGlobalProperties_vrHelp_position_IsOutUpperBound_101_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 101,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -27169,12 +27169,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -27182,11 +27182,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -27194,12 +27194,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -27212,35 +27212,35 @@ end
 	--Description: Check vrHelp: text parameter is missed
 
 		function Test:SetGlobalProperties_vrHelp_text_IsMising_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
 						}
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -27248,11 +27248,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -27260,12 +27260,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -27278,23 +27278,23 @@ end
 	--Description: Check vrHelptext parameter is wrong type
 
 		function Test:SetGlobalProperties_vrHelp_text_IsWrongType_123_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -27302,12 +27302,12 @@ end
 						text = 123
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -27315,11 +27315,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -27327,12 +27327,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -27345,23 +27345,23 @@ end
 	--Description: Check vrHelptext parameter is lower bound
 
 		function Test:SetGlobalProperties_vrHelp_text_IsOutLowerBound_0_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -27369,12 +27369,12 @@ end
 						text = ""
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -27382,11 +27382,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -27394,12 +27394,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -27412,23 +27412,23 @@ end
 	--Description: Check vrHelptext parameter is out upper bound
 
 		function Test:SetGlobalProperties_vrHelp_text_IsOutUpperBound_501_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -27436,12 +27436,12 @@ end
 						text = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_c"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -27449,11 +27449,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -27461,12 +27461,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -27479,23 +27479,23 @@ end
 	--Description: Check vrHelptext parameter contains escape characters _NewLineCharacter_
 
 		function Test:SetGlobalProperties_vrHelp_text__NewLineCharacter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -27503,12 +27503,12 @@ end
 						text = "\n"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -27516,11 +27516,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -27528,12 +27528,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -27546,23 +27546,23 @@ end
 	--Description: Check vrHelptext parameter contains escape characters _TabChacracter_
 
 		function Test:SetGlobalProperties_vrHelp_text__TabChacracter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -27570,12 +27570,12 @@ end
 						text = "\t"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -27583,11 +27583,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -27595,12 +27595,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -27613,23 +27613,23 @@ end
 	--Description: Check vrHelptext parameter contains escape characters _SpaceCharacter_
 
 		function Test:SetGlobalProperties_vrHelp_text__SpaceCharacter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -27637,12 +27637,12 @@ end
 						text = " "
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -27650,11 +27650,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -27662,12 +27662,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -27680,31 +27680,31 @@ end
 	--Description: Check vrHelp: image parameter is missed
 
 		function Test:SetGlobalProperties_vrHelp_image_IsMising_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -27712,11 +27712,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -27724,19 +27724,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -27750,13 +27750,13 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
@@ -27764,19 +27764,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -27793,12 +27793,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -27810,35 +27810,35 @@ end
 	--Description: Check vrHelpimage parameter is empty (missing all children Items)
 
 		function Test:SetGlobalProperties_vrHelp_image_empty_missingallchildrenItems_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 
 						},
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -27846,11 +27846,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -27858,12 +27858,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -27876,19 +27876,19 @@ end
 	--Description: Check vrHelpimage parameter is wrong type
 
 		function Test:SetGlobalProperties_vrHelp_image_WrongType_123_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
@@ -27896,12 +27896,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -27909,11 +27909,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -27921,12 +27921,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -27939,35 +27939,35 @@ end
 	--Description: Check vrHelpimage: imageType parameter is missed
 
 		function Test:SetGlobalProperties_vrHelp_image_imageType_IsMising_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png"
 						},
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -27975,11 +27975,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -27987,12 +27987,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -28005,23 +28005,23 @@ end
 	--Description: Check image: imageType parameter is wrong value
 
 		function Test:SetGlobalProperties_vrHelp_image_imageType_WrongValue_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "Wrong Value"
@@ -28029,12 +28029,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -28042,11 +28042,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -28054,12 +28054,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -28072,35 +28072,35 @@ end
 	--Description: Check vrHelpimage: value parameter is missed
 
 		function Test:SetGlobalProperties_vrHelp_image_value_IsMising_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC"
 						},
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -28108,11 +28108,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -28120,12 +28120,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -28138,23 +28138,23 @@ end
 	--Description: Check image: value parameter is wrong type
 
 		function Test:SetGlobalProperties_vrHelp_image_value_IsWrongType_123_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = 123,
 							imageType = "DYNAMIC"
@@ -28162,12 +28162,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -28175,11 +28175,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -28187,12 +28187,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -28205,23 +28205,23 @@ end
 	--Description: Check image: value parameter is out upper bound
 
 		function Test:SetGlobalProperties_vrHelp_image_value_IsOutUpperBound_65536_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_cB6_vA7_bB8_nA9_mB0_qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_j",
 							imageType = "DYNAMIC"
@@ -28229,12 +28229,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -28242,11 +28242,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -28254,12 +28254,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -28272,23 +28272,23 @@ end
 	--Description: Check image: value parameter contains escape character (new line)
 
 		function Test:SetGlobalProperties_vrHelp_image_value__NewLineCharacter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "\n",
 							imageType = "DYNAMIC"
@@ -28296,12 +28296,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -28309,11 +28309,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -28321,12 +28321,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -28339,23 +28339,23 @@ end
 	--Description: Check image: value parameter contains escape character (tab)
 
 		function Test:SetGlobalProperties_vrHelp_image_value__TabChacracter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "\t",
 							imageType = "DYNAMIC"
@@ -28363,12 +28363,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -28376,11 +28376,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -28388,12 +28388,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -28406,23 +28406,23 @@ end
 	--Description: Check image: value parameter contains escape character (spaces)
 
 		function Test:SetGlobalProperties_vrHelp_image_value__SpaceCharacter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = " ",
 							imageType = "DYNAMIC"
@@ -28430,12 +28430,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -28443,11 +28443,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -28455,12 +28455,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -28473,23 +28473,23 @@ end
 	--Description: Check image: value parameter is not an existing file
 
 		function Test:SetGlobalProperties_vrHelp_image_value_IsNotExist_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "NotExistImage.png",
 							imageType = "DYNAMIC"
@@ -28497,12 +28497,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -28510,11 +28510,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -28522,12 +28522,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -28540,23 +28540,23 @@ end
 	--Description: Check menuTitle parameter is wrong type
 
 		function Test:SetGlobalProperties_menuTitle_IsWrongType_123_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = 123,
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -28564,12 +28564,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -28577,11 +28577,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -28589,12 +28589,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -28607,23 +28607,23 @@ end
 	--Description: Check menuTitle parameter is lower bound
 
 		function Test:SetGlobalProperties_menuTitle_IsOutLowerBound_0_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -28631,12 +28631,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -28644,11 +28644,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -28656,12 +28656,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -28674,23 +28674,23 @@ end
 	--Description: Check menuTitle parameter is out upper bound
 
 		function Test:SetGlobalProperties_menuTitle_IsOutUpperBound_501_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_c",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -28698,12 +28698,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -28711,11 +28711,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -28723,12 +28723,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -28741,23 +28741,23 @@ end
 	--Description: Check menuTitle parameter contains escape characters (new line)
 
 		function Test:SetGlobalProperties_menuTitle__NewLineCharacter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "\n",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -28765,12 +28765,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -28778,11 +28778,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -28790,12 +28790,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -28808,23 +28808,23 @@ end
 	--Description: Check menuTitle parameter contains escape characters (tab)
 
 		function Test:SetGlobalProperties_menuTitle__TabChacracter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "\t",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -28832,12 +28832,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -28845,11 +28845,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -28857,12 +28857,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -28875,23 +28875,23 @@ end
 	--Description: Check menuTitle parameter contains escape characters (spaces)
 
 		function Test:SetGlobalProperties_menuTitle__SpaceCharacter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = " ",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -28899,12 +28899,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -28912,11 +28912,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -28924,12 +28924,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -28942,23 +28942,23 @@ end
 	--Description: Check menuIcon parameter is empty (missing all children Items)
 
 		function Test:SetGlobalProperties_menuIcon_empty_missingallchildrenItems_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -28966,11 +28966,11 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -28978,11 +28978,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -28990,12 +28990,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -29008,23 +29008,23 @@ end
 	--Description: Check menuIcon parameter is wrong type
 
 		function Test:SetGlobalProperties_menuIcon_WrongType_123_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -29033,7 +29033,7 @@ end
 					}
 				},
 				menuIcon = 123,
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -29041,11 +29041,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -29053,12 +29053,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -29071,23 +29071,23 @@ end
 	--Description: Check menuIcon: imageType parameter is missed
 
 		function Test:SetGlobalProperties_menuIcon_imageType_IsMising_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -29095,11 +29095,11 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -29107,11 +29107,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -29119,12 +29119,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -29137,23 +29137,23 @@ end
 	--Description: Check menuIcon: imageType parameter is wrong value
 
 		function Test:SetGlobalProperties_menuIcon_imageType_WrongValue_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -29161,12 +29161,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "Wrong Value"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -29174,11 +29174,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -29186,12 +29186,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -29204,23 +29204,23 @@ end
 	--Description: Check menuIcon: value parameter is missed
 
 		function Test:SetGlobalProperties_menuIcon_value_IsMising_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -29228,11 +29228,11 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -29240,11 +29240,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -29252,12 +29252,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -29270,23 +29270,23 @@ end
 	--Description: Check menuIcon: value parameter is wrong type
 
 		function Test:SetGlobalProperties_menuIcon_value_IsWrongType_123_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -29294,12 +29294,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = 123,
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -29307,11 +29307,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -29319,12 +29319,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -29337,23 +29337,23 @@ end
 	--Description: Check menuIcon: value parameter is out upper bound
 
 		function Test:SetGlobalProperties_menuIcon_value_IsOutUpperBound_65536_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -29361,12 +29361,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_cB6_vA7_bB8_nA9_mB0_qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_j",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -29374,11 +29374,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -29386,12 +29386,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -29404,23 +29404,23 @@ end
 	--Description: Check menuIcon: value parameter contains escape character (new line)
 
 		function Test:SetGlobalProperties_menuIcon_value__NewLineCharacter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -29428,12 +29428,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "\n",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -29441,11 +29441,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -29453,12 +29453,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -29471,23 +29471,23 @@ end
 	--Description: Check menuIcon: value parameter contains escape character (tab)
 
 		function Test:SetGlobalProperties_menuIcon_value__TabChacracter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -29495,12 +29495,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "\t",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -29508,11 +29508,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -29520,12 +29520,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -29538,23 +29538,23 @@ end
 	--Description: Check menuIcon: value parameter contains escape character (spaces)
 
 		function Test:SetGlobalProperties_menuIcon_value__SpaceCharacter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -29562,12 +29562,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = " ",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -29575,11 +29575,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -29587,12 +29587,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -29605,23 +29605,23 @@ end
 	--Description: Check menuIcon: value parameter is not an existing file
 
 		function Test:SetGlobalProperties_menuIcon_value_IsNotExist_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -29629,12 +29629,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "NotExistImage.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -29642,11 +29642,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -29654,12 +29654,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -29672,15 +29672,15 @@ end
 	--Description: Check keyboardProperties parameter is empty (missed all non mandatory child items
 
 		function Test:SetGlobalProperties_keyboardProperties_Empty_MissedAllChildrenItems_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
-				keyboardProperties = 
+				keyboardProperties =
 				{
 
 				}
-			})		
+			})
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties")
@@ -29690,7 +29690,7 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 			:ValidIf(function(_,data)
-				if 
+				if
 					data.params.keyboardProperties and
 					#data.params.keyboardProperties == 0 then
 						return true
@@ -29698,19 +29698,19 @@ end
 					data.params.keyboardProperties == nil then
 						print( "\27[31m UI.SetGlobalProperties request came without keyboardProperties  \27[0m " )
 						return false
-				else 
+				else
 					print( "\27[31m UI.SetGlobalProperties request came with some unexpected values of keyboardProperties, array length is " .. tostring(#data.params.keyboardProperties) .. " \27[0m " )
 						return false
 				end
 
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -29722,23 +29722,23 @@ end
 	--Description: Check keyboardProperties parameter is wrong type
 
 		function Test:SetGlobalProperties_keyboardProperties_WrongType_123_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -29746,12 +29746,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -29761,12 +29761,12 @@ end
 				vrHelpTitle = "VR help title",
 				keyboardProperties = 123
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -29779,23 +29779,23 @@ end
 	--Description: Check keyboardProperties: language parameter is missed
 
 		function Test:SetGlobalProperties_keyboardProperties_language_IsMising_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -29803,12 +29803,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -29816,30 +29816,30 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -29853,19 +29853,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -29874,19 +29874,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					autoCompleteText = "Daemon, Freedom",
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					}]=]
@@ -29901,12 +29901,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -29918,23 +29918,23 @@ end
 	--Description: Check keyboardPropertieslanguage parameter is wrong value
 
 		function Test:SetGlobalProperties_keyboardProperties_language_WrongValue_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -29942,12 +29942,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -29955,11 +29955,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -29967,12 +29967,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -29985,23 +29985,23 @@ end
 	--Description: Check keyboardProperties: keyboardLayout parameter is missed
 
 		function Test:SetGlobalProperties_keyboardProperties_keyboardLayout_IsMising_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -30009,12 +30009,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -30022,29 +30022,29 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -30058,19 +30058,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -30079,18 +30079,18 @@ end
 					}
 				},
 				-- Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					autoCompleteText = "Daemon, Freedom",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					}]=]
@@ -30105,12 +30105,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -30122,23 +30122,23 @@ end
 	--Description: Check keyboardPropertieskeyboardLayout parameter is wrong value
 
 		function Test:SetGlobalProperties_keyboardProperties_keyboardLayout_WrongValue_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -30146,12 +30146,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -30159,11 +30159,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "Wrong Value",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -30171,12 +30171,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -30189,23 +30189,23 @@ end
 	--Description: Check keyboardProperties: keypressMode parameter is missed
 
 		function Test:SetGlobalProperties_keyboardProperties_keypressMode_IsMising_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -30213,12 +30213,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -30226,9 +30226,9 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -30236,19 +30236,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -30262,19 +30262,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -30283,18 +30283,18 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					language = "EN-US",
 					autoCompleteText = "Daemon, Freedom",
 					--[=[ TODO: update after resolving APPLINK-16047
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					}]=]
@@ -30309,12 +30309,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -30326,23 +30326,23 @@ end
 	--Description: Check keyboardPropertieskeypressMode parameter is wrong value
 
 		function Test:SetGlobalProperties_keyboardProperties_keypressMode_WrongValue_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -30350,12 +30350,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -30363,11 +30363,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "Wrong Value",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -30375,12 +30375,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -30393,23 +30393,23 @@ end
 	--Description: Check keyboardProperties: limitedCharacterList parameter is missed
 
 		function Test:SetGlobalProperties_keyboardProperties_limitedCharacterList_IsMising_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -30417,12 +30417,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -30430,26 +30430,26 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					language = "EN-US",
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -30463,19 +30463,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -30484,13 +30484,13 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					autoCompleteText = "Daemon, Freedom",
@@ -30506,12 +30506,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -30523,23 +30523,23 @@ end
 	--Description: Check limitedCharacterList parameter is wrong type
 
 		function Test:SetGlobalProperties_keyboardProperties_limitedCharacterList_Array_WrongType_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -30547,12 +30547,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -30560,7 +30560,7 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					limitedCharacterList = 123,
@@ -30568,12 +30568,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -30586,23 +30586,23 @@ end
 	--Description: Check limitedCharacterList parameter is out lower bound
 
 		function Test:SetGlobalProperties_keyboardProperties_limitedCharacterList_Array_IsOutLowerBound_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -30610,12 +30610,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -30623,10 +30623,10 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 
 					},
@@ -30634,12 +30634,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -30652,23 +30652,23 @@ end
 	--Description: Check limitedCharacterList parameter is out upper bound
 
 		function Test:SetGlobalProperties_keyboardProperties_limitedCharacterList_Array_IsOutUpperBound_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -30676,12 +30676,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -30689,10 +30689,10 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"q",
 						"q",
@@ -30800,12 +30800,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -30818,7 +30818,7 @@ end
 	--Description: Check limitedCharacterList parameter array is zero size
 
 		--It is covered by TC SetGlobalProperties_keyboardProperties_limitedCharacterList_Array_IsOutLowerBound_INVALID_DATA
-		
+
 	--End test case NegativeRequestCheck.1.94
 	-----------------------------------------------------------------------------------------
 
@@ -30826,23 +30826,23 @@ end
 	--Description: Check keyboardPropertieslimitedCharacterList parameter is wrong type
 
 		function Test:SetGlobalProperties_keyboardProperties_limitedCharacterList_IsWrongType_123_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -30850,12 +30850,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -30863,11 +30863,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						123
 					},
@@ -30875,12 +30875,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -30893,23 +30893,23 @@ end
 	--Description: Check keyboardPropertieslimitedCharacterList parameter is lower bound
 
 		function Test:SetGlobalProperties_keyboardProperties_limitedCharacterList_IsOutLowerBound_0_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -30917,12 +30917,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -30930,11 +30930,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						""
 					},
@@ -30942,12 +30942,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -30960,23 +30960,23 @@ end
 	--Description: Check keyboardPropertieslimitedCharacterList parameter is out upper bound
 
 		function Test:SetGlobalProperties_keyboardProperties_limitedCharacterList_IsOutUpperBound_2_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -30984,12 +30984,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -30997,11 +30997,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"qA"
 					},
@@ -31009,12 +31009,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -31027,23 +31027,23 @@ end
 	--Description: Check keyboardPropertieslimitedCharacterList parameter contains escape character (tab)
 
 		function Test:SetGlobalProperties_keyboardProperties_limitedCharacterList__TabChacracter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -31051,12 +31051,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -31064,11 +31064,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"\t"
 					},
@@ -31076,12 +31076,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -31094,23 +31094,23 @@ end
 	--Description: Check keyboardPropertieslimitedCharacterList parameter contains escape character (new line)
 
 		function Test:SetGlobalProperties_keyboardProperties_limitedCharacterList__NewLineCharacter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -31118,12 +31118,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -31131,11 +31131,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"\n"
 					},
@@ -31143,12 +31143,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -31161,23 +31161,23 @@ end
 	--Description: Check keyboardPropertieslimitedCharacterList parameter contains escape character (spaces)
 
 		function Test:SetGlobalProperties_keyboardProperties_limitedCharacterList__SpaceCharacter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -31185,12 +31185,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -31198,11 +31198,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						" "
 					},
@@ -31210,12 +31210,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -31228,23 +31228,23 @@ end
 	--Description: Check keyboardProperties: autoCompleteText parameter is missed
 
 		function Test:SetGlobalProperties_keyboardProperties_autoCompleteText_IsMising_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -31252,12 +31252,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -31265,30 +31265,30 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
 					language = "EN-US"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -31302,19 +31302,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -31323,19 +31323,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -31351,14 +31351,14 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
-			EXPECT_NOTIFICATION("OnHashChange")			
+			EXPECT_NOTIFICATION("OnHashChange")
 		end
 
 	--End test case NegativeRequestCheck.1.101
@@ -31368,23 +31368,23 @@ end
 	--Description: Check keyboardPropertiesautoCompleteText parameter is wrong type
 
 		function Test:SetGlobalProperties_keyboardProperties_autoCompleteText_IsWrongType_123_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -31392,12 +31392,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -31405,11 +31405,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -31417,12 +31417,12 @@ end
 					autoCompleteText = 123
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -31435,23 +31435,23 @@ end
 	--Description: Check keyboardPropertiesautoCompleteText parameter is lower bound
 
 		function Test:SetGlobalProperties_keyboardProperties_autoCompleteText_IsOutLowerBound_0_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -31459,12 +31459,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -31472,11 +31472,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -31484,12 +31484,12 @@ end
 					autoCompleteText = ""
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -31502,23 +31502,23 @@ end
 	--Description: Check keyboardPropertiesautoCompleteText parameter is out upper bound
 
 		function Test:SetGlobalProperties_keyboardProperties_autoCompleteText_IsOutUpperBound_1001_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -31526,12 +31526,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -31539,11 +31539,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -31551,12 +31551,12 @@ end
 					autoCompleteText = "qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_jA1_kB2_lA3_zB4_xA5_cB6_vA7_bB8_nA9_mB0_qA1_wB2_eA3_rB4_tA5_yB6_uA7_iB8_oA9_pB0_aA1_sB2_dA3_fB4_gA5_hB6_jA7_kB8_lA9_zB0_xA1_cB2_vA3_bB4_nA5_mB6_qA7_wB8_eA9_rB0_tA1_yB2_uA3_iB4_oA5_pB6_aA7_sB8_dA9_fB0_gA1_hB2_jA3_kB4_lA5_zB6_xA7_cB8_vA9_bB0_nA1_mB2_qA3_wB4_eA5_rB6_tA7_yB8_uA9_iB0_oA1_pB2_aA3_sB4_dA5_fB6_gA7_hB8_jA9_kB0_lA1_zB2_xA3_cB4_vA5_bB6_nA7_mB8_qA9_wB0_eA1_rB2_tA3_yB4_uA5_iB6_oA7_pB8_aA9_sB0_dA1_fB2_gA3_hB4_jA5_kB6_lA7_zB8_xA9_cB0_vA1_bB2_nA3_mB4_qA5_wB6_eA7_rB8_tA9_yB0_uA1_iB2_oA3_pB4_aA5_sB6_dA7_fB8_gA9_hB0_j"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -31569,23 +31569,23 @@ end
 	--Description: Check keyboardPropertiesautoCompleteText parameter contains escape characters (new line)
 
 		function Test:SetGlobalProperties_keyboardProperties_autoCompleteText__NewLineCharacter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -31593,12 +31593,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -31606,11 +31606,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -31618,12 +31618,12 @@ end
 					autoCompleteText = "\n"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -31636,23 +31636,23 @@ end
 	--Description: Check keyboardPropertiesautoCompleteText parameter contains escape characters (tab)
 
 		function Test:SetGlobalProperties_keyboardProperties_autoCompleteText__TabChacracter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -31660,12 +31660,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -31673,11 +31673,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -31685,12 +31685,12 @@ end
 					autoCompleteText = "\t"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -31703,23 +31703,23 @@ end
 	--Description: Check keyboardPropertiesautoCompleteText parameter contains escape characters (spaces)
 
 		function Test:SetGlobalProperties_keyboardProperties_autoCompleteText__SpaceCharacter__INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -31727,12 +31727,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -31740,11 +31740,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -31752,12 +31752,12 @@ end
 					autoCompleteText = " "
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -31770,23 +31770,23 @@ end
 	--Description: Check keyboardPropertieskeypressMode parameter is wrong data type
 
 		function Test:SetGlobalProperties_keyboardProperties_keypressMode_WrongType_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -31794,12 +31794,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -31807,11 +31807,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = 123,
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -31819,12 +31819,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -31832,28 +31832,28 @@ end
 
 	--End test case NegativeRequestCheck.1.108
 	-----------------------------------------------------------------------------------------
-	
+
 	--Begin test case NegativeRequestCheck.1.109
 	--Description: Check keyboardPropertieskeypressMode parameter is empty string
 
 		function Test:SetGlobalProperties_keyboardProperties_keypressMode_emptyString_INVALID_DATA()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -31861,12 +31861,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -31874,11 +31874,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -31886,12 +31886,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -31899,7 +31899,7 @@ end
 
 	--End test case NegativeRequestCheck.1.109
 	-----------------------------------------------------------------------------------------
-	
+
 --End test case NegativeRequestCheck.1
 
 
@@ -31926,30 +31926,30 @@ end
 	--Description: resultCode APPLICATION_NOT_REGISTERED
 
 		--Requirement id in JAMA: SDLAQ-CRS-388
-		
+
 		--Verification criteria: SDL sends APPLICATION_NOT_REGISTERED result code when the app sends SetGlobalProperties request within the same connection before RegisterAppInterface has been yet performed.
 
 		--Precondition: Create new session
 		commonSteps:precondition_AddNewSession()
-					
+
 		function Test:SetGlobalProperties_resultCode_APPLICATION_NOT_REGISTERED()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession2:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -31957,12 +31957,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -31970,11 +31970,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -31982,12 +31982,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			self.mobileSession2:ExpectResponse(cid, { success = false, resultCode = "APPLICATION_NOT_REGISTERED"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			self.mobileSession2:ExpectNotification("OnHashChange",{})
 			:Times(0)
@@ -32012,23 +32012,23 @@ end
 
 			--UI responses REJECTED
 			function Test:SetGlobalProperties_UI_ResultCode_REJECTED()
-			
+
 				--mobile side: sending SetGlobalProperties request
 				local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 				{
 					menuTitle = "Menu Title",
-					timeoutPrompt = 
+					timeoutPrompt =
 					{
 						{
 							text = "Timeout prompt",
 							type = "TEXT"
 						}
 					},
-					vrHelp = 
+					vrHelp =
 					{
 						{
 							position = 1,
-							image = 
+							image =
 							{
 								value = "action.png",
 								imageType = "DYNAMIC"
@@ -32036,12 +32036,12 @@ end
 							text = "VR help item"
 						}
 					},
-					menuIcon = 
+					menuIcon =
 					{
 						value = "action.png",
 						imageType = "DYNAMIC"
 					},
-					helpPrompt = 
+					helpPrompt =
 					{
 						{
 							text = "Help prompt",
@@ -32049,11 +32049,11 @@ end
 						}
 					},
 					vrHelpTitle = "VR help title",
-					keyboardProperties = 
+					keyboardProperties =
 					{
 						keyboardLayout = "QWERTY",
 						keypressMode = "SINGLE_KEYPRESS",
-						limitedCharacterList = 
+						limitedCharacterList =
 						{
 							"a"
 						},
@@ -32061,19 +32061,19 @@ end
 						autoCompleteText = "Daemon, Freedom"
 					}
 				})
-			
+
 
 				--hmi side: expect TTS.SetGlobalProperties request
 				EXPECT_HMICALL("TTS.SetGlobalProperties",
 				{
-					timeoutPrompt = 
+					timeoutPrompt =
 					{
 						{
 							text = "Timeout prompt",
 							type = "TEXT"
 						}
 					},
-					helpPrompt = 
+					helpPrompt =
 					{
 						{
 							text = "Help prompt",
@@ -32087,19 +32087,19 @@ end
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
 
-			
+
 
 				--hmi side: expect UI.SetGlobalProperties request
 				EXPECT_HMICALL("UI.SetGlobalProperties",
 				{
 					menuTitle = "Menu Title",
-					vrHelp = 
+					vrHelp =
 					{
 						{
 							position = 1,
 							--[=[ TODO: update after resolving APPLINK-16052
 
-							image = 
+							image =
 							{
 								imageType = "DYNAMIC",
 								value = strAppFolder .. "action.png"
@@ -32108,19 +32108,19 @@ end
 						}
 					},
 					--Checked below
-					-- menuIcon = 
+					-- menuIcon =
 					-- {
 					-- 	imageType = "DYNAMIC",
 					-- 	value = strAppFolder .. "action.png"
 					-- },
 					vrHelpTitle = "VR help title",
-					keyboardProperties = 
+					keyboardProperties =
 					{
 						keyboardLayout = "QWERTY",
 						keypressMode = "SINGLE_KEYPRESS",
 						--[=[ TODO: update after resolving APPLINK-16047
 
-						limitedCharacterList = 
+						limitedCharacterList =
 						{
 							"a"
 						},]=]
@@ -32137,12 +32137,12 @@ end
 					self.hmiConnection:SendResponse(data.id, data.method, "REJECTED", {})
 				end)
 
-			
+
 
 				--mobile side: expect SetGlobalProperties response
 				EXPECT_RESPONSE(cid, { success = false, resultCode = "REJECTED"})
-				:Timeout(iTimeout)				
-				
+				:Timeout(iTimeout)
+
 				--mobile side: expect OnHashChange notification
 				EXPECT_NOTIFICATION("OnHashChange")
 				:Times(0)
@@ -32152,23 +32152,23 @@ end
 
 			--TTS responses REJECTED
 			function Test:SetGlobalProperties_TTS_ResultCode_REJECTED()
-			
+
 				--mobile side: sending SetGlobalProperties request
 				local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 				{
 					menuTitle = "Menu Title",
-					timeoutPrompt = 
+					timeoutPrompt =
 					{
 						{
 							text = "Timeout prompt",
 							type = "TEXT"
 						}
 					},
-					vrHelp = 
+					vrHelp =
 					{
 						{
 							position = 1,
-							image = 
+							image =
 							{
 								value = "action.png",
 								imageType = "DYNAMIC"
@@ -32176,12 +32176,12 @@ end
 							text = "VR help item"
 						}
 					},
-					menuIcon = 
+					menuIcon =
 					{
 						value = "action.png",
 						imageType = "DYNAMIC"
 					},
-					helpPrompt = 
+					helpPrompt =
 					{
 						{
 							text = "Help prompt",
@@ -32189,11 +32189,11 @@ end
 						}
 					},
 					vrHelpTitle = "VR help title",
-					keyboardProperties = 
+					keyboardProperties =
 					{
 						keyboardLayout = "QWERTY",
 						keypressMode = "SINGLE_KEYPRESS",
-						limitedCharacterList = 
+						limitedCharacterList =
 						{
 							"a"
 						},
@@ -32201,19 +32201,19 @@ end
 						autoCompleteText = "Daemon, Freedom"
 					}
 				})
-			
+
 
 				--hmi side: expect TTS.SetGlobalProperties request
 				EXPECT_HMICALL("TTS.SetGlobalProperties",
 				{
-					timeoutPrompt = 
+					timeoutPrompt =
 					{
 						{
 							text = "Timeout prompt",
 							type = "TEXT"
 						}
 					},
-					helpPrompt = 
+					helpPrompt =
 					{
 						{
 							text = "Help prompt",
@@ -32227,19 +32227,19 @@ end
 					self.hmiConnection:SendResponse(data.id, data.method, "REJECTED", {})
 				end)
 
-			
+
 
 				--hmi side: expect UI.SetGlobalProperties request
 				EXPECT_HMICALL("UI.SetGlobalProperties",
 				{
 					menuTitle = "Menu Title",
-					vrHelp = 
+					vrHelp =
 					{
 						{
 							position = 1,
 							--[=[ TODO: update after resolving APPLINK-16052
 
-							image = 
+							image =
 							{
 								imageType = "DYNAMIC",
 								value = strAppFolder .. "action.png"
@@ -32248,19 +32248,19 @@ end
 						}
 					},
 					--Checked below
-					-- menuIcon = 
+					-- menuIcon =
 					-- {
 					-- 	imageType = "DYNAMIC",
 					-- 	value = strAppFolder .. "action.png"
 					-- },
 					vrHelpTitle = "VR help title",
-					keyboardProperties = 
+					keyboardProperties =
 					{
 						keyboardLayout = "QWERTY",
 						keypressMode = "SINGLE_KEYPRESS",
 						--[=[ TODO: update after resolving APPLINK-16047
 
-						limitedCharacterList = 
+						limitedCharacterList =
 						{
 							"a"
 						},]=]
@@ -32277,43 +32277,43 @@ end
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
 
-			
+
 
 				--mobile side: expect SetGlobalProperties response
 				EXPECT_RESPONSE(cid, { success = false, resultCode = "REJECTED"})
 				:Timeout(iTimeout)
-						
+
 				--mobile side: expect OnHashChange notification is not send to mobile
 				EXPECT_NOTIFICATION("OnHashChange")
 				:Times(0)
 			end
 
 		--End test case ResultCodeCheck.2.1
-		-----------------------------------------------------------------------------------------		
+		-----------------------------------------------------------------------------------------
 
 		--Begin test case ResultCodeCheck.2.2
 		--Description: "2. SDL rejects the request with REJECTED resultCode when vrHelpItems are omitted and the vrHelpTitle is provided at the same time."
 
 
 			function Test:SetGlobalProperties_resultCode_REJECTED_omitted_vrHelpItems()
-			
+
 				--mobile side: sending SetGlobalProperties request
 				local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 				{
 					menuTitle = "Menu Title",
-					timeoutPrompt = 
+					timeoutPrompt =
 					{
 						{
 							text = "Timeout prompt",
 							type = "TEXT"
 						}
 					},
-					menuIcon = 
+					menuIcon =
 					{
 						value = "action.png",
 						imageType = "DYNAMIC"
 					},
-					helpPrompt = 
+					helpPrompt =
 					{
 						{
 							text = "Help prompt",
@@ -32321,11 +32321,11 @@ end
 						}
 					},
 					vrHelpTitle = "VR help title",
-					keyboardProperties = 
+					keyboardProperties =
 					{
 						keyboardLayout = "QWERTY",
 						keypressMode = "SINGLE_KEYPRESS",
-						limitedCharacterList = 
+						limitedCharacterList =
 						{
 							"a"
 						},
@@ -32333,43 +32333,43 @@ end
 						autoCompleteText = "Daemon, Freedom"
 					}
 				})
-			
+
 
 				--mobile side: expect SetGlobalProperties response
 				EXPECT_RESPONSE(cid, { success = false, resultCode = "REJECTED"})
 				:Timeout(iTimeout)
-						
+
 				--mobile side: expect OnHashChange notification is not send to mobile
 				EXPECT_NOTIFICATION("OnHashChange")
 				:Times(0)
 			end
-		
-		
+
+
 		--End test case ResultCodeCheck.2.2
-		-----------------------------------------------------------------------------------------		
+		-----------------------------------------------------------------------------------------
 
 		--Begin test case ResultCodeCheck.2.3
 		--Description: "3. SDL rejects the request with REJECTED resultCode when vrHelpTitle is omitted and the vrHelpItems are provided at the same time."
 
 
 			function Test:SetGlobalProperties_resultCode_REJECTED_omitted_vrHelpTitle()
-			
+
 				--mobile side: sending SetGlobalProperties request
 				local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 				{
 					menuTitle = "Menu Title",
-					timeoutPrompt = 
+					timeoutPrompt =
 					{
 						{
 							text = "Timeout prompt",
 							type = "TEXT"
 						}
 					},
-					vrHelp = 
+					vrHelp =
 					{
 						{
 							position = 1,
-							image = 
+							image =
 							{
 								value = "action.png",
 								imageType = "DYNAMIC"
@@ -32377,23 +32377,23 @@ end
 							text = "VR help item"
 						}
 					},
-					menuIcon = 
+					menuIcon =
 					{
 						value = "action.png",
 						imageType = "DYNAMIC"
 					},
-					helpPrompt = 
+					helpPrompt =
 					{
 						{
 							text = "Help prompt",
 							type = "TEXT"
 						}
 					},
-					keyboardProperties = 
+					keyboardProperties =
 					{
 						keyboardLayout = "QWERTY",
 						keypressMode = "SINGLE_KEYPRESS",
-						limitedCharacterList = 
+						limitedCharacterList =
 						{
 							"a"
 						},
@@ -32401,21 +32401,21 @@ end
 						autoCompleteText = "Daemon, Freedom"
 					}
 				})
-			
+
 
 
 				--mobile side: expect SetGlobalProperties response
 				EXPECT_RESPONSE(cid, { success = false, resultCode = "REJECTED"})
 				:Timeout(iTimeout)
-						
+
 				--mobile side: expect OnHashChange notification is not send to mobile
 				EXPECT_NOTIFICATION("OnHashChange")
 				:Times(0)
 			end
-		
-				
+
+
 		--End test case ResultCodeCheck.2.3
-		-----------------------------------------------------------------------------------------		
+		-----------------------------------------------------------------------------------------
 
 
 		--Begin test case ResultCodeCheck.2.4
@@ -32423,23 +32423,23 @@ end
 
 
 			function Test:SetGlobalProperties_resultCode_REJECTED_nonsequential_vrHelpItems()
-			
+
 				--mobile side: sending SetGlobalProperties request
 				local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 				{
 					menuTitle = "Menu Title",
-					timeoutPrompt = 
+					timeoutPrompt =
 					{
 						{
 							text = "Timeout prompt",
 							type = "TEXT"
 						}
 					},
-					vrHelp = 
+					vrHelp =
 					{
 						{
 							position = 1,
-							image = 
+							image =
 							{
 								value = "action.png",
 								imageType = "DYNAMIC"
@@ -32448,7 +32448,7 @@ end
 						},
 						{
 							position = 3,
-							image = 
+							image =
 							{
 								value = "action.png",
 								imageType = "DYNAMIC"
@@ -32456,12 +32456,12 @@ end
 							text = "VR help item 3"
 						}
 					},
-					menuIcon = 
+					menuIcon =
 					{
 						value = "action.png",
 						imageType = "DYNAMIC"
 					},
-					helpPrompt = 
+					helpPrompt =
 					{
 						{
 							text = "Help prompt",
@@ -32469,11 +32469,11 @@ end
 						}
 					},
 					vrHelpTitle = "VR help title",
-					keyboardProperties = 
+					keyboardProperties =
 					{
 						keyboardLayout = "QWERTY",
 						keypressMode = "SINGLE_KEYPRESS",
-						limitedCharacterList = 
+						limitedCharacterList =
 						{
 							"a"
 						},
@@ -32481,22 +32481,22 @@ end
 						autoCompleteText = "Daemon, Freedom"
 					}
 				})
-			
+
 
 				--mobile side: expect SetGlobalProperties response
 				EXPECT_RESPONSE(cid, { success = false, resultCode = "REJECTED"})
 				:Timeout(iTimeout)
-						
+
 				--mobile side: expect OnHashChange notification is not send to mobile
 				EXPECT_NOTIFICATION("OnHashChange")
 				:Times(0)
 			end
-		
-				
-		--End test case ResultCodeCheck.2.4
-		-----------------------------------------------------------------------------------------		
 
-		
+
+		--End test case ResultCodeCheck.2.4
+		-----------------------------------------------------------------------------------------
+
+
 	--End test case ResultCodeCheck.2
 	-----------------------------------------------------------------------------------------
 
@@ -32505,32 +32505,32 @@ end
 
 		--Requirement id in JAMA: SDLAQ-CRS-1330; APPLINK-15272
 
-		--Verification criteria: 
-			--When "ttsChunks" are sent within the request but the type is different from "TEXT" , WARNINGS is returned as a result of request. Info parameter provides additional information about the case. General request result success=true in case of no errors from other components. 
+		--Verification criteria:
+			--When "ttsChunks" are sent within the request but the type is different from "TEXT" , WARNINGS is returned as a result of request. Info parameter provides additional information about the case. General request result success=true in case of no errors from other components.
 
 			--When "ttsChunks" are sent within the request but the type is different from "TEXT", WARNINGS is returned as a result of request. Info parameter provides additional information about the case. General request result success=false in case of TTS is the only component which processes in the request.
 			--[=[ TODO: Add TCs to cover the point (success=false) after question APPLINK-16277 resolved ]=]
-			
+
 			--SDL must send WARNINGS (success:true) to mobile app in case HMI respond WARNINGS at least to one HMI-portions
 
 		function Test:SetGlobalProperties_resultCode_TTS_WARNINGS_true()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
-						type = "PRE_RECORDED" 
+						type = "PRE_RECORDED"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -32538,12 +32538,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -32551,11 +32551,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -32563,19 +32563,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "PRE_RECORDED"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -32589,19 +32589,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "WARNINGS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -32610,19 +32610,19 @@ end
 					}
 				},
 				--checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -32639,34 +32639,34 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "WARNINGS"})
-			:Timeout(iTimeout)			
-						
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
 
 		function Test:SetGlobalProperties_resultCode_UI_WARNINGS_true()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
-						type = "PRE_RECORDED" 
+						type = "PRE_RECORDED"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -32674,12 +32674,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -32687,11 +32687,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -32699,19 +32699,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "PRE_RECORDED"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -32725,19 +32725,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -32746,19 +32746,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -32776,21 +32776,21 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "WARNINGS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "WARNINGS"})
-			:Timeout(iTimeout)			
-						
+			:Timeout(iTimeout)
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
 
 	--End test case ResultCodeCheck.3
 	-----------------------------------------------------------------------------------------
-	
-	
-	
+
+
+
 	--Begin test case ResultCodeCheck.4
 	--Description: Check resultCode UNSUPPORTED_RESOURCE
 
@@ -32800,23 +32800,23 @@ end
 
 		--UI responses UNSUPPORTED_RESOURCE to SDL
 		function Test:SetGlobalProperties_UI_ResultCode_UNSUPPORTED_RESOURCE()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -32824,12 +32824,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -32837,11 +32837,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -32849,19 +32849,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -32875,19 +32875,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -32896,19 +32896,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -32926,35 +32926,35 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "UNSUPPORTED_RESOURCE", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "UNSUPPORTED_RESOURCE"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
-			EXPECT_NOTIFICATION("OnHashChange")			
+			EXPECT_NOTIFICATION("OnHashChange")
 		end
 
 		--TTS responses UNSUPPORTED_RESOURCE to SDL
 		function Test:SetGlobalProperties_TTS_ResultCode_UNSUPPORTED_RESOURCE()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -32962,12 +32962,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -32975,11 +32975,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -32987,19 +32987,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -33013,19 +33013,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "UNSUPPORTED_RESOURCE", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -33034,19 +33034,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -33064,12 +33064,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "WARNINGS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -33083,42 +33083,42 @@ end
 
 		--Requirement id in JAMA: SDLAQ-CRS-392
 
-		--Verification criteria: 
+		--Verification criteria:
 			 --1. SDL must return "resultCode: DISALLOWED, success:false" to the RPC in case this RPC is omitted in the PolicyTable group(s) assigned to the app that requests this RPC.
 
 			--2. SDL must return "resultCode: DISALLOWED, success:false" to the RPC in case this RPC is included to the PolicyTable group(s) assigned to the app that requests this RPC and the group has not yet received user's consents.
 
-		
+
 		--Begin test case ResultCodeCheck.5.1
 		--Description: RPC is omitted in the PolicyTable group(s) assigned to the app
 
---[[TODO: check after resolving APPLINK-13101				
+--[[TODO: check after resolving APPLINK-13101
 			--Description: Disallowed SetGlobalProperties
-			
+
 			--Precondition: Build policy table file
 			local PTName = testCasesForPolicyTable:createPolicyTableWithoutAPI(APIName)
-			
+
 			--Precondition: Update policy table
 			testCasesForPolicyTable:updatePolicy(PTName)
-			
+
 			function Test:SetGlobalProperties_resultCode_DISALLOWED()
-			
+
 				--mobile side: sending SetGlobalProperties request
 				local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 				{
 					menuTitle = "Menu Title",
-					timeoutPrompt = 
+					timeoutPrompt =
 					{
 						{
 							text = "Timeout prompt",
-							type = "PRE_RECORDED" 
+							type = "PRE_RECORDED"
 						}
 					},
-					vrHelp = 
+					vrHelp =
 					{
 						{
 							position = 1,
-							image = 
+							image =
 							{
 								value = "action.png",
 								imageType = "DYNAMIC"
@@ -33126,12 +33126,12 @@ end
 							text = "VR help item"
 						}
 					},
-					menuIcon = 
+					menuIcon =
 					{
 						value = "action.png",
 						imageType = "DYNAMIC"
 					},
-					helpPrompt = 
+					helpPrompt =
 					{
 						{
 							text = "Help prompt",
@@ -33139,11 +33139,11 @@ end
 						}
 					},
 					vrHelpTitle = "VR help title",
-					keyboardProperties = 
+					keyboardProperties =
 					{
 						keyboardLayout = "QWERTY",
 						keypressMode = "SINGLE_KEYPRESS",
-						limitedCharacterList = 
+						limitedCharacterList =
 						{
 							"a"
 						},
@@ -33151,53 +33151,53 @@ end
 						autoCompleteText = "Daemon, Freedom"
 					}
 				})
-			
+
 
 				--mobile side: expect SetGlobalProperties response
 				EXPECT_RESPONSE(cid, { success = false, resultCode = "DISALLOWED"})
 				:Timeout(iTimeout)
-						
+
 				--mobile side: expect OnHashChange notification is not send to mobile
 				EXPECT_NOTIFICATION("OnHashChange")
 				:Times(0)
 			end
 
-			
+
 		--End test case ResultCodeCheck.5.1
 		-----------------------------------------------------------------------------------------
-		
+
 		--Begin test case ResultCodeCheck.5.2
 		--Description: RPC is included to the PolicyTable group(s) assigned to the app. And the group has not yet received user's consents.
 
 			--Precondition: Build policy table file
 			local HmiLevels = {"FULL", "LIMITED", "BACKGROUND"}
 			local PTName = testCasesForPolicyTable:createPolicyTable(APIName, HmiLevels)
-			
+
 			--Precondition: Update policy table
 			local groupID = testCasesForPolicyTable:updatePolicy(PTName, "group1")
-			
+
 			--Precondition: User does not allow function group
-			testCasesForPolicyTable:userConsent(groupID, "group1", false)		
-		
+			testCasesForPolicyTable:userConsent(groupID, "group1", false)
+
 			--Description: Send SetGlobalProperties when user not allowed
 			function Test:SetGlobalProperties_resultCode_USER_DISALLOWED()
-			
+
 				--mobile side: sending SetGlobalProperties request
 				local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 				{
 					menuTitle = "Menu Title",
-					timeoutPrompt = 
+					timeoutPrompt =
 					{
 						{
 							text = "Timeout prompt",
-							type = "PRE_RECORDED" 
+							type = "PRE_RECORDED"
 						}
 					},
-					vrHelp = 
+					vrHelp =
 					{
 						{
 							position = 1,
-							image = 
+							image =
 							{
 								value = "action.png",
 								imageType = "DYNAMIC"
@@ -33205,12 +33205,12 @@ end
 							text = "VR help item"
 						}
 					},
-					menuIcon = 
+					menuIcon =
 					{
 						value = "action.png",
 						imageType = "DYNAMIC"
 					},
-					helpPrompt = 
+					helpPrompt =
 					{
 						{
 							text = "Help prompt",
@@ -33218,11 +33218,11 @@ end
 						}
 					},
 					vrHelpTitle = "VR help title",
-					keyboardProperties = 
+					keyboardProperties =
 					{
 						keyboardLayout = "QWERTY",
 						keypressMode = "SINGLE_KEYPRESS",
-						limitedCharacterList = 
+						limitedCharacterList =
 						{
 							"a"
 						},
@@ -33230,26 +33230,26 @@ end
 						autoCompleteText = "Daemon, Freedom"
 					}
 				})
-			
+
 
 				--mobile side: expect SetGlobalProperties response
 				EXPECT_RESPONSE(cid, { success = false, resultCode = "USER_DISALLOWED"})
 				:Timeout(iTimeout)
-						
+
 				--mobile side: expect OnHashChange notification is not send to mobile
 				EXPECT_NOTIFICATION("OnHashChange")
 				:Times(0)
 			end
 
-			
+
 			--Postcondition: User allows function group
-			testCasesForPolicyTable:userConsent(groupID, "group1", true)	
-		
+			testCasesForPolicyTable:userConsent(groupID, "group1", true)
+
 		--End test case ResultCodeCheck.5.2
 		-----------------------------------------------------------------------------------------
-]]	
+]]
 
-	
+
 	--End test case ResultCodeCheck.5
 	-----------------------------------------------------------------------------------------
 
@@ -33277,28 +33277,28 @@ end
 
 	--Verification criteria: The response contains 2 mandatory parameters "success" and "resultCode", "info" is sent if there is any additional information about the resultCode.
 
-	
+
 	--Begin test case HMINegativeCheck.1
 	--Description: Check SetGlobalProperties requests without UI responses from HMI
 
 		function Test:SetGlobalProperties_RequestWithoutUIResponsesFromHMI()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -33306,12 +33306,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -33319,11 +33319,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -33331,19 +33331,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -33362,13 +33362,13 @@ end
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -33377,19 +33377,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -33404,12 +33404,12 @@ end
 			:Do(function(_,data)
 				--hmi side: sending UI.SetGlobalProperties response
 				--self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-			end)		
+			end)
 
 			--mobile side: expect SetGlobalProperties response
-			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = nil})
+			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "UI component does not respond"})
 			:Timeout(12000)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -33423,23 +33423,23 @@ end
 	--Description: Check SetGlobalProperties requests without TTS responses from HMI
 
 		function Test:SetGlobalProperties_RequestWithoutTTSResponsesFromHMI()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -33447,12 +33447,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -33460,11 +33460,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -33478,14 +33478,14 @@ end
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -33504,13 +33504,13 @@ end
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -33519,19 +33519,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -33542,18 +33542,18 @@ end
 			:Timeout(iTimeout)
 			:ValidIf(function(_,data)
 				return Check_menuIconParams(data)
-      		end)			
+      		end)
 			:Do(function(_,data)
 				--hmi side: sending UI.SetGlobalProperties response
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
-			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = nil})
+			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "TTS component does not respond"})
 			:Timeout(12000)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -33567,23 +33567,23 @@ end
 	--Description: Check SetGlobalProperties requests without responses from HMI
 
 		function Test:SetGlobalProperties_RequestWithoutResponsesFromHMI()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -33591,12 +33591,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -33604,11 +33604,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -33616,12 +33616,12 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--mobile side: expect SetGlobalProperties response
-			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = nil})
+			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "UI, TTS component does not respond"})
 			:Timeout(12000)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -33642,23 +33642,23 @@ end
 		--Verification criteria:
 
 		function Test:SetGlobalProperties_UI_InvalidStructureOfResponse()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -33666,12 +33666,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -33679,11 +33679,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -33691,19 +33691,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -33717,19 +33717,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -33737,19 +33737,19 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					imageType = "DYNAMIC",
 					value = strAppFolder .. "action.png"
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -33763,12 +33763,12 @@ end
 				self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0", "code":0, "result":{"method":"UI.SetGlobalProperties"}}')
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -33786,23 +33786,23 @@ end
 		--Verification criteria:
 
 		function Test:SetGlobalProperties_TTS_InvalidStructureOfResponse()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -33810,12 +33810,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -33823,11 +33823,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -33835,19 +33835,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -33861,19 +33861,19 @@ end
 				self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0", "code":0, "result":{"method":"TTS.SetGlobalProperties"}}')
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -33881,19 +33881,19 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					imageType = "DYNAMIC",
 					value = strAppFolder .. "action.png"
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -33907,12 +33907,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -33926,23 +33926,23 @@ end
 	--Description: Check several responses from HMI (UI) to one request
 
 		function Test:SetGlobalProperties_UI_SeveralResponseToOneRequest()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -33950,12 +33950,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -33963,11 +33963,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -33975,19 +33975,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -34001,19 +34001,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -34022,19 +34022,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -34053,12 +34053,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -34071,23 +34071,23 @@ end
 	--Description: Check several responses from HMI (TTS) to one request
 
 		function Test:SetGlobalProperties_TTS_SeveralResponseToOneRequest()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -34095,12 +34095,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -34108,11 +34108,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -34120,19 +34120,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -34147,19 +34147,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -34168,19 +34168,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -34191,18 +34191,18 @@ end
 			:Timeout(iTimeout)
 			:ValidIf(function(_,data)
 				return Check_menuIconParams(data)
-      		end)			
+      		end)
 			:Do(function(_,data)
 				--hmi side: sending UI.SetGlobalProperties response
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -34221,23 +34221,23 @@ end
 			--SetGlobalProperties request ...
 
 		function Test:SetGlobalProperties_UI_ResponseWithFakeParamater()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -34245,12 +34245,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -34258,11 +34258,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -34270,19 +34270,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -34296,19 +34296,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -34316,19 +34316,19 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					imageType = "DYNAMIC",
 					value = strAppFolder .. "action.png"
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -34342,12 +34342,12 @@ end
 				self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"code":0, "fakeParam":0, "method":"UI.SetGlobalProperties"}}')
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -34365,23 +34365,23 @@ end
 			--SetGlobalProperties request ...
 
 		function Test:SetGlobalProperties_TTS_ResponseWithFakeParamater()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -34389,12 +34389,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -34402,11 +34402,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -34414,19 +34414,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -34440,19 +34440,19 @@ end
 				self.hmiConnection:Send('{"id":'..tostring(data.id)..',"jsonrpc":"2.0","result":{"code":0, "fakeParam":0, "method":"TTS.SetGlobalProperties"}}')
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -34460,19 +34460,19 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					imageType = "DYNAMIC",
 					value = strAppFolder .. "action.png"
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -34486,12 +34486,12 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "INVALID_DATA"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -34509,23 +34509,23 @@ end
 		--Verification criteria: The response contains 2 mandatory parameters "success" and "resultCode", "info" is sent if there is any additional information about the resultCode.
 
 		function Test:SetGlobalProperties_UI_WrongResponse_WithCorrectHMICorrelationID()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -34533,12 +34533,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -34546,11 +34546,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -34558,19 +34558,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -34584,19 +34584,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -34605,19 +34605,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -34627,18 +34627,18 @@ end
 			})
 			:ValidIf(function(_,data)
 				return Check_menuIconParams(data)
-      		end)			
+      		end)
 			:Do(function(_,data)
 				--hmi side: sending UI.SetGlobalProperties response
 				self.hmiConnection:SendResponse(data.id, "UI.Show", "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
 			:Timeout(12000)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -34656,23 +34656,23 @@ end
 		--Verification criteria: The response contains 2 mandatory parameters "success" and "resultCode", "info" is sent if there is any additional information about the resultCode.
 
 		function Test:SetGlobalProperties_TTS_WrongResponse_WithCorrectHMICorrelationID()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -34680,12 +34680,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -34693,11 +34693,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -34705,19 +34705,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -34731,19 +34731,19 @@ end
 				self.hmiConnection:SendResponse(data.id, "TTS.Speak", "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -34752,19 +34752,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -34775,18 +34775,18 @@ end
 			:Timeout(iTimeout)
 			:ValidIf(function(_,data)
 				return Check_menuIconParams(data)
-      		end)			
+      		end)
 			:Do(function(_,data)
 				--hmi side: sending UI.SetGlobalProperties response
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
 			:Timeout(12000)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -34796,29 +34796,29 @@ end
 	--End test case HMINegativeCheck.11
 	-----------------------------------------------------------------------------------------
 
-	
+
 	--Begin test case HMINegativeCheck.12
 	--Description: Check UI wrong response with wrong HMI correlation id
 
 		function Test:SetGlobalProperties_UI_Response_WithWrongHMICorrelationID_GENERIC_ERROR()
-		
+
 
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -34826,12 +34826,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -34839,11 +34839,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -34851,19 +34851,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -34877,19 +34877,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -34898,19 +34898,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -34927,12 +34927,12 @@ end
 				self.hmiConnection:SendResponse(data.id + 1, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
 			:Timeout(12000)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -34951,23 +34951,23 @@ end
 		--Verification criteria: The response contains 2 mandatory parameters "success" and "resultCode", "info" is sent if there is any additional information about the resultCode.
 
 		function Test:SetGlobalProperties_TTS_Response_WithWrongHMICorrelationID_GENERIC_ERROR()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -34975,12 +34975,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -34988,11 +34988,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -35000,19 +35000,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -35026,19 +35026,19 @@ end
 				self.hmiConnection:SendResponse(data.id + 1, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -35047,19 +35047,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -35070,18 +35070,18 @@ end
 			:Timeout(iTimeout)
 			:ValidIf(function(_,data)
 				return Check_menuIconParams(data)
-      		end)			
+      		end)
 			:Do(function(_,data)
 				--hmi side: sending UI.SetGlobalProperties response
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
 			:Timeout(12000)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -35113,19 +35113,19 @@ end
 			print("--------------------------------------------------------")
 		end
 
-		commonSteps:UnregisterApplication()	
+		commonSteps:UnregisterApplication()
 		commonSteps:StartSession()
 
 		function Test:Step_RegisterAppAndVerifyTTSGetProperties()
-			
+
 			self.mobileSession:StartService(7)
-			:Do(function()	
+			:Do(function()
 					local CorIdRegister = self.mobileSession:SendRPC("RegisterAppInterface", config.application1.registerAppInterfaceParams)
-					EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", 
+					EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered",
 					{
-					  application = 
+					  application =
 					  {
-						appName = config.application1.registerAppInterfaceParams.appName				
+						appName = config.application1.registerAppInterfaceParams.appName
 					  }
 					})
 					:Do(function(_,data)
@@ -35137,10 +35137,10 @@ end
 
 					self.mobileSession:ExpectNotification("OnHMIStatus", {hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
 				end)
-				
-				
-					
-				--Verify_ helpPrompt _isEmpty()	
+
+
+
+				--Verify_ helpPrompt _isEmpty()
 				--hmi side: expect TTS.SetGlobalProperties request
 				EXPECT_HMICALL("TTS.SetGlobalProperties")
 				:Do(function(_,data)
@@ -35148,7 +35148,7 @@ end
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
 				:ValidIf(function(_,data)
-					if 
+					if
 						data.params.timeoutPrompt then
 						print( "\27[31m TTS.SetGlobalProperties request came with unexpected timeoutPrompt parameter. \27[0m " )
 							return false
@@ -35160,13 +35160,13 @@ end
 						data.params.helpPrompt == nil then
 							print( "\27[31m UI.SetGlobalProperties request came without helpPrompt  \27[0m " )
 							return false
-					else 
+					else
 						print( "\27[31m UI.SetGlobalProperties request came with some unexpected values of helpPrompt, array length is " .. tostring(#data.params.helpPrompt) .. " \27[0m " )
 							return false
 					end
 
 				end)
-			
+
 		end
 
 		function Test:End_TC_SetGlobalProperties_01()
@@ -35183,22 +35183,22 @@ end
 			print("--------------------------------------------------------")
 		end
 
-		commonSteps:UnregisterApplication()	
+		commonSteps:UnregisterApplication()
 		commonSteps:StartSession()
 
 		function Test:Step_RegisterAppAndVerifyTTSGetProperties_background()
 			local RegisterParameters = copy_table(config.application1.registerAppInterfaceParams)
 			RegisterParameters.appID = "background"
 			RegisterParameters.appName = "background"
-			
+
 			self.mobileSession:StartService(7)
-			:Do(function()	
+			:Do(function()
 					local CorIdRegister = self.mobileSession:SendRPC("RegisterAppInterface", RegisterParameters)
-					EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", 
+					EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered",
 					{
-					  application = 
+					  application =
 					  {
-						appName = "background"			
+						appName = "background"
 					  }
 					})
 					:Do(function(_,data)
@@ -35210,10 +35210,10 @@ end
 
 					self.mobileSession:ExpectNotification("OnHMIStatus", {hmiLevel = "BACKGROUND", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
 				end)
-				
-				
-					
-				--Verify_ helpPrompt _isEmpty()	
+
+
+
+				--Verify_ helpPrompt _isEmpty()
 				--hmi side: expect TTS.SetGlobalProperties request
 				EXPECT_HMICALL("TTS.SetGlobalProperties")
 				:Do(function(_,data)
@@ -35221,7 +35221,7 @@ end
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
 				:ValidIf(function(_,data)
-					if 
+					if
 						data.params.timeoutPrompt then
 						print( "\27[31m TTS.SetGlobalProperties request came with unexpected timeoutPrompt parameter. \27[0m " )
 							return false
@@ -35233,13 +35233,13 @@ end
 						data.params.helpPrompt == nil then
 							print( "\27[31m UI.SetGlobalProperties request came without helpPrompt  \27[0m " )
 							return false
-					else 
+					else
 						print( "\27[31m UI.SetGlobalProperties request came with some unexpected values of helpPrompt, array length is " .. tostring(#data.params.helpPrompt) .. " \27[0m " )
 							return false
 					end
 
 				end)
-			
+
 		end
 
 		function Test:End_TC_SetGlobalProperties_02()
@@ -35256,19 +35256,19 @@ end
 			print("--------------------------------------------------------")
 		end
 
-		commonSteps:UnregisterApplication()	
+		commonSteps:UnregisterApplication()
 		commonSteps:StartSession()
 
 		function Test:Step_RegisterApp()
 
 			self.mobileSession:StartService(7)
-			:Do(function()	
+			:Do(function()
 					local CorIdRegister = self.mobileSession:SendRPC("RegisterAppInterface", config.application1.registerAppInterfaceParams)
-					EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", 
+					EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered",
 					{
-					  application = 
+					  application =
 					  {
-						appName = config.application1.registerAppInterfaceParams.appName				
+						appName = config.application1.registerAppInterfaceParams.appName
 					  }
 					})
 					:Do(function(_,data)
@@ -35292,12 +35292,12 @@ end
 				if
 					data.result.isSDLAllowed ~= true then
 					local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", {language = "EN-US", messageCodes = {"DataConsent"}})
-					
+
 					--hmi side: expect SDL.GetUserFriendlyMessage message response
 					--TODO: update after resolving APPLINK-16094.
 					--EXPECT_HMIRESPONSE(RequestId,{result = {code = 0, method = "SDL.GetUserFriendlyMessage"}})
 					EXPECT_HMIRESPONSE(RequestId)
-					:Do(function(_,data)						
+					:Do(function(_,data)
 						--hmi side: send request SDL.OnAllowSDLFunctionality
 						self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality", {allowed = true, source = "GUI", device = {id = config.deviceMAC, name = "127.0.0.1"}})
 
@@ -35312,7 +35312,7 @@ end
 
 				end
 			end)
-		
+
 			--mobile side: expect notification
 			EXPECT_NOTIFICATION("OnHMIStatus", {hmiLevel = "FULL", systemContext = "MAIN"})
 				:Do(function(_,data)
@@ -35324,26 +35324,26 @@ end
 			local cid = self.mobileSession:SendRPC("AddCommand",
 			{
 				cmdID = 11,
-				menuParams = 	
-				{ 
+				menuParams =
+				{
 					--parentID = 1,
 					--position = 0,
 					menuName ="Policies Test"
-				}, 
-				vrCommands = 
-				{ 
+				},
+				vrCommands =
+				{
 					"Policies Test",
 					"Policies"
 				}
 			})
-			
+
 			--/* UI */
-			EXPECT_HMICALL("UI.AddCommand", 
-			{ 
+			EXPECT_HMICALL("UI.AddCommand",
+			{
 				cmdID = 11,
-				menuParams = 
-				{ 
-					--parentID = 1,	
+				menuParams =
+				{
+					--parentID = 1,
 					--position = 0,
 					menuName ="Policies Test"
 				}
@@ -35351,12 +35351,12 @@ end
 			:Do(function(_,data)
 			self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
-			
+
 			--/* VR */
-			EXPECT_HMICALL("VR.AddCommand", 
-			{ 
+			EXPECT_HMICALL("VR.AddCommand",
+			{
 				cmdID = 11,
-				vrCommands = 
+				vrCommands =
 				{
 					"Policies Test",
 					"Policies"
@@ -35364,36 +35364,36 @@ end
 			})
 			:Do(function(_,data)
 			self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-			end)			
-			
+			end)
+
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 			EXPECT_NOTIFICATION("OnHashChange")
-		end 
+		end
 
 		function Test:Step_AddCommand_XML_Test()
 			local cid = self.mobileSession:SendRPC("AddCommand",
 			{
 				cmdID = 12,
-				menuParams = 	
-				{ 
+				menuParams =
+				{
 					--parentID = 1,
 					--position = 0,
 					menuName ="XML Test"
-				}, 
-				vrCommands = 
-				{ 
+				},
+				vrCommands =
+				{
 					"XML Test",
 					"XML"
 				}
 			})
-			
+
 			--/* UI */
-			EXPECT_HMICALL("UI.AddCommand", 
-			{ 
+			EXPECT_HMICALL("UI.AddCommand",
+			{
 				cmdID = 12,
-				menuParams = 
-				{ 
-					--parentID = 1,	
+				menuParams =
+				{
+					--parentID = 1,
 					--position = 0,
 					menuName ="XML Test"
 				}
@@ -35401,12 +35401,12 @@ end
 			:Do(function(_,data)
 			self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
-			
+
 			--/* VR */
-			EXPECT_HMICALL("VR.AddCommand", 
-			{ 
+			EXPECT_HMICALL("VR.AddCommand",
+			{
 				cmdID = 12,
-				vrCommands = 
+				vrCommands =
 				{
 					"XML Test",
 					"XML"
@@ -35414,18 +35414,18 @@ end
 			})
 			:Do(function(_,data)
 			self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-			end)			
-			
+			end)
+
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 			EXPECT_NOTIFICATION("OnHashChange")
-		end 
+		end
 
 		function Test:Step_Verify_TTS_SetGlobalProperties_after_activation_in_Full()
 			local TimeOfPropRequest
 
-			EXPECT_HMICALL("TTS.SetGlobalProperties", 
+			EXPECT_HMICALL("TTS.SetGlobalProperties",
 				{
-					helpPrompt = 
+					helpPrompt =
 					{
 						{
 							text = "Policies Test",
@@ -35456,25 +35456,25 @@ end
 						return true
 				end
 			end)
-						
+
 			--mobile side: expect OnHashChange notification
-			EXPECT_NOTIFICATION("OnHashChange")			
-			:Timeout(27000)		
+			EXPECT_NOTIFICATION("OnHashChange")
+			:Timeout(27000)
 			:Times(0)
 
-			DelayedExp(2000)		
-		end 
+			DelayedExp(2000)
+		end
 
 		function Test:End_TC_SetGlobalProperties_03()
 			print("--------------------------------------------------------")
-		end		
+		end
 	--End test case SequenceCheck.3
 	-----------------------------------------------------------------------------------------
 
 
 		--Begin test case SequenceCheck.3.1
 		--[[
-		Description: Check for manual test case TC_SetGlobalProperties_02, extra check, not covered in original: 
+		Description: Check for manual test case TC_SetGlobalProperties_02, extra check, not covered in original:
 		SDL sends TTS.SetGlobalProperties request in 20 seconds from activation to LIMITED with the default list of
 		HelpPrompts is a list of TTSChunks ( UI commands) defined as “TEXT” type, which are the list of the commands.
 		--]]
@@ -35483,19 +35483,19 @@ end
 			print("--------------------------------------------------------")
 		end
 
-		commonSteps:UnregisterApplication()	
+		commonSteps:UnregisterApplication()
 		commonSteps:StartSession()
 
 		function Test:Step_RegisterApp()
 
 			self.mobileSession:StartService(7)
-			:Do(function()	
+			:Do(function()
 					local CorIdRegister = self.mobileSession:SendRPC("RegisterAppInterface", config.application1.registerAppInterfaceParams)
-					EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", 
+					EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered",
 					{
-					  application = 
+					  application =
 					  {
-						appName = config.application1.registerAppInterfaceParams.appName				
+						appName = config.application1.registerAppInterfaceParams.appName
 					  }
 					})
 					:Do(function(_,data)
@@ -35519,12 +35519,12 @@ end
 				if
 					data.result.isSDLAllowed ~= true then
 					local RequestId = self.hmiConnection:SendRequest("SDL.GetUserFriendlyMessage", {language = "EN-US", messageCodes = {"DataConsent"}})
-					
+
 					--hmi side: expect SDL.GetUserFriendlyMessage message response
 					--TODO: update after resolving APPLINK-16094.
 					--EXPECT_HMIRESPONSE(RequestId,{result = {code = 0, method = "SDL.GetUserFriendlyMessage"}})
 					EXPECT_HMIRESPONSE(RequestId)
-					:Do(function(_,data)						
+					:Do(function(_,data)
 						--hmi side: send request SDL.OnAllowSDLFunctionality
 						self.hmiConnection:SendNotification("SDL.OnAllowSDLFunctionality", {allowed = true, source = "GUI", device = {id = config.deviceMAC, name = "127.0.0.1"}})
 
@@ -35539,7 +35539,7 @@ end
 
 				end
 			end)
-		
+
 			--mobile side: expect notification
 			EXPECT_NOTIFICATION("OnHMIStatus", {hmiLevel = "FULL", systemContext = "MAIN"})
 				:Do(function(_,data)
@@ -35560,26 +35560,26 @@ end
 			local cid = self.mobileSession:SendRPC("AddCommand",
 			{
 				cmdID = 11,
-				menuParams = 	
-				{ 
+				menuParams =
+				{
 					--parentID = 1,
 					--position = 0,
 					menuName ="Policies Test"
-				}, 
-				vrCommands = 
-				{ 
+				},
+				vrCommands =
+				{
 					"Policies Test",
 					"Policies"
 				}
 			})
-			
+
 			--/* UI */
-			EXPECT_HMICALL("UI.AddCommand", 
-			{ 
+			EXPECT_HMICALL("UI.AddCommand",
+			{
 				cmdID = 11,
-				menuParams = 
-				{ 
-					--parentID = 1,	
+				menuParams =
+				{
+					--parentID = 1,
 					--position = 0,
 					menuName ="Policies Test"
 				}
@@ -35587,12 +35587,12 @@ end
 			:Do(function(_,data)
 			self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
-			
+
 			--/* VR */
-			EXPECT_HMICALL("VR.AddCommand", 
-			{ 
+			EXPECT_HMICALL("VR.AddCommand",
+			{
 				cmdID = 11,
-				vrCommands = 
+				vrCommands =
 				{
 					"Policies Test",
 					"Policies"
@@ -35600,36 +35600,36 @@ end
 			})
 			:Do(function(_,data)
 			self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-			end)			
-			
+			end)
+
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 			EXPECT_NOTIFICATION("OnHashChange")
-		end 
+		end
 
 		function Test:Step_AddCommand_XML_Test()
 			local cid = self.mobileSession:SendRPC("AddCommand",
 			{
 				cmdID = 12,
-				menuParams = 	
-				{ 
+				menuParams =
+				{
 					--parentID = 1,
 					--position = 0,
 					menuName ="XML Test"
-				}, 
-				vrCommands = 
-				{ 
+				},
+				vrCommands =
+				{
 					"XML Test",
 					"XML"
 				}
 			})
-			
+
 			--/* UI */
-			EXPECT_HMICALL("UI.AddCommand", 
-			{ 
+			EXPECT_HMICALL("UI.AddCommand",
+			{
 				cmdID = 12,
-				menuParams = 
-				{ 
-					--parentID = 1,	
+				menuParams =
+				{
+					--parentID = 1,
 					--position = 0,
 					menuName ="XML Test"
 				}
@@ -35637,12 +35637,12 @@ end
 			:Do(function(_,data)
 			self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
-			
+
 			--/* VR */
-			EXPECT_HMICALL("VR.AddCommand", 
-			{ 
+			EXPECT_HMICALL("VR.AddCommand",
+			{
 				cmdID = 12,
-				vrCommands = 
+				vrCommands =
 				{
 					"XML Test",
 					"XML"
@@ -35650,18 +35650,18 @@ end
 			})
 			:Do(function(_,data)
 			self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-			end)			
-			
+			end)
+
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 			EXPECT_NOTIFICATION("OnHashChange")
-		end 
+		end
 
 		function Test:Step_Verify_TTS_SetGlobalProperties_after_activation_in_Limited()
 			local TimeOfPropRequest
 
-			EXPECT_HMICALL("TTS.SetGlobalProperties", 
+			EXPECT_HMICALL("TTS.SetGlobalProperties",
 				{
-					helpPrompt = 
+					helpPrompt =
 					{
 						{
 							text = "Policies Test",
@@ -35692,18 +35692,18 @@ end
 						return true
 				end
 			end)
-						
+
 			--mobile side: expect OnHashChange notification
-			EXPECT_NOTIFICATION("OnHashChange")			
-			:Timeout(27000)		
+			EXPECT_NOTIFICATION("OnHashChange")
+			:Timeout(27000)
 			:Times(0)
 
-			DelayedExp(2000)		
-		end 
+			DelayedExp(2000)
+		end
 
 		function Test:End_TC_SetGlobalProperties_3_1()
 			print("--------------------------------------------------------")
-		end		
+		end
 	--End test case SequenceCheck.3.1
 	-----------------------------------------------------------------------------------------
 
@@ -35714,21 +35714,21 @@ end
 		function Test:Begin_TC_SetGlobalProperties_04()
 			print("--------------------------------------------------------")
 		end
-		
-		commonSteps:UnregisterApplication()	
+
+		commonSteps:UnregisterApplication()
 		commonSteps:StartSession()
-		
+
 		function Test:Step_RegisterAppAndVerifyTTSGetProperties()
-			--RegisterAppAndVerifyTTSGetProperties()	
-			
+			--RegisterAppAndVerifyTTSGetProperties()
+
 			self.mobileSession:StartService(7)
-			:Do(function()	
+			:Do(function()
 					local CorIdRegister = self.mobileSession:SendRPC("RegisterAppInterface", config.application1.registerAppInterfaceParams)
-					EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", 
+					EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered",
 					{
-					  application = 
+					  application =
 					  {
-						appName = config.application1.registerAppInterfaceParams.appName				
+						appName = config.application1.registerAppInterfaceParams.appName
 					  }
 					})
 					:Do(function(_,data)
@@ -35740,10 +35740,10 @@ end
 
 					self.mobileSession:ExpectNotification("OnHMIStatus", {hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
 				end)
-				
-				
-					
-				--Verify_ helpPrompt _isEmpty()	
+
+
+
+				--Verify_ helpPrompt _isEmpty()
 				--hmi side: expect TTS.SetGlobalProperties request
 				EXPECT_HMICALL("TTS.SetGlobalProperties")
 				:Timeout(iTimeout)
@@ -35752,7 +35752,7 @@ end
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
 				:ValidIf(function(_,data)
-					if 
+					if
 						data.params.timeoutPrompt then
 						print( "\27[31m TTS.SetGlobalProperties request came with unexpected timeoutPrompt parameter. \27[0m " )
 							return false
@@ -35764,7 +35764,7 @@ end
 						data.params.helpPrompt == nil then
 							print( "\27[31m UI.SetGlobalProperties request came without helpPrompt  \27[0m " )
 							return false
-					else 
+					else
 						print( "\27[31m UI.SetGlobalProperties request came with some unexpected values of helpPrompt, array length is " .. tostring(#data.params.helpPrompt) .. " \27[0m " )
 							return false
 					end
@@ -35773,19 +35773,19 @@ end
 		end
 
 		commonSteps:ActivationApp()
-		
+
 		function Test:Step_PutFile()
-			
+
 			local cid = self.mobileSession:SendRPC(
 				"PutFile",
 				{
 					syncFileName = "action.png",
 					fileType = "GRAPHIC_PNG"
-				}, 
+				},
 				"files/action.png"
-			) 
+			)
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
-			
+
 		end
 
 		function Test:Step_SendSetGlobalPropertiesRequest()
@@ -35794,18 +35794,18 @@ end
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -35813,12 +35813,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -35826,11 +35826,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -35843,14 +35843,14 @@ end
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -35870,13 +35870,13 @@ end
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -35885,19 +35885,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -35908,7 +35908,7 @@ end
 			:Timeout(iTimeout)
 			:ValidIf(function(_,data)
 				return Check_menuIconParams(data)
-      		end)			
+      		end)
 			:Do(function(_,data)
 				--hmi side: sending UI.SetGlobalProperties response
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
@@ -35919,7 +35919,7 @@ end
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-			
+
 			--mobile side: expect OnHashChange notification
 			EXPECT_NOTIFICATION("OnHashChange")
 		end
@@ -35930,11 +35930,11 @@ end
 
 			DelayedExp(22000)
 
-		end 
+		end
 
 		function Test:End_TC_SetGlobalProperties_04()
 			print("--------------------------------------------------------")
-		end		
+		end
 
 	--End test case SequenceCheck.4
 	-----------------------------------------------------------------------------------------
@@ -35949,21 +35949,21 @@ end
 		function Test:Begin_TC_SetGlobalProperties_05()
 			print("--------------------------------------------------------")
 		end
-		
-		commonSteps:UnregisterApplication()	
+
+		commonSteps:UnregisterApplication()
 		commonSteps:StartSession()
 
 		function Test:Step_RegisterAppAndVerifyTTSGetProperties()
-			--RegisterAppAndVerifyTTSGetProperties()	
-			
+			--RegisterAppAndVerifyTTSGetProperties()
+
 			self.mobileSession:StartService(7)
-			:Do(function()	
+			:Do(function()
 					local CorIdRegister = self.mobileSession:SendRPC("RegisterAppInterface", config.application1.registerAppInterfaceParams)
-					EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", 
+					EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered",
 					{
-					  application = 
+					  application =
 					  {
-						appName = config.application1.registerAppInterfaceParams.appName				
+						appName = config.application1.registerAppInterfaceParams.appName
 					  }
 					})
 					:Do(function(_,data)
@@ -35975,10 +35975,10 @@ end
 
 					self.mobileSession:ExpectNotification("OnHMIStatus", {hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
 				end)
-				
-				
-					
-				--Verify_ helpPrompt _isEmpty()	
+
+
+
+				--Verify_ helpPrompt _isEmpty()
 				--hmi side: expect TTS.SetGlobalProperties request
 				EXPECT_HMICALL("TTS.SetGlobalProperties")
 				-- {
@@ -35990,7 +35990,7 @@ end
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
 				:ValidIf(function(_,data)
-					if 
+					if
 						data.params.helpPrompt and
 						#data.params.helpPrompt == 0 then
 							return true
@@ -35998,24 +35998,24 @@ end
 						data.params.helpPrompt == nil then
 							print( "\27[31m UI.SetGlobalProperties request came without helpPrompt  \27[0m " )
 							return false
-					else 
+					else
 						print( "\27[31m UI.SetGlobalProperties request came with some unexpected values of helpPrompt, array length is " .. tostring(#data.params.helpPrompt) .. " \27[0m " )
 							return false
 					end
 
 				end)
 
-			
-			
+
+
 		end
 
 		commonSteps:ActivationApp()
-		
+
 		function Test:Step_SendResetGlobalProperties()
 			local cid = self.mobileSession:SendRPC("ResetGlobalProperties",
 				{
-					properties = 	
-					{ 
+					properties =
+					{
 						"HELPPROMPT",
 						"TIMEOUTPROMPT",
 						"VRHELPTITLE",
@@ -36025,11 +36025,11 @@ end
 						"KEYBOARDPROPERTIES"
 					}
 				})
-		  
+
 				--/* UI */
-				EXPECT_HMICALL("UI.SetGlobalProperties", 
-				{ 
-					keyboardProperties = 
+				EXPECT_HMICALL("UI.SetGlobalProperties",
+				{
+					keyboardProperties =
 					{
 						autoCompleteText = "",
 						keyboardLayout = "QWERTY",
@@ -36040,29 +36040,29 @@ end
 				})
 				:Do(function(_,data)
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-				end)	
+				end)
 
 				--/* TTS */
-				EXPECT_HMICALL("TTS.SetGlobalProperties", 
-				{ 
+				EXPECT_HMICALL("TTS.SetGlobalProperties",
+				{
 					-- helpPrompt = {},
-					timeoutPrompt = 
+					timeoutPrompt =
 					{
 						{
-							text = "Please speak one of the following commands,", 
+							text = "Please speak one of the following commands,",
 							type = "TEXT"
 						},
 						{
 							text = "Please say a command,",
 							type = "TEXT"
-						}			
+						}
 					}
 				})
 				:Do(function(_,data)
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
 				:ValidIf(function(_,data)
-					if 
+					if
 						data.params.helpPrompt and
 						#data.params.helpPrompt == 0 then
 							return true
@@ -36070,7 +36070,7 @@ end
 						data.params.helpPrompt == nil then
 							print( "\27[31m UI.SetGlobalProperties request came without helpPrompt  \27[0m " )
 							return false
-					else 
+					else
 						print( "\27[31m UI.SetGlobalProperties request came with some unexpected values of helpPrompt, array length is " .. tostring(#data.params.helpPrompt) .. " \27[0m " )
 							return false
 					end
@@ -36079,8 +36079,8 @@ end
 
 
 				EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
-				EXPECT_NOTIFICATION("OnHashChange")	
-			
+				EXPECT_NOTIFICATION("OnHashChange")
+
 		end
 
 		function Test:Step_Verify_TTS_SetGlobalProperties_IsNotSend()
@@ -36088,8 +36088,8 @@ end
 				:Times(0)
 
 			DelayedExp(22000)
-		end 
-		
+		end
+
 		function Test:End_TC_SetGlobalProperties_05()
 			print("--------------------------------------------------------")
 		end
@@ -36105,23 +36105,23 @@ end
 		function Test:Begin_TC_SetGlobalProperties_6_1()
 			print("--------------------------------------------------------")
 		end
-		
-		commonSteps:UnregisterApplication()	
+
+		commonSteps:UnregisterApplication()
 		commonSteps:StartSession()
 
 		local RegisterParams
 		function Test:Step_RegisterAppAndVerifyTTSGetProperties_full_level()
 			RegisterParams = copy_table(config.application1.registerAppInterfaceParams)
 			RegisterParams.isMediaApplication = true
-			
+
 			self.mobileSession:StartService(7)
-			:Do(function()	
+			:Do(function()
 					local CorIdRegister = self.mobileSession:SendRPC("RegisterAppInterface", RegisterParams)
-					EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", 
+					EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered",
 					{
-					  application = 
+					  application =
 					  {
-						appName = config.application1.registerAppInterfaceParams.appName				
+						appName = config.application1.registerAppInterfaceParams.appName
 					  }
 					})
 					:Do(function(_,data)
@@ -36133,7 +36133,7 @@ end
 
 					self.mobileSession:ExpectNotification("OnHMIStatus", {hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
 			end)
-			
+
 		end
 
 		commonSteps:ActivationApp()
@@ -36142,26 +36142,26 @@ end
 			local cid = self.mobileSession:SendRPC("AddCommand",
 			{
 				cmdID = 11,
-				menuParams = 	
-				{ 
+				menuParams =
+				{
 					--parentID = 1,
 					--position = 0,
 					menuName ="Policies Test"
-				}, 
-				vrCommands = 
-				{ 
+				},
+				vrCommands =
+				{
 					"Policies Test",
 					"Policies"
 				}
 			})
-			
+
 			--/* UI */
-			EXPECT_HMICALL("UI.AddCommand", 
-			{ 
+			EXPECT_HMICALL("UI.AddCommand",
+			{
 				cmdID = 11,
-				menuParams = 
-				{ 
-					--parentID = 1,	
+				menuParams =
+				{
+					--parentID = 1,
 					--position = 0,
 					menuName ="Policies Test"
 				}
@@ -36169,12 +36169,12 @@ end
 			:Do(function(_,data)
 			self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
-			
+
 			--/* VR */
-			EXPECT_HMICALL("VR.AddCommand", 
-			{ 
+			EXPECT_HMICALL("VR.AddCommand",
+			{
 				cmdID = 11,
-				vrCommands = 
+				vrCommands =
 				{
 					"Policies Test",
 					"Policies"
@@ -36182,39 +36182,39 @@ end
 			})
 			:Do(function(_,data)
 			self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-			end)			
-			
+			end)
+
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 			EXPECT_NOTIFICATION("OnHashChange")
 				:Do(function(_,data)
 					self.hashId = data.payload.hashID
 				end)
-		end 
+		end
 
 		function Test:Step_AddCommand_XML_Test_full_level()
 			local cid = self.mobileSession:SendRPC("AddCommand",
 			{
 				cmdID = 12,
-				menuParams = 	
-				{ 
+				menuParams =
+				{
 					--parentID = 1,
 					--position = 0,
 					menuName ="XML Test"
-				}, 
-				vrCommands = 
-				{ 
+				},
+				vrCommands =
+				{
 					"XML Test",
 					"XML"
 				}
 			})
-			
+
 			--/* UI */
-			EXPECT_HMICALL("UI.AddCommand", 
-			{ 
+			EXPECT_HMICALL("UI.AddCommand",
+			{
 				cmdID = 12,
-				menuParams = 
-				{ 
-					--parentID = 1,	
+				menuParams =
+				{
+					--parentID = 1,
 					--position = 0,
 					menuName ="XML Test"
 				}
@@ -36222,12 +36222,12 @@ end
 			:Do(function(_,data)
 			self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
-			
+
 			--/* VR */
-			EXPECT_HMICALL("VR.AddCommand", 
-			{ 
+			EXPECT_HMICALL("VR.AddCommand",
+			{
 				cmdID = 12,
-				vrCommands = 
+				vrCommands =
 				{
 					"XML Test",
 					"XML"
@@ -36235,14 +36235,14 @@ end
 			})
 			:Do(function(_,data)
 			self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-			end)			
-			
+			end)
+
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 			EXPECT_NOTIFICATION("OnHashChange")
 				:Do(function(_,data)
 					self.hashId = data.payload.hashID
 				end)
-		end 
+		end
 
 		function Test:SetAppToFullCloseSession()
 
@@ -36256,17 +36256,17 @@ end
 
 		local TimeActivationToFull
 		function Test:Step_RegisterAppAndVerifyTTSGetProperties_Resumption_to_full_level()
-			
+
 			RegisterParams.hashID = self.hashId
 
 			self.mobileSession:StartService(7)
-			:Do(function()	
+			:Do(function()
 				local CorIdRegister = self.mobileSession:SendRPC("RegisterAppInterface", RegisterParams)
-				EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", 
+				EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered",
 				{
-				  application = 
+				  application =
 				  {
-					appName = config.application1.registerAppInterfaceParams.appName				
+					appName = config.application1.registerAppInterfaceParams.appName
 				  }
 				})
 				:Do(function(_,data)
@@ -36276,7 +36276,7 @@ end
 				self.mobileSession:ExpectResponse(CorIdRegister, { success = true, resultCode = "SUCCESS" })
 				:Timeout(2000)
 
-				self.mobileSession:ExpectNotification("OnHMIStatus", 
+				self.mobileSession:ExpectNotification("OnHMIStatus",
 					{hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"},
 					{hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
 					:Times(2)
@@ -36299,7 +36299,7 @@ end
 					end)
 					:Times(2)
 
-				--Verify_ helpPrompt _isEmpty()	
+				--Verify_ helpPrompt _isEmpty()
 				--hmi side: expect TTS.SetGlobalProperties request
 				EXPECT_HMICALL("TTS.SetGlobalProperties")
 				:Timeout(iTimeout)
@@ -36308,7 +36308,7 @@ end
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
 				:ValidIf(function(_,data)
-					if 
+					if
 						data.params.helpPrompt and
 						#data.params.helpPrompt == 0 then
 							return true
@@ -36316,22 +36316,22 @@ end
 						data.params.helpPrompt == nil then
 							print( "\27[31m UI.SetGlobalProperties request came without helpPrompt  \27[0m " )
 							return false
-					else 
+					else
 						print( "\27[31m UI.SetGlobalProperties request came with some unexpected values of helpPrompt, array length is " .. tostring(#data.params.helpPrompt) .. " \27[0m " )
 							return false
 					end
 				end)
 			end)
-			
+
 		end
 
 
 		function Test:Step_Verify_TTS_SetGlobalProperties_after_activation_in_full_level()
 			local TimeOfPropRequest
 
-			EXPECT_HMICALL("TTS.SetGlobalProperties", 
+			EXPECT_HMICALL("TTS.SetGlobalProperties",
 				{
-					helpPrompt = 
+					helpPrompt =
 					{
 						{
 							text = "Policies Test",
@@ -36362,16 +36362,16 @@ end
 						return true
 				end
 			end)
-						
+
 			--mobile side: expect OnHashChange notification
-			EXPECT_NOTIFICATION("OnHashChange")			
-			:Timeout(27000)		
+			EXPECT_NOTIFICATION("OnHashChange")
+			:Timeout(27000)
 			:Times(0)
 
-			DelayedExp(2000)		
-		end 
-		
-		
+			DelayedExp(2000)
+		end
+
+
 		function Test:End_TC_SetGlobalProperties_6_1()
 			print("--------------------------------------------------------")
 		end
@@ -36389,23 +36389,23 @@ end
 		function Test:Begin_TC_SetGlobalProperties_6_2()
 			print("--------------------------------------------------------")
 		end
-		
-		commonSteps:UnregisterApplication()	
+
+		commonSteps:UnregisterApplication()
 		commonSteps:StartSession()
 
 		local RegisterParams
 		function Test:Step_RegisterAppAndVerifyTTSGetProperties_limited()
 			RegisterParams = copy_table(config.application1.registerAppInterfaceParams)
 			RegisterParams.isMediaApplication = true
-			
+
 			self.mobileSession:StartService(7)
-			:Do(function()	
+			:Do(function()
 					local CorIdRegister = self.mobileSession:SendRPC("RegisterAppInterface", RegisterParams)
-					EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", 
+					EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered",
 					{
-					  application = 
+					  application =
 					  {
-						appName = config.application1.registerAppInterfaceParams.appName				
+						appName = config.application1.registerAppInterfaceParams.appName
 					  }
 					})
 					:Do(function(_,data)
@@ -36417,7 +36417,7 @@ end
 
 					self.mobileSession:ExpectNotification("OnHMIStatus", {hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
 			end)
-			
+
 		end
 
 		commonSteps:ActivationApp()
@@ -36426,26 +36426,26 @@ end
 			local cid = self.mobileSession:SendRPC("AddCommand",
 			{
 				cmdID = 11,
-				menuParams = 	
-				{ 
+				menuParams =
+				{
 					--parentID = 1,
 					--position = 0,
 					menuName ="Policies Test"
-				}, 
-				vrCommands = 
-				{ 
+				},
+				vrCommands =
+				{
 					"Policies Test",
 					"Policies"
 				}
 			})
-			
+
 			--/* UI */
-			EXPECT_HMICALL("UI.AddCommand", 
-			{ 
+			EXPECT_HMICALL("UI.AddCommand",
+			{
 				cmdID = 11,
-				menuParams = 
-				{ 
-					--parentID = 1,	
+				menuParams =
+				{
+					--parentID = 1,
 					--position = 0,
 					menuName ="Policies Test"
 				}
@@ -36453,12 +36453,12 @@ end
 			:Do(function(_,data)
 			self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
-			
+
 			--/* VR */
-			EXPECT_HMICALL("VR.AddCommand", 
-			{ 
+			EXPECT_HMICALL("VR.AddCommand",
+			{
 				cmdID = 11,
-				vrCommands = 
+				vrCommands =
 				{
 					"Policies Test",
 					"Policies"
@@ -36466,39 +36466,39 @@ end
 			})
 			:Do(function(_,data)
 			self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-			end)			
-			
+			end)
+
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 			EXPECT_NOTIFICATION("OnHashChange")
 				:Do(function(_,data)
 					self.hashId = data.payload.hashID
 				end)
-		end 
+		end
 
 		function Test:Step_AddCommand_XML_Test_limited()
 			local cid = self.mobileSession:SendRPC("AddCommand",
 			{
 				cmdID = 12,
-				menuParams = 	
-				{ 
+				menuParams =
+				{
 					--parentID = 1,
 					--position = 0,
 					menuName ="XML Test"
-				}, 
-				vrCommands = 
-				{ 
+				},
+				vrCommands =
+				{
 					"XML Test",
 					"XML"
 				}
 			})
-			
+
 			--/* UI */
-			EXPECT_HMICALL("UI.AddCommand", 
-			{ 
+			EXPECT_HMICALL("UI.AddCommand",
+			{
 				cmdID = 12,
-				menuParams = 
-				{ 
-					--parentID = 1,	
+				menuParams =
+				{
+					--parentID = 1,
 					--position = 0,
 					menuName ="XML Test"
 				}
@@ -36506,12 +36506,12 @@ end
 			:Do(function(_,data)
 			self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
-			
+
 			--/* VR */
-			EXPECT_HMICALL("VR.AddCommand", 
-			{ 
+			EXPECT_HMICALL("VR.AddCommand",
+			{
 				cmdID = 12,
-				vrCommands = 
+				vrCommands =
 				{
 					"XML Test",
 					"XML"
@@ -36519,14 +36519,14 @@ end
 			})
 			:Do(function(_,data)
 			self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-			end)			
-			
+			end)
+
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
 			EXPECT_NOTIFICATION("OnHashChange")
 				:Do(function(_,data)
 					self.hashId = data.payload.hashID
 				end)
-		end 
+		end
 
 		function Test:SetAppToLimitedCloseSession()
 
@@ -36547,17 +36547,17 @@ end
 
 		local TimeActivationToLimited
 		function Test:Step_RegisterAppAndVerifyTTSGetProperties_Resumption_to_limited()
-			
+
 			RegisterParams.hashID = self.hashId
 
 			self.mobileSession:StartService(7)
-			:Do(function()	
+			:Do(function()
 				local CorIdRegister = self.mobileSession:SendRPC("RegisterAppInterface", RegisterParams)
-				EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", 
+				EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered",
 				{
-				  application = 
+				  application =
 				  {
-					appName = config.application1.registerAppInterfaceParams.appName				
+					appName = config.application1.registerAppInterfaceParams.appName
 				  }
 				})
 				:Do(function(_,data)
@@ -36567,7 +36567,7 @@ end
 				self.mobileSession:ExpectResponse(CorIdRegister, { success = true, resultCode = "SUCCESS" })
 				:Timeout(2000)
 
-				self.mobileSession:ExpectNotification("OnHMIStatus", 
+				self.mobileSession:ExpectNotification("OnHMIStatus",
 					{hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"},
 					{hmiLevel = "LIMITED", audioStreamingState = "AUDIBLE", systemContext = "MAIN"})
 					:Times(2)
@@ -36590,7 +36590,7 @@ end
 					end)
 					:Times(2)
 
-				--Verify_ helpPrompt _isEmpty()	
+				--Verify_ helpPrompt _isEmpty()
 				--hmi side: expect TTS.SetGlobalProperties request
 				EXPECT_HMICALL("TTS.SetGlobalProperties")
 				:Timeout(iTimeout)
@@ -36599,7 +36599,7 @@ end
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
 				:ValidIf(function(_,data)
-					if 
+					if
 						data.params.helpPrompt and
 						#data.params.helpPrompt == 0 then
 							return true
@@ -36607,22 +36607,22 @@ end
 						data.params.helpPrompt == nil then
 							print( "\27[31m UI.SetGlobalProperties request came without helpPrompt  \27[0m " )
 							return false
-					else 
+					else
 						print( "\27[31m UI.SetGlobalProperties request came with some unexpected values of helpPrompt, array length is " .. tostring(#data.params.helpPrompt) .. " \27[0m " )
 							return false
 					end
 				end)
 			end)
-			
+
 		end
 
 
 		function Test:Step_Verify_TTS_SetGlobalProperties_after_activation_in_Limited()
 			local TimeOfPropRequest
 
-			EXPECT_HMICALL("TTS.SetGlobalProperties", 
+			EXPECT_HMICALL("TTS.SetGlobalProperties",
 				{
-					helpPrompt = 
+					helpPrompt =
 					{
 						{
 							text = "Policies Test",
@@ -36653,16 +36653,16 @@ end
 						return true
 				end
 			end)
-						
+
 			--mobile side: expect OnHashChange notification
-			EXPECT_NOTIFICATION("OnHashChange")			
-			:Timeout(27000)		
+			EXPECT_NOTIFICATION("OnHashChange")
+			:Timeout(27000)
 			:Times(0)
 
-			DelayedExp(2000)		
-		end 
-		
-		
+			DelayedExp(2000)
+		end
+
+
 		function Test:End_TC_SetGlobalProperties_6_2()
 			print("--------------------------------------------------------")
 		end
@@ -36670,7 +36670,7 @@ end
 	-----------------------------------------------------------------------------------------
 	]]
 
-	
+
 --End test suit SequenceCheck
 
 
@@ -36691,21 +36691,21 @@ end
 	--Begin test case DifferentHMIlevel.1
 	--Description: Check SetGlobalProperties request when application is in NONE HMI level
 
-		commonSteps:UnregisterApplication()	
+		commonSteps:UnregisterApplication()
 
 		commonSteps:StartSession()
 
 		function Test:RegisterApp_forTestingDiffHMIlevels()
-			--RegisterAppAndVerifyTTSGetProperties()	
-			
+			--RegisterAppAndVerifyTTSGetProperties()
+
 			self.mobileSession:StartService(7)
-			:Do(function()	
+			:Do(function()
 					local CorIdRegister = self.mobileSession:SendRPC("RegisterAppInterface", config.application1.registerAppInterfaceParams)
-					EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered", 
+					EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered",
 					{
-					  application = 
+					  application =
 					  {
-						appName = config.application1.registerAppInterfaceParams.appName				
+						appName = config.application1.registerAppInterfaceParams.appName
 					  }
 					})
 					:Do(function(_,data)
@@ -36717,47 +36717,47 @@ end
 
 					self.mobileSession:ExpectNotification("OnHMIStatus", {hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN"})
 				end)
-			
+
 		end
 
 		commonSteps:ActivationApp()
-	
+
 		-- Precondition: Change app to NONE HMI level
 		commonSteps:DeactivateAppToNoneHmiLevel()
-			
+
 		--Precondition: PutFile "action.png"
 		function Test:Step_PutFile()
-			
+
 			local cid = self.mobileSession:SendRPC(
 				"PutFile",
 				{
 					syncFileName = "action.png",
 					fileType = "GRAPHIC_PNG"
-				}, 
+				},
 				"files/action.png"
-			) 
+			)
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS" })
-			
+
 		end
 
 		function Test:SetGlobalProperties_HMILevelNONE_DISALLOWED()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -36765,12 +36765,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -36778,11 +36778,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -36790,11 +36790,11 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = false, resultCode = "DISALLOWED"})
 			:Timeout(12000)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
@@ -36802,7 +36802,7 @@ end
 
 		--Postcondition: Activate app
 		commonSteps:ActivationApp()
-			
+
 	--End test case DifferentHMIlevel.1
 	-----------------------------------------------------------------------------------------
 
@@ -36811,28 +36811,28 @@ end
 	--Description: Check SetGlobalProperties request when application is in LIMITTED HMI level
 
 		if commonFunctions:isMediaApp() then
-				
+
 			-- Precondition: Change app to LIMITED
-			commonSteps:ChangeHMIToLimited()	
-				
+			commonSteps:ChangeHMIToLimited()
+
 			function Test:SetGlobalProperties_HMILevelLimitted_SUCCESS()
-			
+
 				--mobile side: sending SetGlobalProperties request
 				local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 				{
 					menuTitle = "Menu Title",
-					timeoutPrompt = 
+					timeoutPrompt =
 					{
 						{
 							text = "Timeout prompt",
 							type = "TEXT"
 						}
 					},
-					vrHelp = 
+					vrHelp =
 					{
 						{
 							position = 1,
-							image = 
+							image =
 							{
 								value = "action.png",
 								imageType = "DYNAMIC"
@@ -36840,12 +36840,12 @@ end
 							text = "VR help item"
 						}
 					},
-					menuIcon = 
+					menuIcon =
 					{
 						value = "action.png",
 						imageType = "DYNAMIC"
 					},
-					helpPrompt = 
+					helpPrompt =
 					{
 						{
 							text = "Help prompt",
@@ -36853,11 +36853,11 @@ end
 						}
 					},
 					vrHelpTitle = "VR help title",
-					keyboardProperties = 
+					keyboardProperties =
 					{
 						keyboardLayout = "QWERTY",
 						keypressMode = "SINGLE_KEYPRESS",
-						limitedCharacterList = 
+						limitedCharacterList =
 						{
 							"a"
 						},
@@ -36865,19 +36865,19 @@ end
 						autoCompleteText = "Daemon, Freedom"
 					}
 				})
-			
+
 
 				--hmi side: expect TTS.SetGlobalProperties request
 				EXPECT_HMICALL("TTS.SetGlobalProperties",
 				{
-					timeoutPrompt = 
+					timeoutPrompt =
 					{
 						{
 							text = "Timeout prompt",
 							type = "TEXT"
 						}
 					},
-					helpPrompt = 
+					helpPrompt =
 					{
 						{
 							text = "Help prompt",
@@ -36891,19 +36891,19 @@ end
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
 
-			
+
 
 				--hmi side: expect UI.SetGlobalProperties request
 				EXPECT_HMICALL("UI.SetGlobalProperties",
 				{
 					menuTitle = "Menu Title",
-					vrHelp = 
+					vrHelp =
 					{
 						{
 							position = 1,
 							--[=[ TODO: update after resolving APPLINK-16052
 
-							image = 
+							image =
 							{
 								imageType = "DYNAMIC",
 								value = strAppFolder .. "action.png"
@@ -36912,19 +36912,19 @@ end
 						}
 					},
 					--Checked below
-					-- menuIcon = 
+					-- menuIcon =
 					-- {
 					-- 	imageType = "DYNAMIC",
 					-- 	value = strAppFolder .. "action.png"
 					-- },
 					vrHelpTitle = "VR help title",
-					keyboardProperties = 
+					keyboardProperties =
 					{
 						keyboardLayout = "QWERTY",
 						keypressMode = "SINGLE_KEYPRESS",
 						--[=[ TODO: update after resolving APPLINK-16047
 
-						limitedCharacterList = 
+						limitedCharacterList =
 						{
 							"a"
 						},]=]
@@ -36941,17 +36941,17 @@ end
 					self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 				end)
 
-			
+
 
 				--mobile side: expect SetGlobalProperties response
 				EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 				:Timeout(iTimeout)
-						
+
 				--mobile side: expect OnHashChange notification is not send to mobile
 				EXPECT_NOTIFICATION("OnHashChange")
 				:Times(0)
 			end
-		
+
 		end
 	--End test case DifferentHMIlevel.2
 	-----------------------------------------------------------------------------------------
@@ -36962,25 +36962,25 @@ end
 
 		-- Precondition 1: Change app to BACKGOUND HMI level
 		commonTestCases:ChangeAppToBackgroundHmiLevel()
-			
+
 		function Test:SetGlobalProperties_HMILevelBACKGOUND_SUCCESS()
-		
+
 			--mobile side: sending SetGlobalProperties request
 			local cid = self.mobileSession:SendRPC("SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
-						image = 
+						image =
 						{
 							value = "action.png",
 							imageType = "DYNAMIC"
@@ -36988,12 +36988,12 @@ end
 						text = "VR help item"
 					}
 				},
-				menuIcon = 
+				menuIcon =
 				{
 					value = "action.png",
 					imageType = "DYNAMIC"
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -37001,11 +37001,11 @@ end
 					}
 				},
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},
@@ -37013,19 +37013,19 @@ end
 					autoCompleteText = "Daemon, Freedom"
 				}
 			})
-		
+
 
 			--hmi side: expect TTS.SetGlobalProperties request
 			EXPECT_HMICALL("TTS.SetGlobalProperties",
 			{
-				timeoutPrompt = 
+				timeoutPrompt =
 				{
 					{
 						text = "Timeout prompt",
 						type = "TEXT"
 					}
 				},
-				helpPrompt = 
+				helpPrompt =
 				{
 					{
 						text = "Help prompt",
@@ -37039,19 +37039,19 @@ end
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--hmi side: expect UI.SetGlobalProperties request
 			EXPECT_HMICALL("UI.SetGlobalProperties",
 			{
 				menuTitle = "Menu Title",
-				vrHelp = 
+				vrHelp =
 				{
 					{
 						position = 1,
 						--[=[ TODO: update after resolving APPLINK-16052
 
-						image = 
+						image =
 						{
 							imageType = "DYNAMIC",
 							value = strAppFolder .. "action.png"
@@ -37060,19 +37060,19 @@ end
 					}
 				},
 				--Checked below
-				-- menuIcon = 
+				-- menuIcon =
 				-- {
 				-- 	imageType = "DYNAMIC",
 				-- 	value = strAppFolder .. "action.png"
 				-- },
 				vrHelpTitle = "VR help title",
-				keyboardProperties = 
+				keyboardProperties =
 				{
 					keyboardLayout = "QWERTY",
 					keypressMode = "SINGLE_KEYPRESS",
 					--[=[ TODO: update after resolving APPLINK-16047
 
-					limitedCharacterList = 
+					limitedCharacterList =
 					{
 						"a"
 					},]=]
@@ -37083,23 +37083,23 @@ end
 			:Timeout(iTimeout)
 			:ValidIf(function(_,data)
 				return Check_menuIconParams(data)
-      		end)			
+      		end)
 			:Do(function(_,data)
 				--hmi side: sending UI.SetGlobalProperties response
 				self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
 			end)
 
-		
+
 
 			--mobile side: expect SetGlobalProperties response
 			EXPECT_RESPONSE(cid, { success = true, resultCode = "SUCCESS"})
 			:Timeout(iTimeout)
-						
+
 			--mobile side: expect OnHashChange notification is not send to mobile
 			EXPECT_NOTIFICATION("OnHashChange")
 			:Times(0)
 		end
-		
+
 	--End test case DifferentHMIlevel.3
 
 	-----------------------------------------------------------------------------------------
@@ -37107,7 +37107,7 @@ end
 -------------------------------------------Postconditions-------------------------------------
 ---------------------------------------------------------------------------------------------
 
-		function Test:RemoveConfigurationFiles()    
+		function Test:RemoveConfigurationFiles()
     		commonPreconditions:RestoreFile("sdl_preloaded_pt.json")
 		end
 	--End test suit DifferentHMIlevel

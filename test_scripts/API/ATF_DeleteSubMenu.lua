@@ -1872,7 +1872,7 @@ end
 								})
 
 				--mobile side: expect response
-				EXPECT_RESPONSE(cid, {  success = false, resultCode = "GENERIC_ERROR"})
+				EXPECT_RESPONSE(cid, {  success = false, resultCode = "GENERIC_ERROR", info = "UI component does not respond"})
 				:Timeout(12000)
 
 				--mobile side: expect OnHashChange notification is not send to mobile

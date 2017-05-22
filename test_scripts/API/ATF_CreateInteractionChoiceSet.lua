@@ -6181,7 +6181,7 @@ end
 					:Times(0)
 
 					--response on mobile side
-					EXPECT_RESPONSE(CorIdCICS, { success = false, resultCode = "GENERIC_ERROR"})
+					EXPECT_RESPONSE(CorIdCICS, { success = false, resultCode = "GENERIC_ERROR", info = "VR component does not respond"})
 					:Timeout(12000)
 
 					--notification on mobile side
@@ -6245,7 +6245,7 @@ end
 					end)
 
 					--response on mobile side
-					EXPECT_RESPONSE(CorIdCICS, { success = false, resultCode = "GENERIC_ERROR"})
+					EXPECT_RESPONSE(CorIdCICS, { success = false, resultCode = "GENERIC_ERROR", info = "VR component does not respond"})
 					:Timeout(25000)
 
 					--notification on mobile side
