@@ -60,6 +60,9 @@ result = someFunctionThatTakesArguments(
 ```
 ### Maximum Line Length
 * Limit the length of a single line to 79 characters + newline  character
+(For ATF test scripts limit the length of a single line to 119 characters + newline  character, due to next reason:
+Any person who will read script should understand scenario. In case 80 characters people who will write scripts will think more about
+"how to write less strings" rather than "how to do readable scenario".)
 * Use multiple lines constructions for expressions with length over the limit.
 Each line of expression except first should have hanging indent
 ```
