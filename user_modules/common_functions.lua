@@ -18,20 +18,21 @@ function common_functions:DeletePolicyTable()
   common_functions:CheckSdlPath()
   local policy_file = config.pathToSDL .. common_functions:GetValueFromIniFile("AppStorageFolder") .. "/policy.sqlite"
   if common_functions:IsFileExist(policy_file) then
-    os.remove(policy_file)
+    os.execute("rm -f " .. policy_file)
   end
   policy_file = config.pathToSDL .. "policy.sqlite"
   if common_functions:IsFileExist(policy_file) then
-    os.remove(policy_file)
+    os.execute("rm -f " .. policy_file)
   end
 end
 
 function common_functions:DeleteLogsFiles()
   common_functions:CheckSdlPath()
   if self:IsFileExist(config.pathToSDL .. "app_info.dat") then
-    os.remove(config.pathToSDL .. "app_info.dat")
+    os.execute("rm -f " .. config.pathToSDL .. "app_info.dat")
   end
-  os.remove(config.pathToSDL .. "*.log")
+
+  os.execute("rm -f " .. config.pathToSDL .. "*.log") 
 end
 
 -- Check file existence
@@ -88,7 +89,7 @@ function common_functions:SetValuesInIniFile(FindExpression, parameterName, Valu
       f = assert(io.open(SDLini, "w"))
       f:write(fileContentUpdated)
     else
-      common_functions:userPrint(31, "Finding of '" .. tostring(parameterName) .. " = value' is failed. Expect string finding and replacing the value to " .. tostring(ValueToUpdate))
+      common_functions:UserPrint(31, "Finding of '" .. tostring(parameterName) .. " = value' is failed. Expect string finding and replacing the value to " .. tostring(ValueToUpdate))
     end
     f:close()
   end
