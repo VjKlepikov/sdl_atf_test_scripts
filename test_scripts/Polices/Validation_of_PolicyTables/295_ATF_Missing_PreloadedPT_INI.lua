@@ -53,13 +53,18 @@ end
 
 function Test:TestStep_CheckSDLLogError()
   local result = testCasesForPolicySDLErrorsStops.ReadSpecificMessage("Policy table is not initialized.")
-  if (result == false) then
+  if (false == result) then
     self:FailTestCase("Error: message 'Policy table is not initialized.' is not observed in smartDeviceLink.log.")
   end
 
   result = testCasesForPolicySDLErrorsStops.ReadSpecificMessage("BasicCommunication.OnSDLClose")
-  if (result == false) then
+  if (false == result) then
     self:FailTestCase("Error: 'BasicCommunication.OnSDLClose' is not observed in smartDeviceLink.log.")
+  end
+
+  result = testCasesForPolicySDLErrorsStops.ReadSpecificMessage("DCHECK")
+  if (true == result) then
+    self:FailTestCase("'DCHECK' is observed in smartDeviceLink.log.")
   end
 end
 
