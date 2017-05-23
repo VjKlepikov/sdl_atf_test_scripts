@@ -48,6 +48,10 @@ function Test:TestStep_VerifyErrorMessageIsLogged()
   if not string.find(logFileContent, "BasicCommunication.OnSDLClose") then
     self:FailTestCase("OnSDLClose is not present in .log")
   end
+
+  if string.find(logFileContent, "DCHECK") then
+    self:FailTestCase("'DCHECK' is present in .log")
+  end
 end
 
 function Test:TestStep_CheckSDLStatus()
