@@ -4,10 +4,10 @@
 
 -- Description:
 -- In case PreloadedPT has several values in "RequestType" array and one of them is invalid
--- sdl must:cut off this invalid value treat such PreloadedPT as valid continue working.
+-- SDL must:cut off this invalid value treat such PreloadedPT as valid continue working.
 
 -- Preconditions:
--- -- 1. sdl and HMI are started
+-- -- 1. SDL and HMI are started
 -- -- 2. Preloaded PT exists at the path defined in .ini file
 
 -- Steps:
@@ -15,8 +15,8 @@
 -- -- 2. PreloadedPT-> "app_policies" -> "default" -> RequestType has {TRAFFIC_MESSAGE_CHANNEL, HTTP, PROPRIETARY, IVSU}
 
 -- Expected result:
--- -- 1. sdl cuts off IVSU from RequestType
--- -- 2. sdl continue working
+-- -- 1. SDL cuts off IVSU from RequestType
+-- -- 2. SDL continue working
 
 --[[ Generic precondition ]]
 require('user_modules/all_common_modules')
@@ -58,7 +58,7 @@ common_steps:PreconditionSteps("PreconditionSteps", const.precondition.ACTIVATE_
 
 --[[ Test ]]
 common_steps:AddNewTestCasesGroup("Test")
-function Test:Check_sdl_cuts_off_IVSU_from_RequestType()
+function Test:Check_SDL_cuts_off_IVSU_from_RequestType()
   local count_sleep = 1
   while not common_functions:IsFileExist(snapshot_file) and count_sleep < 9 do
     os.execute("sleep 1")
@@ -75,14 +75,14 @@ function Test:Check_sdl_cuts_off_IVSU_from_RequestType()
   end
 end
 
-function Test:Check_sdl_continue_working()
+function Test:Check_SDL_continue_working()
   os.execute(" sleep 5 ")
   if sdl:CheckStatusSDL() ~= sdl.RUNNING then
-    self:FailTestCase("sdl is stopped.")
+    self:FailTestCase("SDL is stopped.")
   end
 end
 
 --[[ Postconditions ]]
 common_steps:AddNewTestCasesGroup("Postconditions")
 common_steps:RestoreIniFile("Postcondition_Restore_sdl_preloaded_pt.json", "sdl_preloaded_pt.json")
-common_steps:StopSDL("Postcondition_Stopsdl")
+common_steps:StopSDL("Postcondition_StopSDL")
