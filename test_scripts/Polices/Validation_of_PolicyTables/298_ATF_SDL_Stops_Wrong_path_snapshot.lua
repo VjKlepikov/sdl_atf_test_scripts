@@ -1,7 +1,8 @@
 ---------------------------------------------------------------------------------------------
 -- Requirement summary:
--- [APPLINK-8112]: Policies Manager - SDL must interrupt its starting up in case of policies-related failures (see in description)
--- 6) The name defined in PathToSnapshot is incorrect for the specific OS.
+-- [APPLINK-8112]: Policies Manager - SDL must interrupt its starting up in case of policies-related 
+-- failures (see in description)
+-- Case 6) from [APPLINK-8112]: The name defined in PathToSnapshot is incorrect for the specific OS.
 --
 -- Description:
 -- In case the sdl_snapshot.json is incorrect for the specific OS, 
@@ -16,8 +17,8 @@
 -- 3. Start again SDL
 --
 -- Expected result:
--- 1. SDL should log error. SDL should shut down.
--- 3. SDL should start normal communication.
+-- 1. SDL logs error. SDL should shut down.
+-- 3. SDL starts normal communication.
 ---------------------------------------------------------------------------------------------
 require('user_modules/all_common_modules')
 local testCasesForPolicySDLErrorsStops = require('user_modules/shared_testcases_genivi/testCasesForPolicySDLErrorsStops')
