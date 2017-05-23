@@ -43,11 +43,9 @@ function Test:Check_SDL_is_shutdown()
   os.execute(" sleep 5 ")
   local status = sdl:CheckStatusSDL()
   if (status == 1) then
-    self:FailTestCase("SDL is not shut down")
     StopSDL()
-    return false
+    self:FailTestCase("SDL is not shut down")
   end
-  return true
 end
 
 function Test:Check_SDL_logs_error_internally()
