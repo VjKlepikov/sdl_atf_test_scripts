@@ -5756,7 +5756,7 @@ end
 					ExpectOnHMIStatusWithAudioStateChanged(self, "FULL", true)
 
 					--mobile side: expect PerformAudioPassThru response
-					EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
+					EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "TTS component does not respond" })
 					:Timeout(15000)
 
 					DelayedExp(1000)
@@ -5821,7 +5821,7 @@ end
 					ExpectOnHMIStatusWithAudioStateChanged(self, "FULL", true)
 
 					--mobile side: expect PerformAudioPassThru response
-					EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
+					EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "UI component does not respond" })
 					:Timeout(15000)
 
 					DelayedExp(1000)
@@ -5886,7 +5886,7 @@ end
 					ExpectOnHMIStatusWithAudioStateChanged(self, "FULL", true)
 
 					--mobile side: expect PerformAudioPassThru response
-					EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
+					EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "TTS, UI component does not respond" })
 					:Timeout(15000)
 
 					DelayedExp(1000)
@@ -5925,7 +5925,7 @@ end
 					EXPECT_HMINOTIFICATION("UI.OnRecordStart", {appID = self.applications["Test Application"]})
 
 					--mobile side: expect PerformAudioPassThru response
-					EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR" })
+					EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "UI component does not respond" })
 					:Timeout(15000)
 
 					DelayedExp(1000)

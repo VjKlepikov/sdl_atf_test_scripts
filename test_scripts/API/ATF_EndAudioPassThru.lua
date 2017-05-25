@@ -2281,7 +2281,7 @@ end
 					end)
 
 					--mobile side: expect EndAudioPassThru response
-					EXPECT_RESPONSE(cidEndAudioPassThru, { success = false, resultCode = "GENERIC_ERROR"})
+					EXPECT_RESPONSE(cidEndAudioPassThru, { success = false, resultCode = "GENERIC_ERROR", info = "UI component does not respond"})
 					:Timeout(12000)
 				end)
 

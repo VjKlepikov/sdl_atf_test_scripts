@@ -2187,7 +2187,7 @@ local function SpecialResponseChecks()
 
 
 			--mobile side: expect ShowConstantTBT response
-			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
+			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "Navigation component does not respond"})
 			:Timeout(12000)
 		end
 	--End NegativeResponseCheck.5

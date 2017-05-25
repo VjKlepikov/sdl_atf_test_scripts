@@ -3546,7 +3546,7 @@ commonSteps:DeleteLogsFileAndPolicyTable()
 				end)
 
 				--mobile side: expect UpdateTurnList response
-				EXPECT_RESPONSE(CorIdUpdateTurnList, { success = false, resultCode = "GENERIC_ERROR"})
+				EXPECT_RESPONSE(CorIdUpdateTurnList, { success = false, resultCode = "GENERIC_ERROR", info = "Navigation component does not respond"})
 				:Timeout(12000)
 			end
 		--End Test case HMINegativeCheck.1

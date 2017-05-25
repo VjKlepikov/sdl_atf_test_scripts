@@ -1621,7 +1621,7 @@ local function SpecialResponseChecks()
     EXPECT_HMICALL("TTS.Speak", Request)
 
     --mobile side: expect the response
-    EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
+    EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "TTS component does not respond"})
     :Timeout(12000)
 
   end

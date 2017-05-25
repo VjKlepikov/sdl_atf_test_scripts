@@ -5541,7 +5541,7 @@ end
 					end)
 
 					--mobile side: expect ChangeRegistration response
-					EXPECT_RESPONSE(CorIdChangeRegistration, { success = false, resultCode = "GENERIC_ERROR" })
+					EXPECT_RESPONSE(CorIdChangeRegistration, { success = false, resultCode = "GENERIC_ERROR", info = "UI component does not respond" })
 					:Timeout(12000)
 				end
 			--End Test case HMINegativeCheck.1.1
@@ -5590,7 +5590,7 @@ end
 					end)
 
 					--mobile side: expect ChangeRegistration response
-					EXPECT_RESPONSE(CorIdChangeRegistration, { success = false, resultCode = "GENERIC_ERROR" })
+					EXPECT_RESPONSE(CorIdChangeRegistration, { success = false, resultCode = "GENERIC_ERROR", info = "VR component does not respond" })
 					:Timeout(12000)
 				end
 			--End Test case HMINegativeCheck.1.2
@@ -5639,7 +5639,7 @@ end
 					end)
 
 					--mobile side: expect ChangeRegistration response
-					EXPECT_RESPONSE(CorIdChangeRegistration, { success = false, resultCode = "GENERIC_ERROR" })
+					EXPECT_RESPONSE(CorIdChangeRegistration, { success = false, resultCode = "GENERIC_ERROR", info = "TTS component does not respond" })
 					:Timeout(12000)
 				end
 			--End Test case HMINegativeCheck.1.3
@@ -5686,7 +5686,7 @@ end
                                         end)
 
                                         --mobile side: expect ChangeRegistration response
-                                        EXPECT_RESPONSE(CorIdChangeRegistration, { success = false, resultCode = "GENERIC_ERROR" })
+                                        EXPECT_RESPONSE(CorIdChangeRegistration, { success = false, resultCode = "GENERIC_ERROR", info = "UI, VR, TTS component does not respond" })
                                         :Timeout(12000)
                                 end
                         --End Test case HMINegativeCheck.1.4
@@ -5732,7 +5732,7 @@ end
                                         end)
 
                                         --mobile side: expect ChangeRegistration response
-                                        EXPECT_RESPONSE(CorIdChangeRegistration, { success = false, resultCode = "GENERIC_ERROR" })
+                                        EXPECT_RESPONSE(CorIdChangeRegistration, { success = false, resultCode = "GENERIC_ERROR", info = "UI, TTS component does not respond" })
                                         :Timeout(12000)
                                 end
                         --End Test case HMINegativeCheck.1.5
@@ -5778,7 +5778,7 @@ end
                                         end)
 
                                         --mobile side: expect ChangeRegistration response
-                                        EXPECT_RESPONSE(CorIdChangeRegistration, { success = false, resultCode = "GENERIC_ERROR" })
+                                        EXPECT_RESPONSE(CorIdChangeRegistration, { success = false, resultCode = "GENERIC_ERROR", info = "UI, VR component does not respond" })
                                         :Timeout(12000)
                                 end
                         --End Test case HMINegativeCheck.1.6
@@ -5824,7 +5824,7 @@ end
                                         end)
 
                                         --mobile side: expect ChangeRegistration response
-                                        EXPECT_RESPONSE(CorIdChangeRegistration, { success = false, resultCode = "GENERIC_ERROR" })
+                                        EXPECT_RESPONSE(CorIdChangeRegistration, { success = false, resultCode = "GENERIC_ERROR", info = "TTS, VR component does not respond" })
                                         :Timeout(12000)
                                 end
                         --End Test case HMINegativeCheck.1.7

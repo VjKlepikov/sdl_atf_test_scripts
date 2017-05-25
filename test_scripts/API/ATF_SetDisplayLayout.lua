@@ -11321,7 +11321,7 @@ end
 
 
 				--mobile side: expect SetDisplayLayout response
-				EXPECT_RESPONSE(cid, {success = false, resultCode = "GENERIC_ERROR", info = nil})
+				EXPECT_RESPONSE(cid, {success = false, resultCode = "GENERIC_ERROR", info = "UI component does not respond"})
 				:Timeout(12000)
 
 			end

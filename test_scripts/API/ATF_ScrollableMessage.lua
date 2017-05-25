@@ -3279,7 +3279,7 @@ local function SpecialResponseChecks()
 
 	--End SpecialResponseChecks.4
 
-
+	]]
 	--Begin Test case SpecialResponseChecks.5
 	--Description: Request without responses from HMI
 
@@ -3323,13 +3323,13 @@ local function SpecialResponseChecks()
 			:Times(2)
 
 			--mobile side: expect the response
-			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR"})
+			EXPECT_RESPONSE(cid, { success = false, resultCode = "GENERIC_ERROR", info = "UI component does not respond"})
 			:Timeout(12000)
 
 		end
 
 	--End SpecialResponseChecks.5
-	]]
+
 
 	--Begin Test case SpecialResponseChecks.6
 	--Description: Several response to one request
