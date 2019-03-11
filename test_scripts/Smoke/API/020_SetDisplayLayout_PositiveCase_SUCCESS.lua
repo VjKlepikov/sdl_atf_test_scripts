@@ -1,0 +1,246 @@
+---------------------------------------------------------------------------------------------------
+-- User story: Smoke
+-- Use case: SetDisplayLayout
+-- Item: Happy path
+--
+-- Requirement summary:
+-- [SetDisplayLayout] SUCCESS on UI.SetDisplayLayout
+--
+-- Description:
+-- Mobile application sends SetDisplayLayout request with valid parameters to SDL
+--
+-- Pre-conditions:
+-- a. HMI and SDL are started
+-- b. appID is registered and activated on SDL
+--
+-- Steps:
+-- Application sends SetDisplayLayout request with valid parameters to SDL
+--
+-- Expected:
+-- SDL validates parameters of the request
+-- SDL checks if UI interface is available on HMI
+-- SDL checks if SetDispLay is allowed by Policies
+-- SDL checks if all parameters are allowed by Policies
+-- SDL transfers the UI part of request with allowed parameters to HMI
+-- SDL receives UI part of response from HMI with "SUCCESS" result code
+-- SDL transfers response to mobile app
+---------------------------------------------------------------------------------------------------
+
+--[[ Required Shared libraries ]]
+local runner = require('user_modules/script_runner')
+local commonSmoke = require('test_scripts/Smoke/commonSmoke')
+local commonFunctions = require("user_modules/shared_testcases/commonFunctions")
+
+--[[ Local Functions ]]
+local function getSoftButCapValues()
+	return {
+		{
+			shortPressAvailable = true,
+			longPressAvailable = true,
+			upDownAvailable = true,
+			imageSupported = true
+		}
+	}
+end
+
+local function getPresetBankCapValues()
+	return { onScreenPresetsAvailable = true }
+end
+
+local function getButCapValues()
+	local names = {
+		"PRESET_0",
+		"PRESET_1",
+		"PRESET_2",
+		"PRESET_3",
+		"PRESET_4",
+		"PRESET_5",
+		"PRESET_6",
+		"PRESET_7",
+		"PRESET_8",
+		"PRESET_9",
+		"OK",
+		"SEEKLEFT",
+		"SEEKRIGHT",
+		"TUNEUP",
+		"TUNEDOWN"
+	}
+	local values = { }
+	for _, v in pairs(names) do
+		local item = {
+			name = v,
+			shortPressAvailable = true,
+			longPressAvailable = true,
+			upDownAvailable = true
+		}
+		table.insert(values, item)
+	end
+  return values
+end
+
+local function getDisplayCapImageFieldsValues()
+	local names = {
+		"softButtonImage",
+		"choiceImage",
+		"choiceSecondaryImage",
+		"vrHelpItem",
+		"turnIcon",
+		"menuIcon",
+		"cmdIcon",
+		"graphic",
+		-- "secondaryGraphic", -- value is missed in ImageFieldName
+		"showConstantTBTIcon",
+		"showConstantTBTNextTurnIcon",
+		"locationImage",
+		"appIcon"
+	}
+	local values = { }
+	for _, v in pairs(names) do
+		local item = {
+			imageResolution = {
+				resolutionHeight = 64,
+				resolutionWidth = 64
+			},
+			imageTypeSupported = {
+				"GRAPHIC_BMP",
+				"GRAPHIC_JPEG",
+				"GRAPHIC_PNG"
+			},
+			name = v
+		}
+		table.insert(values, item)
+	end
+  return values
+end
+
+local function getDisplayCapTextFieldsValues()
+	-- some text fields are excluded due to SDL issue
+  local names = {
+		"mainField1",
+		"mainField2",
+		"mainField3",
+		"mainField4",
+		"statusBar",
+		"mediaClock",
+		"mediaTrack",
+		"alertText1",
+		"alertText2",
+		"alertText3",
+		"scrollableMessageBody",
+		"initialInteractionText",
+		"navigationText1",
+		"navigationText2",
+		"ETA",
+		"totalDistance",
+		"audioPassThruDisplayText1",
+		"audioPassThruDisplayText2",
+		"sliderHeader",
+		"sliderFooter",
+		"menuName",
+		"secondaryText",
+		"tertiaryText",
+		"menuTitle",
+		-- "timeToDestination",
+		-- "navigationText",
+		-- "notificationText",
+		-- "locationName",
+		-- "locationDescription",
+		-- "addressLines",
+		-- "phoneNumber",
+		"turnText"
+	}
+	local values = { }
+	for _, v in pairs(names) do
+		local item = {
+			characterSet = "TYPE2SET",
+			name = v,
+			rows = 1,
+			width = 500
+		}
+		table.insert(values, item)
+	end
+  return values
+end
+
+local function getDisplayCapValues()
+	-- some capabilities are excluded due to SDL issue
+	return {
+		displayType = "GEN2_8_DMA",
+		graphicSupported = true,
+		imageCapabilities = {
+			"DYNAMIC",
+			"STATIC"
+		 },
+		imageFields = getDisplayCapImageFieldsValues(),
+		mediaClockFormats =	{
+			"CLOCK1",
+			"CLOCK2",
+			"CLOCK3",
+			"CLOCKTEXT1",
+			"CLOCKTEXT2",
+			"CLOCKTEXT3",
+			"CLOCKTEXT4"
+		},
+		numCustomPresetsAvailable = 10,
+		screenParams = {
+			resolution = {
+				resolutionHeight = 480,
+				resolutionWidth = 800
+			},
+			touchEventAvailable =	{
+				doublePressAvailable = false,
+				multiTouchAvailable = true,
+				pressAvailable = true
+			}
+		},
+		templatesAvailable = {
+			"ONSCREEN_PRESETS"
+		},
+		textFields = getDisplayCapTextFieldsValues()
+	}
+end
+
+local function getRequestParams()
+	return { displayLayout = "ONSCREEN_PRESETS" }
+end
+
+local function getResponseParams()
+	return {
+		displayCapabilities = getDisplayCapValues(),
+		buttonCapabilities = getButCapValues(),
+		softButtonCapabilities = getSoftButCapValues(),
+		presetBankCapabilities = getPresetBankCapValues()
+	}
+end
+
+local function setDisplaySuccess(self)
+	local responseParams = getResponseParams()
+	local cid = self.mobileSession1:SendRPC("SetDisplayLayout", getRequestParams())
+	EXPECT_HMICALL("UI.SetDisplayLayout", getRequestParams())
+	:Do(function(_, data)
+			self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", responseParams)
+		end)
+	local mobileRespDisplayCapabilities = commonFunctions:cloneTable(responseParams.displayCapabilities)
+	mobileRespDisplayCapabilities.imageCapabilities = nil
+	self.mobileSession1:ExpectResponse(cid, {
+		success = true,
+		resultCode = "SUCCESS",
+		displayCapabilities = mobileRespDisplayCapabilities,
+		buttonCapabilities = responseParams.buttonCapabilities,
+		softButtonCapabilities = responseParams.softButtonCapabilities,
+		presetBankCapabilities = responseParams.presetBankCapabilities
+	})
+end
+
+--[[ Scenario ]]
+runner.Title("Preconditions")
+runner.Step("Clean environment", commonSmoke.preconditions)
+runner.Step("Start SDL, HMI, connect Mobile, start Session", commonSmoke.start)
+runner.Step("RAI", commonSmoke.registerApp)
+runner.Step("Activate App", commonSmoke.activateApp)
+
+runner.Title("Test")
+runner.Step("SetDisplay Positive Case", setDisplaySuccess)
+
+runner.Title("Postconditions")
+runner.Step("Stop SDL", commonSmoke.postconditions)

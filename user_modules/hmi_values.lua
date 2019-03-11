@@ -92,7 +92,7 @@ function module.getDefaultHMITable()
 
   hmi_table.BasicCommunication.GetSystemInfo =
   {
-    params = 
+    params =
     {
       ccpu_version = "ccpu_version",
       language = "EN-US",
@@ -104,7 +104,7 @@ function module.getDefaultHMITable()
 
   hmi_table.UI.GetLanguage =
   {
-    params = 
+    params =
     {
       language = default_language
     },
@@ -113,7 +113,7 @@ function module.getDefaultHMITable()
   }
   hmi_table.VR.GetLanguage =
   {
-    params = 
+    params =
     {
       language = default_language
     },
@@ -122,7 +122,7 @@ function module.getDefaultHMITable()
   }
   hmi_table.TTS.GetLanguage =
   {
-    params = 
+    params =
     {
       language = default_language
     },
@@ -357,6 +357,7 @@ function module.getDefaultHMITable()
         module.createButtonCapability("PRESET_8"),
         module.createButtonCapability("PRESET_9"),
         module.createButtonCapability("OK", true, false, true),
+        module.createButtonCapability("PLAY_PAUSE", true, false, true),
         module.createButtonCapability("SEEKLEFT"),
         module.createButtonCapability("SEEKRIGHT"),
         module.createButtonCapability("TUNEUP"),
