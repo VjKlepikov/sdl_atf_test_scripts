@@ -35,6 +35,7 @@ runner.Step("Activate App", common.activateApp)
 
 runner.Title("Test")
 runner.Step("Start RPC Service protected", common.startServiceProtected, { 7 })
+runner.Step("Process RPC in unprotected mode", common.rpcInUnprotectedMode)
 runner.Step("Process RPC in protected mode", common.rpcInProtectedModeSuccess)
 
 runner.Title("Postconditions")

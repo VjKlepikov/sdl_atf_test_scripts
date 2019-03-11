@@ -20,9 +20,8 @@ local function ptUpdate(pTbl)
   local filePath = "./files/Security/client_credential.pem"
   local crt = utils.readFile(filePath)
   pTbl.policy_table.module_config.certificate = crt
-  local appId = config.application1.registerAppInterfaceParams.fullAppID
   -- pTbl.policy_table.functional_groupings.encryption_required = true
-  pTbl.policy_table.app_policies[appId].encryption_required = true
+  pTbl.policy_table.app_policies[config.application1.registerAppInterfaceParams.fullAppID].encryption_required = true
 end
 
 --[[ Scenario ]]
