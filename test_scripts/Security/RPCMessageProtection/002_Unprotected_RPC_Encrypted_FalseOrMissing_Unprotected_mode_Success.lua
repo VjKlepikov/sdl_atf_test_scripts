@@ -48,10 +48,11 @@ for _, tc in common.spairs(testCases) do
   runner.Title("Preconditions")
   runner.Step("Clean environment", common.preconditions)
   runner.Step("Back-up PreloadedPT", common.backupPreloadedPT)
+  runner.Step("Init SDL certificates", common.initSDLCertificates,
+    { "./files/Security/client_credential.pem" })
   runner.Step("Preloaded update", common.updatePreloadedPT, { tc.a, tc.f })
   runner.Step("Start SDL, init HMI", common.start)
-  runner.Step("Register App", common.registerApp)
-  runner.Step("Policy Table Update Certificate", common.policyTableUpdate, { common.ptUpdate })
+  runner.Step("Register App", common.registerAppWOPTU)
   runner.Step("Activate App", common.activateApp)
 
   runner.Title("Test")

@@ -17,7 +17,7 @@ runner.testSettings.isSelfIncluded = false
 
 --[[ Local Functions ]]
 local function ptUpdate(pTbl)
-  pTbl.policy_table.app_policies["SPT"].encryption_required = false
+  pTbl.policy_table.app_policies["SPT"].encryption_required = true
   pTbl.policy_table.functional_groupings["Base-4"].encryption_required = true
 end
 
@@ -26,7 +26,19 @@ local function ptUpdateNewParam(pTbl)
   local crt = utils.readFile(filePath)
   pTbl.policy_table.module_config.certificate = crt
   pTbl.policy_table.app_policies["SPT"].encryption_required = nil
-  pTbl.policy_table.functional_groupings["Base-4"].encryption_required = false
+  pTbl.policy_table.functional_groupings["Base-4"].encryption_required = nil
+end
+
+local function unprotectedRpcInUnprotectedMode()
+	-- local params = {
+  --   cmdID = 1,
+  --   menuParams = {
+  --     position = 1,
+  --     menuName = "Command_1"
+  --   }
+  -- }
+  -- local cid = common.getMobileSession():SendRPC("AddCommand", params)
+  -- common.getMobileSession():ExpectResponse(cid, { success = false, resultCode = "ENCRYPTION_NEEDED" })
 end
 
 local function rpcInProtectedModeSuccess()
@@ -46,23 +58,6 @@ local function rpcInProtectedModeSuccess()
     common.getMobileSession():ExpectEncryptedNotification("OnHashChange")
 end
 
-local function unprotectedRpc()
-	local params = {
-    cmdID = 1,
-    menuParams = {
-      position = 1,
-      menuName = "Command_1"
-    }
-  }
-  local cid = common.getMobileSession():SendRPC("AddCommand", params)
-  common.getHMIConnection():ExpectRequest("UI.AddCommand", params)
-  :Do(function(_, data)
-    common.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS", { })
-  end)
-  common.getMobileSession():ExpectResponse(cid, { success = true, resultCode = "SUCCESS" })
-  common.getMobileSession():ExpectNotification("OnHashChange")
-end
-
 --[[ Scenario ]]
 runner.Title("Preconditions")
 runner.Step("Clean environment", common.preconditions)
@@ -70,12 +65,11 @@ runner.Step("Start SDL, init HMI", common.start)
 runner.Step("Register App", common.registerApp)
 runner.Step("Policy Table Update", common.policyTableUpdate, { ptUpdate })
 runner.Step("Activate App", common.activateApp)
-runner.Step("Unprotected RPC in unprotected mode", unprotectedRpc)
-runner.Step("Register App_2", common.registerApp, { 2 })
-runner.Step("Policy Table Update", common.policyTableUpdate, { ptUpdateNewParam })
+runner.Step("Unprotected RPC in unprotected mode", unprotectedRpcInUnprotectedMode)
 
 runner.Title("Test")
-
+runner.Step("Register App_2", common.registerApp, { 2 })
+runner.Step("Policy Table Update", common.policyTableUpdate, { ptUpdateNewParam })
 runner.Step("Start RPC Service protected", common.startServiceProtected, { 7 })
 runner.Step("Protected RPC in protected mode", rpcInProtectedModeSuccess)
 

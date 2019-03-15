@@ -13,22 +13,12 @@ local commonFunctions = require("user_modules/shared_testcases/commonFunctions")
 local json = require("modules/json")
 local test = require("user_modules/dummy_connecttest")
 
---[[ General configuration parameters ]]
-config.SecurityProtocol = "DTLS"
-
 --[[ Variables ]]
 local m = actions
+common.cloneTable = utils.cloneTable
 local preloadedPT = commonFunctions:read_parameter_from_smart_device_link_ini("PreloadedPT")
 
-m.flags = { true, false, nil }
-
 --[[ Common Functions ]]
-function m.ptUpdate(pTbl)
-  local filePath = "./files/Security/client_credential.pem"
-  local crt = utils.readFile(filePath)
-  pTbl.policy_table.module_config.certificate = crt
-end
-
 function m.backupPreloadedPT()
   commonPreconditions:BackupFile(preloadedPT)
 end
@@ -40,11 +30,23 @@ end
 function m.updatePreloadedPT(pAppPolicy, pFuncGroup)
   local preloadedFile = commonPreconditions:GetPathToSDL() .. preloadedPT
   local pt = utils.jsonFileToTable(preloadedFile)
-  pt.policy_table.app_policies["0000001"] = utils.cloneTable(pt.policy_table.app_policies.default)
+  pt.policy_table.app_policies["SPT"] = utils.cloneTable(pt.policy_table.app_policies.default)
   pt.policy_table.functional_groupings["Base-4"].encryption_required = pFuncGroup
-  pt.policy_table.app_policies["0000001"].encryption_required = pAppPolicy
+  pt.policy_table.app_policies["SPT"].encryption_required = pAppPolicy
   pt.policy_table.functional_groupings["DataConsent-2"].rpcs = json.null
   utils.tableToJsonFile(pt, preloadedFile)
+
+
+
+--   local appId = config.application1.registerAppInterfaceParams.fullAppID
+--   pt.policy_table.functional_groupings["DataConsent-2"].rpcs = json.null
+--   pt.policy_table.functional_groupings["Base-4"].encryption_required = pFuncGroup
+--   pt.policy_table.app_policies[appId].encryption_required = pAppPolicy
+-- --   -- pt.policy_table.functional_groupings["Base-4"].encryption_required = pFuncGroup
+-- --   -- pt.policy_table.app_policies[config.application1.registerAppInterfaceParams.fullAppID].encryption_required = pAppPolicy
+-- --   -- pt.policy_table.app_policies["SPT"] = common.cloneTable(pt.policy_table.app_policies.default)
+-- --   -- pt.policy_table.app_policies["SPT"].encryption_required = pAppPolicy
+--   utils.tableToJsonFile(pt, preloadedFile)
 end
 
 function m.startServiceProtected(pServiceId)
@@ -54,10 +56,6 @@ function m.startServiceProtected(pServiceId)
     frameInfo = m.frameInfo.START_SERVICE_ACK,
     encryption = true
   })
-end
-
-function m.stopService(pServiceId)
-  m.getMobileSession():StopService(pServiceId)
 end
 
 local preconditionsOrig = m.preconditions
