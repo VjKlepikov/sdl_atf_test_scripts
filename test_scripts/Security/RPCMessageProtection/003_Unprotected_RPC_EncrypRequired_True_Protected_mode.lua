@@ -39,7 +39,7 @@ runner.Step("Init SDL certificates", common.initSDLCertificates,
     { "./files/Security/client_credential.pem" })
 runner.Step("Preloaded update", common.updatePreloadedPT, { appPolicy, funcGroup })
 runner.Step("Start SDL, init HMI", common.start)
-runner.Step("Register App", common.registerApp)
+runner.Step("Register App", common.registerAppWOPTU)
 runner.Step("Activate App", common.activateApp)
 
 runner.Title("Test")

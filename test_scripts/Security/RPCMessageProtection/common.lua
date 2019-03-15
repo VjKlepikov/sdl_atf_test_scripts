@@ -35,18 +35,6 @@ function m.updatePreloadedPT(pAppPolicy, pFuncGroup)
   pt.policy_table.app_policies["SPT"].encryption_required = pAppPolicy
   pt.policy_table.functional_groupings["DataConsent-2"].rpcs = json.null
   utils.tableToJsonFile(pt, preloadedFile)
-
-
-
---   local appId = config.application1.registerAppInterfaceParams.fullAppID
---   pt.policy_table.functional_groupings["DataConsent-2"].rpcs = json.null
---   pt.policy_table.functional_groupings["Base-4"].encryption_required = pFuncGroup
---   pt.policy_table.app_policies[appId].encryption_required = pAppPolicy
--- --   -- pt.policy_table.functional_groupings["Base-4"].encryption_required = pFuncGroup
--- --   -- pt.policy_table.app_policies[config.application1.registerAppInterfaceParams.fullAppID].encryption_required = pAppPolicy
--- --   -- pt.policy_table.app_policies["SPT"] = common.cloneTable(pt.policy_table.app_policies.default)
--- --   -- pt.policy_table.app_policies["SPT"].encryption_required = pAppPolicy
---   utils.tableToJsonFile(pt, preloadedFile)
 end
 
 function m.startServiceProtected(pServiceId)

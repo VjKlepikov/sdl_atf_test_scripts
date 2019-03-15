@@ -17,12 +17,12 @@ runner.testSettings.isSelfIncluded = false
 --[[ Local Variables ]]
 local testCases = {
   [001] = { a = true, f = false },
-  -- [002] = { a = true, f = nil },
-  -- [003] = { a = false, f = true },
-  -- [004] = { a = false, f = false },
-  -- [005] = { a = false, f = nil },
-  -- [006] = { a = nil, f = false },
-  -- [007] = { a = nil, f = nil }
+  [002] = { a = true, f = nil },
+  [003] = { a = false, f = true },
+  [004] = { a = false, f = false },
+  [005] = { a = false, f = nil },
+  [006] = { a = nil, f = false },
+  [007] = { a = nil, f = nil }
 }
 
 local function unprotectedRpc()
@@ -49,7 +49,7 @@ for _, tc in common.spairs(testCases) do
   runner.Step("Back-up PreloadedPT", common.backupPreloadedPT)
   runner.Step("Preloaded update", common.updatePreloadedPT, { tc.a, tc.f })
   runner.Step("Start SDL, init HMI", common.start)
-  runner.Step("Register App", common.registerApp)
+  runner.Step("Register App", common.registerAppWOPTU)
   runner.Step("Activate App", common.activateApp)
 
   runner.Title("Test")

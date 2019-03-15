@@ -19,7 +19,7 @@ local appPolicy = true
 local funcGroup = true
 
 --[[Local Function]]
-local function unprotectedRpcInUnprotectedMode()
+local function unprotectedRpcEncryptedRequired()
 	local params = {
     cmdID = 1,
     menuParams = {
@@ -37,11 +37,11 @@ runner.Step("Clean environment", common.preconditions)
 runner.Step("Back-up PreloadedPT", common.backupPreloadedPT)
 runner.Step("Preloaded update", common.updatePreloadedPT, { appPolicy, funcGroup })
 runner.Step("Start SDL, init HMI", common.start)
-runner.Step("Register App", common.registerApp)
+runner.Step("Register App", common.registerAppWOPTU)
 runner.Step("Activate App", common.activateApp)
 
 runner.Title("Test")
-runner.Step("Unprotected RPC in protected mode", unprotectedRpcInUnprotectedMode)
+runner.Step("Unprotected RPC in protected mode", unprotectedRpcEncryptedRequired)
 
 runner.Title("Postconditions")
 runner.Step("Clean sessions", common.cleanSessions)
