@@ -50,7 +50,6 @@ local function start(self)
               self:connectMobile()
               :Do(function()
                   commonFunctions:userPrint(35, "Mobile connected")
-                  allowSDL(self)
                 end)
             end)
         end)
@@ -250,6 +249,7 @@ local function raiPTU(self)
         { application = { appName = config.application1.registerAppInterfaceParams.appName } })
       :Do(function()
           log("SDL->HMI: N: BC.OnAppRegistered")
+          allowSDL(self)
           if sdl.buildOptions.extendedPolicy == "PROPRIETARY"
           or sdl.buildOptions.extendedPolicy == "EXTERNAL_PROPRIETARY" then
             -- Expect PolicyUpdate request on HMI side
@@ -306,6 +306,7 @@ local function raiPTU(self)
           :Do(function()
               log("SDL->MOB: N: OnPermissionsChange")
             end)
+          :Times(2)
         end)
     end)
 end
