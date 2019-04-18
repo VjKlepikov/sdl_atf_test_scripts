@@ -13,6 +13,7 @@ local SDL = require('SDL')
 local exit_codes = require('exit_codes')
 local load_schema = require('load_schema')
 local commonFunctions = require('user_modules/shared_testcases/commonFunctions')
+local commonTestCases = require('user_modules/shared_testcases/commonTestCases')
 local hmi_values = require("user_modules/hmi_values")
 local mob_schema = load_schema.mob_schema
 local hmi_schema = load_schema.hmi_schema
@@ -30,6 +31,7 @@ module.mobileConnection = mobile.MobileConnection(fileConnection)
 event_dispatcher:AddConnection(module.hmiConnection)
 event_dispatcher:AddConnection(module.mobileConnection)
 module.notification_counter = 1
+module.sdlBuildOptions = SDL.buildOptions
 
 function module.hmiConnection:EXPECT_HMIRESPONSE(id, args)
   local event = events.Event()
@@ -48,31 +50,17 @@ function module.hmiConnection:EXPECT_HMIRESPONSE(id, args)
       xmlReporter.AddMessage("EXPECT_HMIRESPONSE", {["Id"] = tostring(id),["Type"] = "AVALIABLE_RESULT"},data)
       local func_name = data.method
       local results_args = arguments
-      local results_args2 = arguments
       if(table2str(arguments):match('result')) then
         results_args = arguments.result
-        results_args2 = arguments.result
       elseif(table2str(arguments):match('error')) then
         results_args = arguments.error
-        results_args2 = arguments.error
       end
-
-      if results_args2 and results_args2.code then
-        results_args2 = table.removeKey(results_args2, 'code')
-      end
-      if results_args2 and results_args2.method then
-        results_args2 = table.removeKey(results_args2, 'method')
-      elseif results_args2 and results_args2.data.method then
-        results_args2 = table.removeKey(results_args2.data, 'method')
-      end
-
       if func_name == nil and type(data.result) == 'table' then
         func_name = data.result.method
       elseif func_name == nil and type(data.error) == 'table' then
         print_table(data)
         func_name = data.error.data.method
       end
-
       local _res, _err
       _res = true
       if not (table2str(arguments):match('error')) then
@@ -81,7 +69,6 @@ function module.hmiConnection:EXPECT_HMIRESPONSE(id, args)
       if (not _res) then
         return _res,_err
       end
-
       if func_name and results_args and data.result then
         return compareValues(results_args, data.result, "result")
       elseif func_name and results_args and data.error then
@@ -305,7 +292,6 @@ function module:runSDL()
   end
   local result, errmsg = SDL:StartSDL(config.pathToSDL, config.SDL, config.ExitOnCrash)
   if not result then
-    SDL:DeleteFile()
     quit(exit_codes.aborted)
   end
   SDL.autoStarted = true
@@ -345,13 +331,18 @@ function module:initHMI()
           "BasicCommunication.PlayTone",
           "BasicCommunication.OnSDLClose",
           "SDL.OnSDLConsentNeeded",
-          "BasicCommunication.OnResumeAudioSource"
+          "BasicCommunication.OnResumeAudioSource",
+          "BasicCommunication.OnSystemTimeReady"
         })
       registerComponent("UI",
         {
           "UI.OnRecordStart"
         })
       registerComponent("VehicleInfo")
+      registerComponent("RC",
+        {
+          "RC.OnRCStatus"
+        })
       registerComponent("Navigation",
         {
           "Navigation.OnAudioDataStreaming",
@@ -359,37 +350,42 @@ function module:initHMI()
         })
     end)
   exp_waiter:AddExpectation(web_socket_connected_event)
-  
+
   self.hmiConnection:Connect()
   return exp_waiter.expectation
 end
 
 --[[ @initHMI_onReady: the function is HMI's onReady response
 --! @parameters:
---! @hmi_table - hmi_table of hmi specification values, default one
----- is specified in "user_modules/hmi_values"
+--! @hmi_table - hmi_table of hmi specification values, default one is specified in "user_modules/hmi_values"
 --! @example: self:initHMI_onReady(local_hmi_table) ]]
 function module:initHMI_onReady(hmi_table)
   local exp_waiter = commonFunctions:createMultipleExpectationsWaiter(module, "HMI on ready")
 
   local function ExpectRequest(name, hmi_table_element)
+    if hmi_table_element.occurrence == 0 then
+      EXPECT_HMICALL(name, hmi_table_element.params)
+      :Times(0)
+      commonTestCases:DelayedExp(3000)
+      return
+    end
     local event = events.Event()
-    event.level = 2
+    event.level = 1
     event.matches = function(self, data)
       return data.method == name
     end
     local exp = EXPECT_HMIEVENT(event, name)
     :Times(hmi_table_element.mandatory and 1 or AnyNumber())
     :Do(function(_, data)
-      xmlReporter.AddMessage("hmi_connection","SendResponse",
+        xmlReporter.AddMessage("hmi_connection","SendResponse",
         {
           ["methodName"] = tostring(name),
-          ["mandatory"] = hmi_table_element.mandatory ,
+          ["mandatory"] = hmi_table_element.mandatory,
           ["params"] = hmi_table_element.params
         })
-      self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", hmi_table_element.params)
-    end)
-    if hmi_table_element.mandatory then 
+        self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", hmi_table_element.params)
+      end)
+    if hmi_table_element.mandatory then
       exp_waiter:AddExpectation(exp)
     end
     if hmi_table_element.pinned then
@@ -421,8 +417,6 @@ function module:initHMI_onReady(hmi_table)
     end
   end
 
-
-  self.applications = {}
   if type(bc_update_app_list) == "table" then
     ExpectRequest("BasicCommunication.UpdateAppList", bc_update_app_list)
     :Do(function(_, data)
