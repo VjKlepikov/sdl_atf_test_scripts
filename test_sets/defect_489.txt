@@ -4,4 +4,3 @@
 ./test_scripts/Defects_489/489_4_language_change_interfaces.lua
 ./test_scripts/Defects_489/489_5_language_change_Languages.lua
 ./test_scripts/Defects_489/489_6_language_change_different_languages_for_UI_and_VR_TTS.lua
-
