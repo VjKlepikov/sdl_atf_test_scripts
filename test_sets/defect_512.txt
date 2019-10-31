@@ -1,0 +1,2 @@
+./test_scripts/Defects_512/512_PerfomInteraction_error_resultCode.lua
+
