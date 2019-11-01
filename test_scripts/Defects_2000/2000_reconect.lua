@@ -34,8 +34,8 @@ runner.Step("Update ini file ApplicationResumingTimeout=5000", updateIniFile)
 runner.Step("Start SDL, HMI, connect Mobile, start Session", common.start)
 runner.Step("App registration", common.registerApp)
 
-runner.Title("Test")
-for i = 1, 2002 do
+for i = 1, 2100 do
+runner.Title("Test" ..i)
 runner.Step("Activate App", common.activateApp)
 runner.Step("Close session", common.unexpectedDisconnect)
 runner.Step("Connect mobile", common.connectMobile)
