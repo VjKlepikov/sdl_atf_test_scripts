@@ -197,6 +197,20 @@ local function deleteInteractionChoiceSet2(params, self)
 
   self.mobileSession1:ExpectResponse(cid, { success = true, resultCode = "SUCCESS"})
   self.mobileSession1:ExpectNotification("OnHashChange")
+  :Timeout(300000)
+end
+
+local function deleteInteractionChoiceSet3(params, self)
+  local cid = self.mobileSession1:SendRPC("DeleteInteractionChoiceSet", params.requestParams)
+
+  params.responseVrParams.appID = commonSmoke.getHMIAppId()
+  EXPECT_HMICALL("VR.DeleteCommand", params.responseVrParams)
+  :Do(function(_,data)
+    self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
+  end)
+
+  self.mobileSession1:ExpectResponse(cid, { success = true, resultCode = "SUCCESS"})
+  self.mobileSession1:ExpectNotification("OnHashChange")
 end
 
 
@@ -322,7 +336,8 @@ runner.Step("PerformInteraction with MANUAL_ONLY interaction mode no VR commands
 --runner.Step("UnregisterAppInterface Positive Case", unregisterAppInterface)
 --runner.Step("RAI", commonSmoke.registerApp)
 runner.Step("DeleteInteractionChoiceSet Positive Case", deleteInteractionChoiceSet, {deleteAllParams})
-runner.Step("DeleteInteractionChoiceSet Positive Case2", deleteInteractionChoiceSet2, {deleteAllParams})
+runner.Step("DeleteInteractionChoiceSet Positive Case2 via 60", deleteInteractionChoiceSet2, {deleteAllParams})
+runner.Step("DeleteInteractionChoiceSet Positive Case2 via ", deleteInteractionChoiceSet3, {deleteAllParams})
 
 runner.Title("Postconditions")
 runner.Step("Stop SDL", commonSmoke.postconditions)
