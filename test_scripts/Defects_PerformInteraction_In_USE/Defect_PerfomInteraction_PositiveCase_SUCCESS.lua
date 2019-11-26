@@ -67,8 +67,8 @@ local createRequestParams = {
   }
 }
 
-local storagePath = commonPreconditions:GetPathToSDL() .. "storage/" ..
-config.application1.registerAppInterfaceParams.appID .. "_" .. commonSmoke.getDeviceMAC() .. "/"
+-- local storagePath = commonPreconditions:GetPathToSDL() .. "storage/" ..
+-- config.application1.registerAppInterfaceParams.appID .. "_" .. commonSmoke.getDeviceMAC() .. "/"
 
 
 local ImageValue = {
