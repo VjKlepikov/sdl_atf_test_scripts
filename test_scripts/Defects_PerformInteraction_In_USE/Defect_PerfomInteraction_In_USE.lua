@@ -127,7 +127,7 @@ local requestParams_noVR_2 = {
   helpPrompt = helpPromptValue,
   timeoutPrompt = timeoutPromptValue,
   timeout = 5000,
-  vrHelp = vrHelpvalue2,
+  --vrHelp = vrHelpvalue2,
   interactionLayout = "ICON_ONLY"
 }
 
