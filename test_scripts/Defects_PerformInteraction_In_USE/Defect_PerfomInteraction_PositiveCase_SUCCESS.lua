@@ -224,6 +224,35 @@ local function PI_PerformViaMANUAL_ONLY(paramsSend, self)
     })
 end
 
+--! @setExChoiceSet: ChoiceSet structure for UI.PerformInteraction request
+--! @parameters:
+--! choiceIDValues - value of choice id
+--! @return: none
+local function setExChoiceSet(choiceIDValues)
+  local exChoiceSet = { }
+  for i = 1, #choiceIDValues do
+    exChoiceSet[i] = {
+      choiceID = choiceIDValues[i],
+      image = {
+        value = "icon.png",
+        imageType = "STATIC",
+      },
+      menuName = "Choice" .. choiceIDValues[i]
+    }
+  end
+  return exChoiceSet
+end
+
+--! @SendOnSystemContext: OnSystemContext notification
+--! @parameters:
+--! self - test object,
+--! ctx - systemContext value
+--! @return: none
+local function SendOnSystemContext(self, ctx)
+  self.hmiConnection:SendNotification("UI.OnSystemContext",
+    { appID = commonSmoke.getHMIAppId(), systemContext = ctx })
+end
+
 --[[ Scenario ]]
 runner.Title("Preconditions")
 runner.Step("Clean environment", commonSmoke.preconditions)
