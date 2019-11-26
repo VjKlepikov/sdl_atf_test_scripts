@@ -276,13 +276,13 @@ local function PI_PerformViaMANUAL_ONLY(paramsSend, self)
     })
   :Do(function(_,data)
       SendOnSystemContext(self,"HMI_OBSCURED")
-      local function uiResponse()
-        self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS",
-          { choiceID = paramsSend.interactionChoiceSetIDList[1] })
-        self.hmiConnection:SendNotification("TTS.Stopped")
-        SendOnSystemContext(self,"MAIN")
-      end
-      RUN_AFTER(uiResponse, 1000)
+      -- local function uiResponse()
+      --   self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS",
+      --     { choiceID = paramsSend.interactionChoiceSetIDList[1] })
+      --   self.hmiConnection:SendNotification("TTS.Stopped")
+      --   SendOnSystemContext(self,"MAIN")
+      -- end
+      -- RUN_AFTER(uiResponse, 1000)
     end)
   ExpectOnHMIStatusWithAudioStateChanged_PI(self, "MANUAL")
   self.mobileSession1:ExpectResponse(cid,
