@@ -33,6 +33,8 @@
 --[[ Required Shared libraries ]]
 local runner = require('user_modules/script_runner')
 local commonSmoke = require('test_scripts/Smoke/commonSmoke')
+local commonPreconditions = require('user_modules/shared_testcases/commonPreconditions')
+local utils = require('user_modules/utils')
 
 --[[ Local Variables ]]
 local putFileParams = {
@@ -169,24 +171,24 @@ local function PI_PerformViaMANUAL_ONLY(paramsSend, self)
         fieldText = paramsSend.initialText
       }
     })
-  -- :Do(function(_,data)
-  --     SendOnSystemContext(self,"HMI_OBSCURED")
-  --     local function uiResponse()
-  --       self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS",
-  --         { choiceID = paramsSend.interactionChoiceSetIDList[1] })
-  --       self.hmiConnection:SendNotification("TTS.Stopped")
-  --       SendOnSystemContext(self,"MAIN")
-  --     end
-  --     RUN_AFTER(uiResponse, 1000)
-  --   end)
-  -- ExpectOnHMIStatusWithAudioStateChanged_PI(self, "MANUAL")
-  -- self.mobileSession1:ExpectResponse(cid,
-  --   {
-  --     success = true,
-  --     resultCode = "SUCCESS",
-  --     choiceID = paramsSend.interactionChoiceSetIDList[1],
-  --     triggerSource = "MENU"
-  --   })
+  :Do(function(_,data)
+      SendOnSystemContext(self,"HMI_OBSCURED")
+      local function uiResponse()
+        self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS",
+          { choiceID = paramsSend.interactionChoiceSetIDList[1] })
+        self.hmiConnection:SendNotification("TTS.Stopped")
+        SendOnSystemContext(self,"MAIN")
+      end
+      RUN_AFTER(uiResponse, 1000)
+    end)
+  ExpectOnHMIStatusWithAudioStateChanged_PI(self, "MANUAL")
+  self.mobileSession1:ExpectResponse(cid,
+    {
+      success = true,
+      resultCode = "SUCCESS",
+      choiceID = paramsSend.interactionChoiceSetIDList[1],
+      triggerSource = "MENU"
+    })
 end
 
 --[[ Scenario ]]
