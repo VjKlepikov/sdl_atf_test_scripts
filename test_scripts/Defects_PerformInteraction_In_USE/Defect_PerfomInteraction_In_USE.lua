@@ -89,19 +89,19 @@ local vrHelpvalue2 = {
   }
 }
 
-local requestParams = {
-  initialText = "StartPerformInteraction",
-  initialPrompt = initialPromptValue,
-  interactionMode = "BOTH",
-  interactionChoiceSetIDList = {
-    100, 200, 300
-  },
-  helpPrompt = helpPromptValue,
-  timeoutPrompt = timeoutPromptValue,
-  timeout = 5000,
-  vrHelp = vrHelpvalue,
-  interactionLayout = "ICON_ONLY"
-}
+-- local requestParams = {
+--   initialText = "StartPerformInteraction",
+--   initialPrompt = initialPromptValue,
+--   interactionMode = "BOTH",
+--   interactionChoiceSetIDList = {
+--     100, 200, 300
+--   },
+--   helpPrompt = helpPromptValue,
+--   timeoutPrompt = timeoutPromptValue,
+--   timeout = 5000,
+--   vrHelp = vrHelpvalue,
+--   interactionLayout = "ICON_ONLY"
+-- }
 
 local requestParams_noVR = {
   initialText = "StartPerformInteraction",
@@ -508,12 +508,6 @@ local function putFile(params)
   common.getMobileSession():ExpectResponse(cid, { success = true, resultCode = "SUCCESS"})
 end
 
-local createResponseVrParams = {
-  cmdID = createRequestParams.interactionChoiceSetID,
-  type = "Choice",
-  vrCommands = createRequestParams.vrCommands
-}
-
 local createRequestParams = {
   interactionChoiceSetID = 400,
   choiceSet = {
@@ -530,6 +524,13 @@ local createRequestParams = {
     }
   }
 }
+
+local createResponseVrParams = {
+  cmdID = createRequestParams.interactionChoiceSetID,
+  type = "Choice",
+  vrCommands = createRequestParams.vrCommands
+}
+
 
 local createAllParams = {
   requestParams = createRequestParams,
