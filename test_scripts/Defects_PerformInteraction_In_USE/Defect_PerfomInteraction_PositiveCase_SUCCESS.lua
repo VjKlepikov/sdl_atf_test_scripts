@@ -64,6 +64,15 @@ local createRequestParams = {
   }
 }
 
+local function PromptValue(text)
+  local tmp = {
+    {
+      text = text,
+      type = "TEXT"
+    }
+  }
+  return tmp
+end
 
 local initialPromptValue = PromptValue(" Make your choice ")
 
