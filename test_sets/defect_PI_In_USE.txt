@@ -1,0 +1,1 @@
+./test_scripts/Defects_PerformInteraction_In_USE/Defect_PerfomInteraction_PositiveCase_SUCCESS.lua
