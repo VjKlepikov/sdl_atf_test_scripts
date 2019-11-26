@@ -554,7 +554,7 @@ local deleteAllParams = {
 local function deleteInteractionChoiceSet(params)
   local cid = common.getMobileSession():SendRPC("DeleteInteractionChoiceSet", params.requestParams)
 
-  params.responseVrParams.appID = commonSmoke.getHMIAppId()
+  params.responseVrParams.appID = common.getHMIAppId()
   EXPECT_HMICALL("VR.DeleteCommand", params.responseVrParams)
   :Do(function(_,data)
     common.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS", {})
