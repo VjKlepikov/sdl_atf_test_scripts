@@ -508,6 +508,61 @@ local function putFile(params)
   common.getMobileSession():ExpectResponse(cid, { success = true, resultCode = "SUCCESS"})
 end
 
+local createResponseVrParams = {
+  cmdID = createRequestParams.interactionChoiceSetID,
+  type = "Choice",
+  vrCommands = createRequestParams.vrCommands
+}
+
+local createRequestParams = {
+  interactionChoiceSetID = 400,
+  choiceSet = {
+    {
+      choiceID = 400,
+      menuName ="Choice1001",
+      vrCommands = {
+        "Choice1001"
+      },
+      image = {
+        value ="icon.png",
+        imageType ="DYNAMIC"
+      }
+    }
+  }
+}
+
+local createAllParams = {
+  requestParams = createRequestParams,
+  responseVrParams = createResponseVrParams
+}
+
+local deleteRequestParams = {
+  interactionChoiceSetID = createRequestParams.interactionChoiceSetID
+}
+
+local deleteResponseVrParams = {
+  cmdID = createRequestParams.interactionChoiceSetID,
+  type = "Choice"
+}
+
+local deleteAllParams = {
+  requestParams = deleteRequestParams,
+  responseVrParams = deleteResponseVrParams
+}
+
+local function deleteInteractionChoiceSet(params)
+  local cid = common.getMobileSession():SendRPC("DeleteInteractionChoiceSet", params.requestParams)
+
+  params.responseVrParams.appID = commonSmoke.getHMIAppId()
+  EXPECT_HMICALL("VR.DeleteCommand", params.responseVrParams)
+  :Do(function(_,data)
+    common.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS", {})
+  end)
+
+  common.getMobileSession():ExpectResponse(cid, { success = true, resultCode = "SUCCESS"})
+  common.getMobileSession():ExpectNotification("OnHashChange")
+end
+
 --[[ Scenario ]]
 runner.Title("Preconditions")
 runner.Step("Clean environment", common.preconditions)
@@ -532,6 +587,7 @@ runner.Step("connectMobile", common.connectMobile)
 runner.Step("Data resumption during registration", registerAppWithResumption)
 runner.Step("PerformInteraction with MANUAL_ONLY interaction mode no VR commands",
   PI_PerformViaMANUAL_ONLY, {requestParams_noVR_2})
+runner.Step("DeleteInteractionChoiceSet Positive Case", deleteInteractionChoiceSet, {deleteAllParams})
 
 runner.Title("Postconditions")
 runner.Step("Stop SDL", common.postconditions)
