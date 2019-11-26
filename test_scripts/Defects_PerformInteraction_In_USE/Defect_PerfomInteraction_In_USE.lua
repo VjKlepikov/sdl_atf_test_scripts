@@ -23,7 +23,7 @@ local test = require("user_modules/dummy_connecttest")
 runner.testSettings.isSelfIncluded = false
 
 --[[ Local Variables ]]
-local requestParams = {
+local requestParamsAddCommand = {
   menuID = 1000,
   position = 500,
   menuName ="SubMenupositive"
@@ -111,7 +111,7 @@ local requestParams_noVR = {
 
 --[[ Local Functions ]]
 local function addSubMenu()
-  local cid = common.getMobileSession():SendRPC("AddSubMenu", requestParams)
+  local cid = common.getMobileSession():SendRPC("AddSubMenu", requestParamsAddCommand)
 
   responseUiParams.appID = common.getHMIAppId()
   EXPECT_HMICALL("UI.AddSubMenu", responseUiParams)
@@ -493,9 +493,9 @@ runner.Step("Start SDL, HMI, connect Mobile, start Session", common.start)
 runner.Step("RAI", common.registerApp)
 runner.Step("Activate App", common.activateApp)
 runner.Step("Upload icon file", putFile, {putFileParams})
-runner.Step("CreateInteractionChoiceSet with id 100", CreateInteractionChoiceSet, {100})
-runner.Step("CreateInteractionChoiceSet with id 200", CreateInteractionChoiceSet, {200})
-runner.Step("CreateInteractionChoiceSet with id 300", CreateInteractionChoiceSet, {300})
+--runner.Step("CreateInteractionChoiceSet with id 100", CreateInteractionChoiceSet, {100})
+--runner.Step("CreateInteractionChoiceSet with id 200", CreateInteractionChoiceSet, {200})
+--runner.Step("CreateInteractionChoiceSet with id 300", CreateInteractionChoiceSet, {300})
 runner.Step("CreateInteractionChoiceSet no VR commands with id 400", CreateInteractionChoiceSet_noVR, {400})
 
 runner.Title("Test")
