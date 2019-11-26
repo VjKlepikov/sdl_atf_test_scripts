@@ -1,97 +1,65 @@
 ---------------------------------------------------------------------------------------------------
 -- User story: Smoke
--- Use case: PerformInteraction
+-- Use case: DeleteInteractionChoiceSet
 -- Item: Happy path
 --
 -- Requirement summary:
--- [PerformInteraction]:
--- SUCCESS result code
--- TIMED_OUT result code
+-- [DeleteInteractionChoiceSet] SUCCESS choiceSet removal
 --
 -- Description:
--- Mobile application sends PerformInteraction request with valid parameters to SDL
+-- Mobile application sends valid DeleteInteractionChoiceSet request to SDL
+-- and interactionChoiceSet with <interactionChoiceSetID> was successfully
+-- removed on SDL and HMI for the application.
 
 -- Pre-conditions:
 -- a. HMI and SDL are started
 -- b. appID is registered and activated on SDL
 -- c. appID is currently in Background, Full or Limited HMI level
--- d. ChoiceSets are already added
+-- d. Choice set with <interactionChoiceSetID> is created
 
 -- Steps:
--- appID requests PerformInteraction with valid parameters to SDL
+-- appID requests DeleteInteractionChoiceSet request with valid parameters
 
 -- Expected:
 -- SDL validates parameters of the request
--- SDL checks if PerformInteraction is allowed by Policies
+-- SDL checks if VR interface is available on HMI
+-- SDL checks if DeleteInteractionChoiceSet is allowed by Policies
 -- SDL checks if all parameters are allowed by Policies
--- SDL provides ability to perform choice on HMI manually or by voice
--- After user provide the choice SDL responds with (resultCode: SUCCESS, success:true) to mobile application
--- After user does not provide the choice SDL responds with (resultCode: TIMED_OUT, success:false) to mobile application
+-- SDL transfers the VR.DeleteCommand with allowed parameters to HMI
+-- SDL receives successful responses to corresponding VR.DeleteCommand from HMI
+-- SDL responds with (resultCode: SUCCESS, success:true) to mobile application
 ---------------------------------------------------------------------------------------------------
 
 --[[ Required Shared libraries ]]
 local runner = require('user_modules/script_runner')
 local commonSmoke = require('test_scripts/Smoke/commonSmoke')
-local commonPreconditions = require('user_modules/shared_testcases/commonPreconditions')
-
-config.application1.registerAppInterfaceParams.syncMsgVersion.majorVersion = 5
-config.application1.registerAppInterfaceParams.syncMsgVersion.minorVersion = 0
 
 --[[ Local Variables ]]
 local putFileParams = {
   requestParams = {
-    syncFileName = 'icon.png',
-    fileType = "GRAPHIC_PNG",
-    persistentFile = false,
-    systemFile = false
+      syncFileName = 'icon.png',
+      fileType = "GRAPHIC_PNG",
+      persistentFile = false,
+      systemFile = false
   },
   filePath = "files/icon.png"
 }
 
-local storagePath = commonPreconditions:GetPathToSDL() .. "storage/" ..
-config.application1.registerAppInterfaceParams.fullAppID .. "_" .. commonSmoke.getDeviceMAC() .. "/"
-
-local ImageValue = {
-  value = storagePath .. "icon.png",
-  imageType = "DYNAMIC",
-}
-
-local function PromptValue(text)
-  local tmp = {
+local createRequestParams = {
+  interactionChoiceSetID = 1001,
+  choiceSet = {
     {
-      text = text,
-      type = "TEXT"
+      choiceID = 1001,
+      menuName ="Choice1001",
+      vrCommands = {
+        "Choice1001"
+      },
+      image = {
+        value ="icon.png",
+        imageType ="DYNAMIC"
+      }
     }
   }
-  return tmp
-end
-
-local initialPromptValue = PromptValue(" Make your choice ")
-
-local helpPromptValue = PromptValue(" Help Prompt ")
-
-local timeoutPromptValue = PromptValue(" Time out ")
-
-local vrHelpvalue = {
-  {
-    text = " New VRHelp ",
-    position = 1,
-    image = ImageValue
-  }
-}
-
-local requestParams = {
-  initialText = "StartPerformInteraction",
-  initialPrompt = initialPromptValue,
-  interactionMode = "BOTH",
-  interactionChoiceSetIDList = {
-    100, 200, 300
-  },
-  helpPrompt = helpPromptValue,
-  timeoutPrompt = timeoutPromptValue,
-  timeout = 5000,
-  vrHelp = vrHelpvalue,
-  interactionLayout = "ICON_ONLY"
 }
 
 local requestParams_noVR = {
@@ -99,7 +67,7 @@ local requestParams_noVR = {
   initialPrompt = initialPromptValue,
   interactionMode = "BOTH",
   interactionChoiceSetIDList = {
-    100, 200, 300, 400
+    1001
   },
   helpPrompt = helpPromptValue,
   timeoutPrompt = timeoutPromptValue,
@@ -108,187 +76,73 @@ local requestParams_noVR = {
   interactionLayout = "ICON_ONLY"
 }
 
+local createResponseVrParams = {
+  cmdID = createRequestParams.interactionChoiceSetID,
+  type = "Choice",
+  vrCommands = createRequestParams.vrCommands
+}
+
+local createAllParams = {
+  requestParams = createRequestParams,
+  responseVrParams = createResponseVrParams
+}
+
+local deleteRequestParams = {
+  interactionChoiceSetID = createRequestParams.interactionChoiceSetID
+}
+
+local deleteResponseVrParams = {
+  cmdID = createRequestParams.interactionChoiceSetID,
+  type = "Choice"
+}
+
+local deleteAllParams = {
+  requestParams = deleteRequestParams,
+  responseVrParams = deleteResponseVrParams
+}
+
 --[[ Local Functions ]]
+local function createInteractionChoiceSet(params, self)
+  local cid = self.mobileSession1:SendRPC("CreateInteractionChoiceSet", params.requestParams)
 
---! @setChoiceSet: Creates Choice structure
---! @parameters:
---! choiceIDValue - Id for created choice
---! @return: table of created choice structure
-local function setChoiceSet(choiceIDValue)
-  local temp = {
-    {
-      choiceID = choiceIDValue,
-      menuName ="Choice" .. tostring(choiceIDValue),
-      vrCommands = {
-        "VrChoice" .. tostring(choiceIDValue),
-      },
-      image = {
-        value ="icon.png",
-        imageType ="STATIC",
-      }
-    }
-  }
-  return temp
-end
-
---! @setChoiceSet_noVR: Creates Choice structure without VRcommands
---! @parameters:
---! choiceIDValue - Id for created choice
---! @return: table of created choice structure
-local function setChoiceSet_noVR(choiceIDValue)
-  local temp = {
-    {
-      choiceID = choiceIDValue,
-      menuName ="Choice" .. tostring(choiceIDValue),
-      image = {
-        value ="icon.png",
-        imageType ="STATIC",
-      }
-    }
-  }
-  return temp
-end
-
---! @SendOnSystemContext: OnSystemContext notification
---! @parameters:
---! self - test object,
---! ctx - systemContext value
---! @return: none
-local function SendOnSystemContext(self, ctx)
-  self.hmiConnection:SendNotification("UI.OnSystemContext",
-    { appID = commonSmoke.getHMIAppId(), systemContext = ctx })
-end
-
---! @setExChoiceSet: ChoiceSet structure for UI.PerformInteraction request
---! @parameters:
---! choiceIDValues - value of choice id
---! @return: none
-local function setExChoiceSet(choiceIDValues)
-  local exChoiceSet = { }
-  for i = 1, #choiceIDValues do
-    exChoiceSet[i] = {
-      choiceID = choiceIDValues[i],
-      image = {
-        value = "icon.png",
-        imageType = "STATIC",
-      },
-      menuName = "Choice" .. choiceIDValues[i]
-    }
-  end
-  return exChoiceSet
-end
-
---! @ExpectOnHMIStatusWithAudioStateChanged_PI: Expectations of OnHMIStatus notification depending on the application
---! type, HMI level and interaction mode
---! @parameters:
---! self - test object,
---! request - interaction mode,
---! @return: none
-local function ExpectOnHMIStatusWithAudioStateChanged_PI(self, request)
-  if "BOTH" == request then
-    self.mobileSession1:ExpectNotification("OnHMIStatus",
-      { hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN" },
-      { hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE", systemContext = "VRSESSION" },
-      { hmiLevel = "FULL", audioStreamingState = "ATTENUATED", systemContext = "VRSESSION" },
-      { hmiLevel = "FULL", audioStreamingState = "ATTENUATED", systemContext = "HMI_OBSCURED" },
-      { hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "HMI_OBSCURED" },
-      { hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN" })
-    :Times(6)
-  elseif "VR" == request then
-    self.mobileSession1:ExpectNotification("OnHMIStatus",
-      { systemContext = "MAIN", hmiLevel = "FULL", audioStreamingState = "ATTENUATED" },
-      { systemContext = "MAIN", hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE" },
-      { systemContext = "VRSESSION", hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE" },
-      { systemContext = "VRSESSION", hmiLevel = "FULL", audioStreamingState = "AUDIBLE" },
-      { systemContext = "MAIN", hmiLevel = "FULL", audioStreamingState = "AUDIBLE" })
-    :Times(5)
-  elseif "MANUAL" == request then
-    self.mobileSession1:ExpectNotification("OnHMIStatus",
-      { systemContext = "MAIN", hmiLevel = "FULL", audioStreamingState = "ATTENUATED" },
-      { systemContext = "HMI_OBSCURED", hmiLevel = "FULL", audioStreamingState = "ATTENUATED" },
-      { systemContext = "HMI_OBSCURED", hmiLevel = "FULL", audioStreamingState = "AUDIBLE" },
-      { systemContext = "MAIN", hmiLevel = "FULL", audioStreamingState = "AUDIBLE" })
-    :Times(4)
-  end
-end
-
---! @CreateInteractionChoiceSet: Creation of Choice Set
---! @parameters:
---! choiceSetID - id for choice set
---! self - test object
---! @return: none
-local function CreateInteractionChoiceSet(choiceSetID, self)
-  local choiceID = choiceSetID
-  local cid = self.mobileSession1:SendRPC("CreateInteractionChoiceSet", {
-      interactionChoiceSetID = choiceSetID,
-      choiceSet = setChoiceSet(choiceID),
-    })
-  EXPECT_HMICALL("VR.AddCommand", {
-      cmdID = choiceID,
-      type = "Choice",
-      vrCommands = { "VrChoice" .. tostring(choiceID) }
-    })
+  params.responseVrParams.appID = commonSmoke.getHMIAppId()
+  EXPECT_HMICALL("VR.AddCommand", params.responseVrParams)
   :Do(function(_,data)
-      self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", { })
-    end)
-  self.mobileSession1:ExpectResponse(cid, { resultCode = "SUCCESS", success = true })
+    self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
+  end)
+  :ValidIf(function(_,data)
+    if data.params.grammarID ~= nil then
+      deleteResponseVrParams.grammarID = data.params.grammarID
+      return true
+    else
+      return false, "grammarID should not be empty"
+    end
+  end)
+
+  self.mobileSession1:ExpectResponse(cid, { success = true, resultCode = "SUCCESS"})
+  self.mobileSession1:ExpectNotification("OnHashChange")
 end
 
---! @CreateInteractionChoiceSet_noVR: Creation of Choice Set with no vrCommands
---! @parameters:
---! choiceSetID - id for choice set
---! self - test object
---! @return: none
-local function CreateInteractionChoiceSet_noVR(choiceSetID, self)
-  local choiceID = choiceSetID
-  local cid = self.mobileSession1:SendRPC("CreateInteractionChoiceSet", {
-      interactionChoiceSetID = choiceSetID,
-      choiceSet = setChoiceSet_noVR(choiceID),
-    })
-  self.mobileSession1:ExpectResponse(cid, { resultCode = "SUCCESS", success = true })
-end
+local function deleteInteractionChoiceSet(params, self)
+  local cid = self.mobileSession1:SendRPC("DeleteInteractionChoiceSet", params.requestParams)
 
---! @PI_PerformViaVR_ONLY: Processing PI with interaction mode VR_ONLY with performing selection
---! @parameters:
---! paramsSend - parameters for PI request
---! self - test object
---! @return: none
-local function PI_PerformViaVR_ONLY(paramsSend, self)
-  paramsSend.interactionMode = "VR_ONLY"
-  local cid = self.mobileSession1:SendRPC("PerformInteraction",paramsSend)
-  EXPECT_HMICALL("VR.PerformInteraction", {
-      helpPrompt = paramsSend.helpPrompt,
-      initialPrompt = paramsSend.initialPrompt,
-      timeout = paramsSend.timeout,
-      timeoutPrompt = paramsSend.timeoutPrompt
-    })
+  params.responseVrParams.appID = commonSmoke.getHMIAppId()
+  EXPECT_HMICALL("VR.DeleteCommand", params.responseVrParams)
   :Do(function(_,data)
-      local function vrResponse()
-        self.hmiConnection:SendNotification("TTS.Started")
-        self.hmiConnection:SendNotification("VR.Started")
-        SendOnSystemContext(self, "VRSESSION")
-        self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS",
-          { choiceID = paramsSend.interactionChoiceSetIDList[1] })
-        self.hmiConnection:SendNotification("TTS.Stopped")
-        self.hmiConnection:SendNotification("VR.Stopped")
-        SendOnSystemContext(self, "MAIN")
-      end
-      RUN_AFTER(vrResponse, 1000)
-    end)
+    self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
+  end)
 
-  EXPECT_HMICALL("UI.PerformInteraction", {
-      timeout = paramsSend.timeout,
-      vrHelp = paramsSend.vrHelp,
-      vrHelpTitle = paramsSend.initialText,
-    })
-  :Do(function(_,data)
-      self.hmiConnection:SendResponse( data.id, data.method, "SUCCESS", { } )
-    end)
-  ExpectOnHMIStatusWithAudioStateChanged_PI(self, "VR")
-  self.mobileSession1:ExpectResponse(cid,
-    { success = true, resultCode = "SUCCESS", choiceID = paramsSend.interactionChoiceSetIDList[1] })
+  self.mobileSession1:ExpectResponse(cid, { success = true, resultCode = "SUCCESS"})
+  self.mobileSession1:ExpectNotification("OnHashChange")
 end
 
+--[[ Local Functions ]]
+local function unregisterAppInterface(self)
+  local cid = self.mobileSession1:SendRPC("UnregisterAppInterface", { })
+  EXPECT_HMINOTIFICATION("BasicCommunication.OnAppUnregistered",
+    { appID = commonSmoke.getHMIAppId(), unexpectedDisconnect = false })
+  self.mobileSession1:ExpectResponse(cid, { success = true, resultCode = "SUCCESS" })
+end
 --! @PI_PerformViaMANUAL_ONLY: Processing PI with interaction mode MANUAL_ONLY with performing selection
 --! @parameters:
 --! paramsSend - parameters for PI request
@@ -327,82 +181,12 @@ local function PI_PerformViaMANUAL_ONLY(paramsSend, self)
   --   end)
   -- ExpectOnHMIStatusWithAudioStateChanged_PI(self, "MANUAL")
   -- self.mobileSession1:ExpectResponse(cid,
-  --   { success = true, resultCode = "SUCCESS", choiceID = paramsSend.interactionChoiceSetIDList[1] })
-end
-
---! @PI_PerformViaBOTH: Processing PI with interaction mode BOTH with timeout on VR and IU
---! @parameters:
---! paramsSend - parameters for PI request
---! self - test object
---! @return: none
-local function PI_PerformViaBOTH(paramsSend, self)
-  paramsSend.interactionMode = "BOTH"
-  local cid = self.mobileSession1:SendRPC("PerformInteraction",paramsSend)
-  EXPECT_HMICALL("VR.PerformInteraction", {
-      helpPrompt = paramsSend.helpPrompt,
-      initialPrompt = paramsSend.initialPrompt,
-      timeout = paramsSend.timeout,
-      timeoutPrompt = paramsSend.timeoutPrompt
-    })
-  :Do(function(_,data)
-      self.hmiConnection:SendNotification("VR.Started")
-      self.hmiConnection:SendNotification("TTS.Started")
-      SendOnSystemContext(self,"VRSESSION")
-      local function firstSpeakTimeOut()
-        self.hmiConnection:SendNotification("TTS.Stopped")
-        self.hmiConnection:SendNotification("TTS.Started")
-      end
-      RUN_AFTER(firstSpeakTimeOut, 5)
-      local function vrResponse()
-        self.hmiConnection:SendError(data.id, data.method, "TIMED_OUT", "Perform Interaction error response.")
-        self.hmiConnection:SendNotification("VR.Stopped")
-      end
-      RUN_AFTER(vrResponse, 20)
-    end)
-  EXPECT_HMICALL("UI.PerformInteraction", {
-      timeout = paramsSend.timeout,
-      choiceSet = setExChoiceSet(paramsSend.interactionChoiceSetIDList),
-      initialText = {
-        fieldName = "initialInteractionText",
-        fieldText = paramsSend.initialText
-      },
-      vrHelp = paramsSend.vrHelp,
-      vrHelpTitle = paramsSend.initialText
-    })
-  :Do(function(_,data)
-      local function choiceIconDisplayed()
-        SendOnSystemContext(self,"HMI_OBSCURED")
-      end
-      RUN_AFTER(choiceIconDisplayed, 25)
-      local function uiResponse()
-        self.hmiConnection:SendNotification("TTS.Stopped")
-        self.hmiConnection:SendError(data.id, data.method, "TIMED_OUT", "Perform Interaction error response.")
-        SendOnSystemContext(self,"MAIN")
-      end
-      RUN_AFTER(uiResponse, 30)
-    end)
-  ExpectOnHMIStatusWithAudioStateChanged_PI(self, "BOTH")
-  self.mobileSession1:ExpectResponse(cid, { success = false, resultCode = "TIMED_OUT" })
-end
-
-local function unregisterAppInterface(self)
-  local cid = self.mobileSession1:SendRPC("UnregisterAppInterface", { })
-  EXPECT_HMINOTIFICATION("BasicCommunication.OnAppUnregistered",
-    { appID = commonSmoke.getHMIAppId(), unexpectedDisconnect = false })
-  self.mobileSession1:ExpectResponse(cid, { success = true, resultCode = "SUCCESS" })
-end
-
-local function deleteInteractionChoiceSet(params, self)
-  local cid = self.mobileSession1:SendRPC("DeleteInteractionChoiceSet", params.requestParams)
-
-  params.responseVrParams.appID = commonSmoke.getHMIAppId()
-  EXPECT_HMICALL("VR.DeleteCommand", params.responseVrParams)
-  :Do(function(_,data)
-    self.hmiConnection:SendResponse(data.id, data.method, "SUCCESS", {})
-  end)
-
-  self.mobileSession1:ExpectResponse(cid, { success = true, resultCode = "SUCCESS"})
-  self.mobileSession1:ExpectNotification("OnHashChange")
+  --   {
+  --     success = true,
+  --     resultCode = "SUCCESS",
+  --     choiceID = paramsSend.interactionChoiceSetIDList[1],
+  --     triggerSource = "MENU"
+  --   })
 end
 
 --[[ Scenario ]]
@@ -412,22 +196,13 @@ runner.Step("Start SDL, HMI, connect Mobile, start Session", commonSmoke.start)
 runner.Step("RAI", commonSmoke.registerApp)
 runner.Step("Activate App", commonSmoke.activateApp)
 runner.Step("Upload icon file", commonSmoke.putFile, {putFileParams})
-runner.Step("CreateInteractionChoiceSet with id 100", CreateInteractionChoiceSet, {100})
-runner.Step("CreateInteractionChoiceSet with id 200", CreateInteractionChoiceSet, {200})
-runner.Step("CreateInteractionChoiceSet with id 300", CreateInteractionChoiceSet, {300})
-runner.Step("CreateInteractionChoiceSet no VR commands with id 400", CreateInteractionChoiceSet_noVR, {400})
+runner.Step("CreateInteractionChoiceSet", createInteractionChoiceSet, {createAllParams})
 
 runner.Title("Test")
-
-runner.Step("PerformInteraction with MANUAL_ONLY interaction mode", PI_PerformViaMANUAL_ONLY, {requestParams})
+runner.Step("PerformInteraction with MANUAL_ONLY interaction mode no VR commands", PI_PerformViaMANUAL_ONLY, {requestParams_noVR})
 runner.Step("UnregisterAppInterface Positive Case", unregisterAppInterface)
 runner.Step("RAI", commonSmoke.registerApp)
 runner.Step("DeleteInteractionChoiceSet Positive Case", deleteInteractionChoiceSet, {deleteAllParams})
-
---runner.Step("PerformInteraction with VR_ONLY interaction mode", PI_PerformViaVR_ONLY, {requestParams})
---runner.Step("PerformInteraction with MANUAL_ONLY interaction mode no VR commands", PI_PerformViaMANUAL_ONLY, {requestParams_noVR})
---runner.Step("PerformInteraction with BOTH interaction mode", PI_PerformViaBOTH, {requestParams})
-
 
 runner.Title("Postconditions")
 runner.Step("Stop SDL", commonSmoke.postconditions)
