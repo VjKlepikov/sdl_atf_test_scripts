@@ -370,8 +370,8 @@ runner.Step("PerformInteraction with MANUAL_ONLY interaction mode no VR commands
 --runner.Step("UnregisterAppInterface Positive Case", unregisterAppInterface)
 --runner.Step("RAI", commonSmoke.registerApp)
 runner.Step("DeleteInteractionChoiceSet Positive Case", deleteInteractionChoiceSet, {deleteAllParams})
-runner.Step("DeleteInteractionChoiceSet Positive Case2 via 60", deleteInteractionChoiceSet2, {deleteAllParams})
-runner.Step("DeleteInteractionChoiceSet Positive Case2 via ", deleteInteractionChoiceSet3, {deleteAllParams})
+--runner.Step("DeleteInteractionChoiceSet Positive Case2 via 60", deleteInteractionChoiceSet2, {deleteAllParams})
+--runner.Step("DeleteInteractionChoiceSet Positive Case2 via ", deleteInteractionChoiceSet3, {deleteAllParams})
 
 runner.Title("Postconditions")
 runner.Step("Stop SDL", commonSmoke.postconditions)
