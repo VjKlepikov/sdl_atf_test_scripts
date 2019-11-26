@@ -67,8 +67,8 @@ local createRequestParams = {
   }
 }
 
--- local storagePath = commonPreconditions:GetPathToSDL() .. "storage/" ..
--- config.application1.registerAppInterfaceParams.appID .. "_" .. commonSmoke.getDeviceMAC() .. "/"
+local storagePath = commonPreconditions:GetPathToSDL() .. "storage/" ..
+config.application1.registerAppInterfaceParams.appID .. "_" .. commonSmoke.getDeviceMAC() .. "/"
 
 
 local ImageValue = {
@@ -198,7 +198,7 @@ local function setExChoiceSet(choiceIDValues)
     exChoiceSet[i] = {
       choiceID = choiceIDValues[i],
       image = {
-        value = "icon.png",
+        value = storagePath .."icon.png",
         imageType = "DYNAMIC",
       },
       menuName = "Choice" .. choiceIDValues[i]
