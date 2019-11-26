@@ -199,7 +199,7 @@ local function setExChoiceSet(choiceIDValues)
       choiceID = choiceIDValues[i],
       image = {
         value = "icon.png",
-        imageType = "STATIC",
+        imageType = "DYNAMIC",
       },
       menuName = "Choice" .. choiceIDValues[i]
     }
