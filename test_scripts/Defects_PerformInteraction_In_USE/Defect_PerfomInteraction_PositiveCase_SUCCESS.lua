@@ -31,15 +31,47 @@
 ---------------------------------------------------------------------------------------------------
 
 --[[ Required Shared libraries ]]
+local actions = require("user_modules/sequences/actions")
 local runner = require('user_modules/script_runner')
 local commonSmoke = require('test_scripts/Smoke/commonSmoke')
 local commonPreconditions = require('user_modules/shared_testcases/commonPreconditions')
 local utils = require('user_modules/utils')
+local test = require("user_modules/dummy_connecttest")
+local events = require('events')
+
 
 config.application1.registerAppInterfaceParams.syncMsgVersion.majorVersion = 5
 config.application1.registerAppInterfaceParams.syncMsgVersion.minorVersion = 0
 
 --[[ Local Variables ]]
+
+--[[ @unexpectedDisconnect: closing connection
+--! @parameters: none
+--! @return: none
+--]]
+local function unexpectedDisconnect()
+  test.mobileConnection:Close()
+  actions.getHMIConnection():ExpectNotification("BasicCommunication.OnAppUnregistered", { unexpectedDisconnect = true })
+  :Do(function()
+      for i = 1, actions.getAppsCount() do
+        test.mobileSession[i] = nil
+      end
+    end)
+end
+
+--[[ @connectMobile: create connection
+--! @parameters: none
+--! @return: none
+--]]
+function connectMobile()
+  test.mobileConnection:Connect()
+  EXPECT_EVENT(events.connectedEvent, "Connected")
+  :Do(function()
+      utils.cprint(35, "Mobile connected")
+    end)
+end
+
+
 local putFileParams = {
   requestParams = {
       syncFileName = 'icon.png',
@@ -332,6 +364,8 @@ runner.Step("Upload icon file", commonSmoke.putFile, {putFileParams})
 runner.Step("CreateInteractionChoiceSet", createInteractionChoiceSet, {createAllParams})
 
 runner.Title("Test")
+runner.Step("unexpectedDisconnect", unexpectedDisconnect )
+runner.Step("connectMobile", connectMobile )
 runner.Step("PerformInteraction with MANUAL_ONLY interaction mode no VR commands", PI_PerformViaMANUAL_ONLY, {requestParams_noVR})
 --runner.Step("UnregisterAppInterface Positive Case", unregisterAppInterface)
 --runner.Step("RAI", commonSmoke.registerApp)
