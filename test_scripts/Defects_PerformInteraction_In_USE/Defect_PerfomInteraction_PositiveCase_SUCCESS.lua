@@ -36,6 +36,9 @@ local commonSmoke = require('test_scripts/Smoke/commonSmoke')
 local commonPreconditions = require('user_modules/shared_testcases/commonPreconditions')
 local utils = require('user_modules/utils')
 
+config.application1.registerAppInterfaceParams.syncMsgVersion.majorVersion = 5
+config.application1.registerAppInterfaceParams.syncMsgVersion.minorVersion = 0
+
 --[[ Local Variables ]]
 local putFileParams = {
   requestParams = {
@@ -137,6 +140,17 @@ local deleteAllParams = {
 }
 
 --[[ Local Functions ]]
+
+--! @SendOnSystemContext: OnSystemContext notification
+--! @parameters:
+--! self - test object,
+--! ctx - systemContext value
+--! @return: none
+local function SendOnSystemContext(self, ctx)
+  self.hmiConnection:SendNotification("UI.OnSystemContext",
+    { appID = commonSmoke.getHMIAppId(), systemContext = ctx })
+end
+
 local function createInteractionChoiceSet(params, self)
   local cid = self.mobileSession1:SendRPC("CreateInteractionChoiceSet", params.requestParams)
 
@@ -171,7 +185,63 @@ local function deleteInteractionChoiceSet(params, self)
   self.mobileSession1:ExpectNotification("OnHashChange")
 end
 
+
 --[[ Local Functions ]]
+
+--! @setExChoiceSet: ChoiceSet structure for UI.PerformInteraction request
+--! @parameters:
+--! choiceIDValues - value of choice id
+--! @return: none
+local function setExChoiceSet(choiceIDValues)
+  local exChoiceSet = { }
+  for i = 1, #choiceIDValues do
+    exChoiceSet[i] = {
+      choiceID = choiceIDValues[i],
+      image = {
+        value = "icon.png",
+        imageType = "STATIC",
+      },
+      menuName = "Choice" .. choiceIDValues[i]
+    }
+  end
+  return exChoiceSet
+end
+
+--! @ExpectOnHMIStatusWithAudioStateChanged_PI: Expectations of OnHMIStatus notification depending on the application
+--! type, HMI level and interaction mode
+--! @parameters:
+--! self - test object,
+--! request - interaction mode,
+--! @return: none
+local function ExpectOnHMIStatusWithAudioStateChanged_PI(self, request)
+  if "BOTH" == request then
+    self.mobileSession1:ExpectNotification("OnHMIStatus",
+      { hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN" },
+      { hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE", systemContext = "VRSESSION" },
+      { hmiLevel = "FULL", audioStreamingState = "ATTENUATED", systemContext = "VRSESSION" },
+      { hmiLevel = "FULL", audioStreamingState = "ATTENUATED", systemContext = "HMI_OBSCURED" },
+      { hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "HMI_OBSCURED" },
+      { hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN" })
+    :Times(6)
+  elseif "VR" == request then
+    self.mobileSession1:ExpectNotification("OnHMIStatus",
+      { systemContext = "MAIN", hmiLevel = "FULL", audioStreamingState = "ATTENUATED" },
+      { systemContext = "MAIN", hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE" },
+      { systemContext = "VRSESSION", hmiLevel = "FULL", audioStreamingState = "NOT_AUDIBLE" },
+      { systemContext = "VRSESSION", hmiLevel = "FULL", audioStreamingState = "AUDIBLE" },
+      { systemContext = "MAIN", hmiLevel = "FULL", audioStreamingState = "AUDIBLE" })
+    :Times(5)
+  elseif "MANUAL" == request then
+    self.mobileSession1:ExpectNotification("OnHMIStatus",
+      { systemContext = "MAIN", hmiLevel = "FULL", audioStreamingState = "ATTENUATED" },
+      { systemContext = "HMI_OBSCURED", hmiLevel = "FULL", audioStreamingState = "ATTENUATED" },
+      { systemContext = "HMI_OBSCURED", hmiLevel = "FULL", audioStreamingState = "AUDIBLE" },
+      { systemContext = "MAIN", hmiLevel = "FULL", audioStreamingState = "AUDIBLE" })
+    :Times(4)
+  end
+end
+
+
 local function unregisterAppInterface(self)
   local cid = self.mobileSession1:SendRPC("UnregisterAppInterface", { })
   EXPECT_HMINOTIFICATION("BasicCommunication.OnAppUnregistered",
@@ -222,35 +292,6 @@ local function PI_PerformViaMANUAL_ONLY(paramsSend, self)
       choiceID = paramsSend.interactionChoiceSetIDList[1],
       triggerSource = "MENU"
     })
-end
-
---! @setExChoiceSet: ChoiceSet structure for UI.PerformInteraction request
---! @parameters:
---! choiceIDValues - value of choice id
---! @return: none
-local function setExChoiceSet(choiceIDValues)
-  local exChoiceSet = { }
-  for i = 1, #choiceIDValues do
-    exChoiceSet[i] = {
-      choiceID = choiceIDValues[i],
-      image = {
-        value = "icon.png",
-        imageType = "STATIC",
-      },
-      menuName = "Choice" .. choiceIDValues[i]
-    }
-  end
-  return exChoiceSet
-end
-
---! @SendOnSystemContext: OnSystemContext notification
---! @parameters:
---! self - test object,
---! ctx - systemContext value
---! @return: none
-local function SendOnSystemContext(self, ctx)
-  self.hmiConnection:SendNotification("UI.OnSystemContext",
-    { appID = commonSmoke.getHMIAppId(), systemContext = ctx })
 end
 
 --[[ Scenario ]]
