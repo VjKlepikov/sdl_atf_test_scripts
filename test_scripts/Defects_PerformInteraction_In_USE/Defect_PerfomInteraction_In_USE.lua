@@ -531,7 +531,7 @@ runner.Step("unexpectedDisconnect", common.unexpectedDisconnect)
 runner.Step("connectMobile", common.connectMobile)
 runner.Step("Data resumption during registration", registerAppWithResumption)
 runner.Step("PerformInteraction with MANUAL_ONLY interaction mode no VR commands",
-  PI_PerformViaMANUAL_ONLY, {requestParams_noVR})
+  PI_PerformViaMANUAL_ONLY, {requestParams_noVR_2})
 
 runner.Title("Postconditions")
 runner.Step("Stop SDL", common.postconditions)
