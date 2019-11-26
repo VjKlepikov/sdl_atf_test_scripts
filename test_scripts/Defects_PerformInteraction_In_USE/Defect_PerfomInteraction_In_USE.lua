@@ -329,6 +329,10 @@ local function CreateInteractionChoiceSet_noVR(choiceSetID)
       choiceSet = setChoiceSet_noVR(choiceID),
     })
   common.getMobileSession():ExpectResponse(cid, { resultCode = "SUCCESS", success = true })
+  common.getMobileSession():ExpectNotification("OnHashChange")
+  :Do(function(_,data)
+      common.getConfigAppParams().hashID = data.payload.hashID
+    end)
 end
 
 --! @SetImageValue: Set full image path in vrHelp array
@@ -574,6 +578,7 @@ runner.Step("Upload icon file", putFile, {putFileParams})
 --runner.Step("CreateInteractionChoiceSet with id 100", CreateInteractionChoiceSet, {100})
 --runner.Step("CreateInteractionChoiceSet with id 200", CreateInteractionChoiceSet, {200})
 --runner.Step("CreateInteractionChoiceSet with id 300", CreateInteractionChoiceSet, {300})
+runner.Step("AddSubMenu", addSubMenu)
 runner.Step("CreateInteractionChoiceSet no VR commands with id 400", CreateInteractionChoiceSet_noVR, {400})
 
 runner.Title("Test")
@@ -581,7 +586,7 @@ runner.Title("Test")
 --runner.Step("PerformInteraction with MANUAL_ONLY interaction mode", PI_PerformViaMANUAL_ONLY, {requestParams})
 runner.Step("PerformInteraction with MANUAL_ONLY interaction mode no VR commands",
   PI_PerformViaMANUAL_ONLY, {requestParams_noVR})
-runner.Step("AddSubMenu", addSubMenu)
+
 --runner.Step("PerformInteraction with BOTH interaction mode", PI_PerformViaBOTH, {requestParams})
 runner.Step("unexpectedDisconnect", common.unexpectedDisconnect)
 runner.Step("connectMobile", common.connectMobile)
