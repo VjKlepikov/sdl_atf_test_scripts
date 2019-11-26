@@ -38,12 +38,16 @@ local commonPreconditions = require('user_modules/shared_testcases/commonPrecond
 local utils = require('user_modules/utils')
 local test = require("user_modules/dummy_connecttest")
 local events = require('events')
+local commonStepsResumption = require('user_modules/shared_testcases/commonStepsResumption')
+local mobile_session = require('mobile_session')
 
 
 config.application1.registerAppInterfaceParams.syncMsgVersion.majorVersion = 5
 config.application1.registerAppInterfaceParams.syncMsgVersion.minorVersion = 0
 
 --[[ Local Variables ]]
+
+local default_app_params = config.application1.registerAppInterfaceParams
 
 --[[ @unexpectedDisconnect: closing connection
 --! @parameters: none
@@ -57,6 +61,16 @@ local function unexpectedDisconnect()
         test.mobileSession[i] = nil
       end
     end)
+end
+
+local function RegisterResumeApp()
+  local mobileSession = mobile_session.MobileSession(self, self.mobileConnection)
+  local on_rpc_service_started = mobileSession:StartRPC()
+  on_rpc_service_started:Do(function()
+    default_app_params.hashID = self.currentHashID
+    commonStepsResumption:Expect_Resumption_Data(default_app_params)
+    commonStepsResumption:RegisterApp(default_app_params, commonStepsResumption.ExpectResumeAppFULL, true)
+  end)
 end
 
 --[[ @connectMobile: create connection
@@ -366,7 +380,7 @@ runner.Step("CreateInteractionChoiceSet", createInteractionChoiceSet, {createAll
 runner.Title("Test")
 runner.Step("unexpectedDisconnect", unexpectedDisconnect )
 runner.Step("connectMobile", connectMobile )
-runner.Step("RAI", commonSmoke.registerApp)
+runner.Step("RegisterResumeApp", RegisterResumeApp)
 runner.Step("Activate App", commonSmoke.activateApp)
 runner.Step("PerformInteraction with MANUAL_ONLY interaction mode no VR commands", PI_PerformViaMANUAL_ONLY, {requestParams_noVR})
 --runner.Step("UnregisterAppInterface Positive Case", unregisterAppInterface)
