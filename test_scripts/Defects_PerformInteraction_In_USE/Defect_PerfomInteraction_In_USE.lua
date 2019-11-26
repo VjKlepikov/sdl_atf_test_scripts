@@ -81,6 +81,14 @@ local vrHelpvalue = {
   }
 }
 
+local vrHelpvalue2 = {
+  {
+    text = " New VRHelp2 ",
+    position = 2,
+    image = ImageValue
+  }
+}
+
 local requestParams = {
   initialText = "StartPerformInteraction",
   initialPrompt = initialPromptValue,
@@ -106,6 +114,20 @@ local requestParams_noVR = {
   timeoutPrompt = timeoutPromptValue,
   timeout = 5000,
   vrHelp = vrHelpvalue,
+  interactionLayout = "ICON_ONLY"
+}
+
+local requestParams_noVR_2 = {
+  initialText = "StartPerformInteraction",
+  initialPrompt = initialPromptValue,
+  interactionMode = "BOTH",
+  interactionChoiceSetIDList = {
+    400
+  },
+  helpPrompt = helpPromptValue,
+  timeoutPrompt = timeoutPromptValue,
+  timeout = 5000,
+  vrHelp = vrHelpvalue2,
   interactionLayout = "ICON_ONLY"
 }
 
