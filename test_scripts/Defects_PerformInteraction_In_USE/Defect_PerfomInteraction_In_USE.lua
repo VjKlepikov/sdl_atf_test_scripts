@@ -30,10 +30,10 @@ local requestParamsAddCommand = {
 }
 
 local responseUiParams = {
-  menuID = requestParams.menuID,
+  menuID = requestParamsAddCommand.menuID,
   menuParams = {
-    position = requestParams.position,
-    menuName = requestParams.menuName
+    position = requestParamsAddCommand.position,
+    menuName = requestParamsAddCommand.menuName
   }
 }
 
