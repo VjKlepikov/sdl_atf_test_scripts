@@ -100,7 +100,7 @@ local requestParams_noVR = {
   initialPrompt = initialPromptValue,
   interactionMode = "BOTH",
   interactionChoiceSetIDList = {
-    100, 200, 300, 400
+    400
   },
   helpPrompt = helpPromptValue,
   timeoutPrompt = timeoutPromptValue,
