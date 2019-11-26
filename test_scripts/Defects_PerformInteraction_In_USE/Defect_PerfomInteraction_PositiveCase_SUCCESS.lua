@@ -366,6 +366,8 @@ runner.Step("CreateInteractionChoiceSet", createInteractionChoiceSet, {createAll
 runner.Title("Test")
 runner.Step("unexpectedDisconnect", unexpectedDisconnect )
 runner.Step("connectMobile", connectMobile )
+runner.Step("RAI", commonSmoke.registerApp)
+runner.Step("Activate App", commonSmoke.activateApp)
 runner.Step("PerformInteraction with MANUAL_ONLY interaction mode no VR commands", PI_PerformViaMANUAL_ONLY, {requestParams_noVR})
 --runner.Step("UnregisterAppInterface Positive Case", unregisterAppInterface)
 --runner.Step("RAI", commonSmoke.registerApp)
