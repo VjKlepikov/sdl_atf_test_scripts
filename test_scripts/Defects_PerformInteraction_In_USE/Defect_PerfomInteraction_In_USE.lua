@@ -414,32 +414,32 @@ local function PI_PerformViaMANUAL_ONLY(paramsSend)
       common.getHMIConnection():SendNotification("TTS.Started")
       common.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS", { })
     end)
-  EXPECT_HMICALL("UI.PerformInteraction", {
-      timeout = paramsSend.timeout,
-      choiceSet = setExChoiceSet(paramsSend.interactionChoiceSetIDList),
-      initialText = {
-        fieldName = "initialInteractionText",
-        fieldText = paramsSend.initialText
-      }
-    })
-  :Do(function(_,data)
-      SendOnSystemContext("HMI_OBSCURED")
-      local function uiResponse()
-        common.getHMIConnection():SendError(data.id, data.method, "ABORTED", "Perform Interaction error response.")
-        common.getHMIConnection():SendNotification("TTS.Stopped")
-        SendOnSystemContext("MAIN")
-      end
-      RUN_AFTER(uiResponse, 1000)
-    end)
-  ExpectOnHMIStatusWithAudioStateChanged_PI("MANUAL")
-  common.getMobileSession():ExpectResponse(cid,
-    { success = false, resultCode = "ABORTED", info = "Perform Interaction error response." })
-  :ValidIf(function(_, data)
-      if data.payload.triggerSource then
-        return false, "SDL sends redundant triggerSource parameter in response"
-      end
-      return true
-    end)
+  -- EXPECT_HMICALL("UI.PerformInteraction", {
+  --     timeout = paramsSend.timeout,
+  --     choiceSet = setExChoiceSet(paramsSend.interactionChoiceSetIDList),
+  --     initialText = {
+  --       fieldName = "initialInteractionText",
+  --       fieldText = paramsSend.initialText
+  --     }
+  --   })
+  -- :Do(function(_,data)
+  --     SendOnSystemContext("HMI_OBSCURED")
+  --     local function uiResponse()
+  --       common.getHMIConnection():SendError(data.id, data.method, "ABORTED", "Perform Interaction error response.")
+  --       common.getHMIConnection():SendNotification("TTS.Stopped")
+  --       SendOnSystemContext("MAIN")
+  --     end
+  --     RUN_AFTER(uiResponse, 1000)
+  --   end)
+  -- ExpectOnHMIStatusWithAudioStateChanged_PI("MANUAL")
+  -- common.getMobileSession():ExpectResponse(cid,
+  --   { success = false, resultCode = "ABORTED", info = "Perform Interaction error response." })
+  -- :ValidIf(function(_, data)
+  --     if data.payload.triggerSource then
+  --       return false, "SDL sends redundant triggerSource parameter in response"
+  --     end
+  --     return true
+  --   end)
 end
 
 --! @PI_PerformViaBOTH: Processing PI with interaction mode BOTH with timeout on VR and IU
