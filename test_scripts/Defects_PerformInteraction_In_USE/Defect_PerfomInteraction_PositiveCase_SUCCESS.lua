@@ -201,7 +201,7 @@ runner.Step("Upload icon file", commonSmoke.putFile, {putFileParams})
 runner.Step("CreateInteractionChoiceSet", createInteractionChoiceSet, {createAllParams})
 
 runner.Title("Test")
-runner.Step("PerformInteraction with MANUAL_ONLY interaction mode no VR commands", PI_PerformViaMANUAL_ONLY, {requestParams_noVR})
+--runner.Step("PerformInteraction with MANUAL_ONLY interaction mode no VR commands", PI_PerformViaMANUAL_ONLY, {requestParams_noVR})
 runner.Step("UnregisterAppInterface Positive Case", unregisterAppInterface)
 runner.Step("RAI", commonSmoke.registerApp)
 runner.Step("DeleteInteractionChoiceSet Positive Case", deleteInteractionChoiceSet, {deleteAllParams})
