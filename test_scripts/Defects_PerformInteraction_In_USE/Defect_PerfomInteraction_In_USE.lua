@@ -556,6 +556,7 @@ local deleteAllParams = {
 }
 
 local function deleteInteractionChoiceSet(params)
+  utils.wait(300000)
   local cid = common.getMobileSession():SendRPC("DeleteInteractionChoiceSet", params.requestParams)
 
   params.responseVrParams.appID = common.getHMIAppId()
