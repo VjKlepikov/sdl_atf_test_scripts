@@ -414,14 +414,14 @@ local function PI_PerformViaMANUAL_ONLY(paramsSend)
       common.getHMIConnection():SendNotification("TTS.Started")
       common.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS", { })
     end)
-  -- EXPECT_HMICALL("UI.PerformInteraction", {
-  --     timeout = paramsSend.timeout,
-  --     choiceSet = setExChoiceSet(paramsSend.interactionChoiceSetIDList),
-  --     initialText = {
-  --       fieldName = "initialInteractionText",
-  --       fieldText = paramsSend.initialText
-  --     }
-  --   })
+  EXPECT_HMICALL("UI.PerformInteraction", {
+      timeout = paramsSend.timeout,
+      choiceSet = setExChoiceSet(paramsSend.interactionChoiceSetIDList),
+      initialText = {
+        fieldName = "initialInteractionText",
+        fieldText = paramsSend.initialText
+      }
+    })
   -- :Do(function(_,data)
   --     SendOnSystemContext("HMI_OBSCURED")
   --     local function uiResponse()
@@ -569,6 +569,10 @@ local function deleteInteractionChoiceSet(params)
   common.getMobileSession():ExpectNotification("OnHashChange")
 end
 
+local function wait()
+  utils.wait(200000)
+end
+
 --[[ Scenario ]]
 runner.Title("Preconditions")
 runner.Step("Clean environment", common.preconditions)
@@ -594,6 +598,7 @@ runner.Step("connectMobile", common.connectMobile)
 runner.Step("Data resumption during registration", registerAppWithResumption)
 runner.Step("PerformInteraction with MANUAL_ONLY interaction mode no VR commands",
   PI_PerformViaMANUAL_ONLY, {requestParams_noVR_2})
+runner.Step("Wait", wait)
 runner.Step("DeleteInteractionChoiceSet Positive Case", deleteInteractionChoiceSet, {deleteAllParams})
 
 runner.Title("Postconditions")
