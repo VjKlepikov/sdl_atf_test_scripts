@@ -32,9 +32,7 @@ local function sendOnExitApplication()
   :Times(0)
 
   common.getHMIConnection():ExpectNotification("BasicCommunication.ActivateApp")
-  :Do(function(_,data)
-    common.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS", { })
-  end)
+  :Times(0)
 
   common.getMobileSession():ExpectNotification("OnHMIStatus",
     { hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN" })
