@@ -2,19 +2,14 @@
 -- User story: https://github.com/CustomSDL/Sync3.2v2/issues/512
 ---------------------------------------------------------------------------------------------------
 --
--- Description: Wrong processing of PerformInteraction with ABORTED resultCode
+-- Description: TBA
 --
 -- Steps:
--- 1. Mobile app requests PerformInteraction BOTH
--- 2. User aborts the PerformInteraction
---
--- Expected result:
--- 1. HMI responds with resultCode:5(ABORTED) to VR and UI
--- 2. SDL sends PI response to mobile app with resultCode ABORTED and with appropriate error message
+-- TBA
 ---------------------------------------------------------------------------------------------------
 --[[ Required Shared libraries ]]
 local runner = require('user_modules/script_runner')
-local common = require('test_scripts/Defects/commonDefects')
+local common = require('test_scripts/Defects_PerformInteraction_In_USE/commonDefects')
 local commonPreconditions = require('user_modules/shared_testcases/commonPreconditions')
 local utils = require("user_modules/utils")
 local test = require("user_modules/dummy_connecttest")
@@ -569,7 +564,7 @@ local function deleteInteractionChoiceSet(params)
 end
 
 local function wait()
-  utils.wait(200000)
+  utils.wait(240000)
 end
 
 --[[ Scenario ]]
@@ -579,19 +574,12 @@ runner.Step("Start SDL, HMI, connect Mobile, start Session", common.start)
 runner.Step("RAI", common.registerApp)
 runner.Step("Activate App", common.activateApp)
 runner.Step("Upload icon file", putFile, {putFileParams})
---runner.Step("CreateInteractionChoiceSet with id 100", CreateInteractionChoiceSet, {100})
---runner.Step("CreateInteractionChoiceSet with id 200", CreateInteractionChoiceSet, {200})
---runner.Step("CreateInteractionChoiceSet with id 300", CreateInteractionChoiceSet, {300})
 runner.Step("AddSubMenu", addSubMenu)
 runner.Step("CreateInteractionChoiceSet no VR commands with id 400", CreateInteractionChoiceSet_noVR, {400})
 
 runner.Title("Test")
---runner.Step("PerformInteraction with VR_ONLY interaction mode", PI_PerformViaVR_ONLY, {requestParams})
---runner.Step("PerformInteraction with MANUAL_ONLY interaction mode", PI_PerformViaMANUAL_ONLY, {requestParams})
 runner.Step("PerformInteraction with MANUAL_ONLY interaction mode no VR commands",
   PI_PerformViaMANUAL_ONLY, {requestParams_noVR})
-
---runner.Step("PerformInteraction with BOTH interaction mode", PI_PerformViaBOTH, {requestParams})
 runner.Step("unexpectedDisconnect", common.unexpectedDisconnect)
 runner.Step("connectMobile", common.connectMobile)
 runner.Step("Data resumption during registration", registerAppWithResumption)
