@@ -179,7 +179,7 @@ local function registerAppWithResumption()
       :Do(function()
           common.getMobileSession():ExpectNotification("OnHMIStatus",
             { hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN" },
-            { hmiLevel = "FULL", audioStreamingState = "AUDIBLE", systemContext = "MAIN" })
+            { hmiLevel = "FULL", audioStreamingState = "ATTENUATED", systemContext = "MAIN" })
           :Times(2)
           common.getMobileSession():ExpectNotification("OnPermissionsChange")
         end)
