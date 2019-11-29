@@ -1,1 +1,1 @@
-./test_scripts/Defects_PerformInteraction_In_USE/Defect_PerfomInteraction_In_USE.lua
+./test_scripts/Defect_ShowConstantTBT/Defect_ShowConstantTBT.lua
