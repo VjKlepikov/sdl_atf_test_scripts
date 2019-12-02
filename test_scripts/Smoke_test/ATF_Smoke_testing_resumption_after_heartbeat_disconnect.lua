@@ -47,8 +47,8 @@ common_steps:PreconditionSteps("Precondition", 4)
 function Test:Precondition_StartSession()
   self.mobileSession = mobile_session.MobileSession(self, self.mobileConnection)
   self.mobileSession.version = 3
-  self.mobileSession.sendHeartbeatToSDL = false
-  self.mobileSession.answerHeartBeatFromSDL = false
+  self.mobileSession.sendHeartbeatToSDL = true
+  self.mobileSession.answerHeartBeatFromSDL = true
   self.mobileSession.ignoreSDLHeartBeatACK = true
   self.mobileSession:StartService(7)
 end
