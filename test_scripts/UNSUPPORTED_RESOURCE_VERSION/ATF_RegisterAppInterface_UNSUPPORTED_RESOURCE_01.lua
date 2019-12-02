@@ -114,6 +114,7 @@ local file_connection  = require('file_connection')
 			event_dispatcher:AddConnection(self.mobileConnection)
 			self.mobileSession:ExpectEvent(events.connectedEvent, "Connection started")
 			self.mobileConnection:Connect()
+			self.mobileSession.sendHeartbeatToSDL = false
 			self.mobileSession:StartService(7)
 		end
 
