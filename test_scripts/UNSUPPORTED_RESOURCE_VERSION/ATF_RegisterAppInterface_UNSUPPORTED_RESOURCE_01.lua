@@ -128,7 +128,7 @@ local file_connection  = require('file_connection')
 
 															syncMsgVersion =
 															{
-																majorVersion = 2,
+																majorVersion = 3,
 																minorVersion = 1,
 															},
 															appName ="SyncProxyTester",
