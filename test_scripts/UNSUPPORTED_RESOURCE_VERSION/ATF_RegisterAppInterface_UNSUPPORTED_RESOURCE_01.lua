@@ -15,7 +15,7 @@ f = assert(io.open('./user_modules/connecttest_RAIttsUnsupported.lua', "r"))
 	local pattern1 = 'ExpectRequest%s-%(%s-"%s-TTS.GetLanguage%s-".-%{'
 	local ResultPattern2 = fileContent:match(pattern1)
 
-	if ResultPattern2 == nil then 
+	if ResultPattern2 == nil then
     	print(" \27[31m ExpectRequest TTS.GetLanguage call is not found in /user_modules/connecttest_RAIttsUnsupported.lua \27[0m ")
   	else
 	    fileContent  =  string.gsub(fileContent, pattern1, 'ExpectRequest("TTS.GetLanguage", false, {')
@@ -25,7 +25,7 @@ f = assert(io.open('./user_modules/connecttest_RAIttsUnsupported.lua', "r"))
 	local pattern1 = 'ExpectRequest%s-%(%s-"%s-TTS.SetGlobalProperties%s-".-%{'
 	local ResultPattern2 = fileContent:match(pattern1)
 
-	if ResultPattern2 == nil then 
+	if ResultPattern2 == nil then
     	print(" \27[31m ExpectRequest TTS.SetGlobalProperties call is not found in /user_modules/connecttest_RAIttsUnsupported.lua \27[0m ")
   	else
 	    fileContent  =  string.gsub(fileContent, pattern1, 'ExpectRequest("TTS.SetGlobalProperties", false, {')
@@ -35,7 +35,7 @@ f = assert(io.open('./user_modules/connecttest_RAIttsUnsupported.lua', "r"))
 	local pattern1 = 'ExpectRequest%s-%(%s-"%s-TTS.ChangeRegistration%s-".-%{'
 	local ResultPattern2 = fileContent:match(pattern1)
 
-	if ResultPattern2 == nil then 
+	if ResultPattern2 == nil then
     	print(" \27[31m ExpectRequest TTS.ChangeRegistration call is not found in /user_modules/connecttest_RAIttsUnsupported.lua \27[0m ")
   	else
 	    fileContent  =  string.gsub(fileContent, pattern1, 'ExpectRequest("TTS.ChangeRegistration", false, {')
@@ -45,7 +45,7 @@ f = assert(io.open('./user_modules/connecttest_RAIttsUnsupported.lua', "r"))
 	local pattern1 = 'ExpectRequest%s-%(%s-"%s-TTS.GetSupportedLanguages%s-".-%{'
 	local ResultPattern2 = fileContent:match(pattern1)
 
-	if ResultPattern2 == nil then 
+	if ResultPattern2 == nil then
     	print(" \27[31m ExpectRequest TTS.GetSupportedLanguages call is not found in /user_modules/connecttest_RAIttsUnsupported.lua \27[0m ")
   	else
 	    fileContent  =  string.gsub(fileContent, pattern1, 'ExpectRequest("TTS.GetSupportedLanguages", false, {')
@@ -55,7 +55,7 @@ f = assert(io.open('./user_modules/connecttest_RAIttsUnsupported.lua', "r"))
 	local pattern1 = 'ExpectRequest%s-%(%s-"%s-TTS.GetCapabilities%s-".-%{'
 	local ResultPattern2 = fileContent:match(pattern1)
 
-	if ResultPattern2 == nil then 
+	if ResultPattern2 == nil then
     	print(" \27[31m ExpectRequest TTS.GetCapabilities call is not found in /user_modules/connecttest_RAIttsUnsupported.lua \27[0m ")
   	else
 	    fileContent  =  string.gsub(fileContent, pattern1, 'ExpectRequest("TTS.GetCapabilities", false, {')
@@ -65,7 +65,7 @@ f = assert(io.open('./user_modules/connecttest_RAIttsUnsupported.lua', "r"))
 	local pattern1 = 'ExpectRequest%s-%(%s-"%s-TTS.IsReady%s-".-%{.-%}%s-%)'
 	local ResultPattern2 = fileContent:match(pattern1)
 
-	if ResultPattern2 == nil then 
+	if ResultPattern2 == nil then
     	print(" \27[31m ExpectRequest TTS.IsReady call is not found in /user_modules/connecttest_RAIttsUnsupported.lua \27[0m ")
   	else
 	    fileContent  =  string.gsub(fileContent, pattern1, 'ExpectRequest("TTS.IsReady", true, { available = false })')
@@ -99,7 +99,7 @@ local file_connection  = require('file_connection')
 
 	--Requirement id in JAMA/or Jira ID: SDLAQ-CRS-1328
 
-	--Verification criteria: When ttsName is sent and TTS isn't supported on current HMI, UNSUPPORTED_RESOURCE is returned as a result of request. Info parameter provides additional information about the case. General request result success=true in case of no errors from other components. 
+	--Verification criteria: When ttsName is sent and TTS isn't supported on current HMI, UNSUPPORTED_RESOURCE is returned as a result of request. Info parameter provides additional information about the case. General request result success=true in case of no errors from other components.
 
 	--Begin Test case ResultCodeCheck
 	--Description: Check UNSUPPORTED_RESOURCE resultCode in case TTS isn't supported on current HMI
@@ -117,40 +117,40 @@ local file_connection  = require('file_connection')
 			self.mobileSession:StartService(7)
 		end
 
-		function Test:RegisterAppInterface_ttsUnsupportedUnsupportedResource() 
+		function Test:RegisterAppInterface_ttsUnsupportedUnsupportedResource()
 
-			--mobile side: RegisterAppInterface request 
+			--mobile side: RegisterAppInterface request
 			local CorIdRAI = self.mobileSession:SendRPC("RegisterAppInterface",
 														{
-														  	 
-															syncMsgVersion = 
-															{ 
-																majorVersion = 2,
-																minorVersion = 2,
-															}, 
+
+															syncMsgVersion =
+															{
+																majorVersion = 5,
+																minorVersion = 1,
+															},
 															appName ="SyncProxyTester",
-															ttsName = 
-															{ 
-																 
-																{ 
+															ttsName =
+															{
+
+																{
 																	text ="SyncProxyTester",
 																	type ="TEXT",
-																}, 
-															}, 
+																},
+															},
 															ngnMediaScreenAppName ="SPT",
-															vrSynonyms = 
-															{ 
+															vrSynonyms =
+															{
 																"VRSyncProxyTester",
-															}, 
+															},
 															isMediaApplication = true,
 															languageDesired ="EN-US",
 															hmiDisplayLanguageDesired ="EN-US",
-															appHMIType = 
-															{ 
+															appHMIType =
+															{
 																"DEFAULT",
-															}, 
+															},
 															appID ="123456",
-															deviceInfo = 
+															deviceInfo =
 															{
 																hardware = "hardware",
 																firmwareRev = "firmwareRev",
@@ -159,15 +159,15 @@ local file_connection  = require('file_connection')
 																carrier = "carrier",
 																maxNumberRFCOMMPorts = 5
 															}
-														
+
 														})
-			
+
 
 		 	--hmi side: expected  BasicCommunication.OnAppRegistered
 				EXPECT_HMINOTIFICATION("BasicCommunication.OnAppRegistered")
 
-			--mobile side: RegisterAppInterface response 
-			EXPECT_RESPONSE(CorIdRAI, { success = true, resultCode = "UNSUPPORTED_RESOURCE"})
+			--mobile side: RegisterAppInterface response
+			EXPECT_RESPONSE(CorIdRAI, { success = true, resultCode = "SUCCESS"})
 				:Timeout(2000)
 
 		end
