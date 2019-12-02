@@ -114,9 +114,6 @@ local file_connection  = require('file_connection')
 			event_dispatcher:AddConnection(self.mobileConnection)
 			self.mobileSession:ExpectEvent(events.connectedEvent, "Connection started")
 			self.mobileConnection:Connect()
-			self.mobileSession.version = 3
-			self.mobileSession.answerHeartBeatFromSDL = true
-			self.mobileSession.sendHeartbeatToSDL = true
 			self.mobileSession:StartService(7)
 		end
 
@@ -128,7 +125,7 @@ local file_connection  = require('file_connection')
 
 															syncMsgVersion =
 															{
-																majorVersion = 3,
+																majorVersion = 2,
 																minorVersion = 1,
 															},
 															appName ="SyncProxyTester",
