@@ -33,7 +33,7 @@ local commonSmoke = require('test_scripts/Smoke/commonSmoke')
 
 --[[ Local Variables ]]
 local stringMaxLength = string.rep("a", 1000)
-local stringoutOfMaxLength = string.rep("a", 1500)
+local stringOutOfMaxLength = string.rep("a", 1500)
 
 local putFileParams = {
   requestParams = {
@@ -122,7 +122,7 @@ local function showConstantTBT(params, self)
   params.responseUiParams.softButtons[1].image.value = commonSmoke.getPathToFileInStorage(params.requestParams.softButtons[1].image.value)
   EXPECT_HMICALL("Navigation.ShowConstantTBT", params.responseUiParams)
   :Do(function(_,data)
-      self.hmiConnection:SendError(data.id, data.method, "TIMED_OUT", stringoutOfMaxLength )
+      self.hmiConnection:SendError(data.id, data.method, "TIMED_OUT", stringOutOfMaxLength )
     end)
   self.mobileSession1:ExpectResponse(cid, { success = false, resultCode = "TIMED_OUT", info = stringMaxLength })
 end
