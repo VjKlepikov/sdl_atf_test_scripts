@@ -124,7 +124,8 @@ local function showConstantTBT(params, self)
   params.responseUiParams.softButtons[1].image.value = commonSmoke.getPathToFileInStorage(params.requestParams.softButtons[1].image.value)
   EXPECT_HMICALL("Navigation.ShowConstantTBT", params.responseUiParams)
   :Do(function(_,data)
-      self.hmiConnection:SendError(data.id, data.method, "TIMED_OUT", arrayOutOfMaxLength }
+      self.hmiConnection:SendError(data.id, data.method, "TIMED_OUT", arrayOutOfMaxLength )
+    end)
   self.mobileSession1:ExpectResponse(cid, { success = false, resultCode = "TIMED_OUT", info = arrayMaxLength })
 end
 
