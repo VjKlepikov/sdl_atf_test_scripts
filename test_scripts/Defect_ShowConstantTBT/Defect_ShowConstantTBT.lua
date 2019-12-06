@@ -32,10 +32,8 @@ local runner = require('user_modules/script_runner')
 local commonSmoke = require('test_scripts/Smoke/commonSmoke')
 
 --[[ Local Variables ]]
-local maxLength = 1000
-local outOfMaxLength = 1500
-local arrayMaxLength = { maxLength .. "a" }
-local arrayOutOfMaxLength = { outOfMaxLength .. "a" }
+local stringMaxLength = string.rep("a", 1000)
+local stringoutOfMaxLength = string.rep("a", 1500)
 
 local putFileParams = {
   requestParams = {
