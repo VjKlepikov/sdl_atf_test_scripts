@@ -21,7 +21,7 @@ config.application1.registerAppInterfaceParams.isMediaApplication = false
 local valid_values = {
   {name = "IsLowerBound", value = 0},
   {name = "IsMiddle", value = 1147483647},
-  {name = "IsMax", value = 2147483648}
+  {name = "IsMax", value = 2147483647}
 }
 
 local invalid_values = {
