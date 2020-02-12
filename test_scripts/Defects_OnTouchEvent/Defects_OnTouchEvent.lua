@@ -29,14 +29,14 @@ end
 
 local valid_values = {
   {name = "IsLowerBound", value = { 0 }},
-  {name = "IsMiddle", value = { 1147483647 }} ,
-  {name = "IsMax", value = { 2147483647 }},
+  {name = "IsMiddle", value = { 2147483648 }} ,
+  {name = "IsMax", value = { 5000000000 }},
   {name = "IsMax", value = ts_upperbound }
 }
 
 local invalid_values = {
-  {name = "IsMaxOut", value = { 2147483648 }},
-  {name = "IsUpperBound", value = { 5000000000 }},
+  {name = "IsMaxOut", value = { 5000000001 }},
+  {name = "IsUpperBound", value = { 6000000001 }},
   {name = "IsMissed", value = { nil }},
   {name = "IsOutLowerBound", value = {}},
   {name = "WrongDataType", value = { "123"}},
