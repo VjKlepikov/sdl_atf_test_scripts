@@ -23,7 +23,7 @@ end
 
 local ts_upperboundOut = {}
 for i = 1, 1001 do
-  table.insert(ts_upperbound, i)
+  table.insert(ts_upperboundOut, i)
 end
 
 
@@ -37,9 +37,9 @@ local valid_values = {
 local invalid_values = {
   {name = "IsMaxOut", value = { 2147483648 }},
   {name = "IsUpperBound", value = { 5000000000 }},
-  {name = "IsMissed", value = nil},
+  {name = "IsMissed", value = { nil }},
   {name = "IsOutLowerBound", value = {}},
-  {name = "WrongDataType", value = "123"},
+  {name = "WrongDataType", value = { "123"}},
   {name = "IsMax", value = ts_upperboundOut }
 }
 
@@ -66,14 +66,14 @@ runner.Step("RAI", common.registerApp)
 runner.Step("Activate App", common.activateApp)
 
 for i = 1, #valid_values do
-  runner.Step("HMI sends UI.OnTouchEvent with the 'ts' ".. tostring(valid_values[i].value),
+  runner.Step("HMI sends UI.OnTouchEvent with the 'ts' ".. tostring(valid_values[i].value[1]),
   OnTouchEvent, { valid_values[i].value, 1 })
 end
 
--- for i = 1, #invalid_values do
---   runner.Step("HMI sends UI.OnTouchEvent with the 'ts' ".. tostring(invalid_values[i].value),
---     OnTouchEvent, { invalid_values[i].value, 0 })
--- end
+for k = 1, #invalid_values do
+  runner.Step("HMI sends UI.OnTouchEvent with the 'ts' ".. tostring(invalid_values[k].value[1]),
+    OnTouchEvent, { invalid_values[k].value, 0 })
+end
 
 runner.Title("Postconditions")
 runner.Step("Stop SDL", common.postconditions)
