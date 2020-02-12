@@ -34,14 +34,14 @@ local invalid_values = {
 
 
 -- [[ Local Functions ]]
-local function OnTouchEvent(pTs)
+local function OnTouchEvent(pTs, pTimes)
   local sendParams = {
     type = "BEGIN",
     event = { {c = {{x = 1, y = 1}}, id = 1, ts = { pTs }}}
   }
   common.getHMIConnection():SendNotification("UI.OnTouchEvent", sendParams)
   common.getMobileSession():ExpectNotification("OnTouchEvent", sendParams)
-  :Times(0)
+  :Times(pTimes)
 end
 
 --[[ Scenario ]]
@@ -56,12 +56,12 @@ runner.Step("Activate App", common.activateApp)
 
 for i = 1, #valid_values do
   runner.Step("HMI sends UI.OnTouchEvent with the 'ts' ".. tostring(valid_values[i].value),
-  OnTouchEvent, { valid_values[i].value })
+  OnTouchEvent, { valid_values[i].value, 1 })
 end
 
 for i = 1, #invalid_values do
   runner.Step("HMI sends UI.OnTouchEvent with the 'ts' ".. tostring(valid_values[i].value),
-    OnTouchEvent, { invalid_values[i].value })
+    OnTouchEvent, { invalid_values[i].value, 0 })
 end
 
 runner.Title("Postconditions")
