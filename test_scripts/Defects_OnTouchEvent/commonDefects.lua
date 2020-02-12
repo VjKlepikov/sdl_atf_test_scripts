@@ -53,12 +53,12 @@ end
 --! @return: none
 --]]
 local preconditionsOrig = commonDefect.preconditions
-function commonDefect.preconditions(pUpdateFunction)
+function commonDefect.preconditions()
   preconditionsOrig()
   commonPreconditions:BackupFile(preloadedPT)
-  if pUpdateFunction then
-    commonDefect.updatePreloadedPT(pUpdateFunction)
-  end
+  -- if pUpdateFunction then
+  --   commonDefect.updatePreloadedPT(pUpdateFunction)
+  -- end
 end
 
 --[[ @updatePreloadedPT: update preloaded file with custom permissions
@@ -66,13 +66,13 @@ end
 --! updateFunction - update preloadedPT
 --! @return: none
 --]]
-function commonDefect.updatePreloadedPT(pUpdateFunction)
+function commonDefect.updatePreloadedPT()
   local preloadedFile = commonPreconditions:GetPathToSDL() .. preloadedPT
   local pt = utils.jsonFileToTable(preloadedFile)
-  pt.policy_table.app_policies[commonDefect.getConfigAppParams().fullAppID].AppHMIType = { "NAVIGATION" }
-  pt.policy_table.app_policies[commonDefect.getConfigAppParams().fullAppID].groups = { "Base-4", "OnTouchEventOnlyGroup" }
+  pt.policy_table.app_policies.default.AppHMIType = { "NAVIGATION" }
+  pt.policy_table.app_policies.default.groups = { "Base-4", "OnTouchEventOnlyGroup" }
   pt.policy_table.functional_groupings["DataConsent-2"].rpcs = json.null
-  pUpdateFunction(pt)
+  --pUpdateFunction(pt)
   utils.tableToJsonFile(pt, preloadedFile)
 end
 
