@@ -1,1 +1,3 @@
 ./test_scripts/Defects_OnTouchEvent/Defects_OnTouchEvent.lua
+./test_scripts/API/ATF_OnTouchEvent_param_ts.lua
+./test_scripts/API/ATF_OnTouchEvent.lua
