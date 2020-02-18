@@ -35,7 +35,6 @@ config.application1.registerAppInterfaceParams.appHMIType = { "DEFAULT" }
 
 --[[ Local Variables ]]
 local buttonName = {
-  "OK",
   "PRESET_0",
   "PRESET_1",
   "PRESET_2",
@@ -52,7 +51,8 @@ local mediaButtonName = {
   "SEEKLEFT",
   "SEEKRIGHT",
   "TUNEUP",
-  "TUNEDOWN"
+  "TUNEDOWN",
+  "OK"
 }
 
 --[[ Local Functions ]]
