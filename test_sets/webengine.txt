@@ -24,4 +24,4 @@
 ./test_scripts/WebEngine/024_AppProperties_are_stored_through_ignition_cycles.lua
 ./test_scripts/WebEngine/025_PTU_update_app_properties.lua
 ./test_scripts/WebEngine/026_PTU_snapshot_validation.lua
-./test_scripts/WebEngine/027_UpdateAppList_WebApp1_unreg_WebApp2.lu
+./test_scripts/WebEngine/027_UpdateAppList_WebApp1_unreg_WebApp2.lua
