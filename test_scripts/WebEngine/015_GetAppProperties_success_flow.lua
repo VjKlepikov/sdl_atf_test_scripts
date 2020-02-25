@@ -24,8 +24,14 @@ local common = require('test_scripts/WebEngine/commonWebEngine')
 
 --[[ Local Variables ]]
 local appProperties1 = {
-  nicknames = { "Test Web Application_11", "Test Web Application_12" },
+  nicknames = { "Test Web Application_11" },
   policyAppID = "0000001",
+  enabled = false
+}
+
+local appProperties2 = {
+  nicknames = { "Test Web Application_21", "Test Web Application_22" },
+  policyAppID = "0000002",
   enabled = true,
   authToken = "ABCD12345",
   transportType = "WS",
@@ -33,9 +39,9 @@ local appProperties1 = {
   endpoint = "ws://127.0.0.1:8080/"
 }
 
-local appProperties2 = {
-  nicknames = { "Test Web Application_21", "Test Web Application_22" },
-  policyAppID = "0000002",
+local appProperties3 = {
+  nicknames = { "Test Web Application_31", "Test Web Application_32" },
+  policyAppID = "0000003",
   enabled = false,
   authToken = "12345ABCD",
   transportType = "WSS",
@@ -43,11 +49,25 @@ local appProperties2 = {
   endpoint = "wss://127.0.0.1:8080/"
 }
 
+local appProperties4 = {
+  nicknames = { "Test Web Application_41", "Test Web Application_42" },
+  policyAppID = "0000004",
+  enabled = true
+}
+
 --[[ Local Functions ]]
 local function getAppPropertiesAll(pData)
+  local sdlResponseDataResult = {}
+  sdlResponseDataResult.success = true
+  sdlResponseDataResult.resultCode = "SUCCESS"
+  sdlResponseDataResult.properties =  pData
   local corId = common.getHMIConnection():SendRequest("BasicCommunication.GetAppProperties", {})
-  common.getHMIConnection():ExpectResponse(corId,
-    { result = { success = true, resultCode = "SUCCESS", properties = pData }})
+  common.getHMIConnection():ExpectResponse(corId, { result = sdlResponseDataResult })
+  :ValidIf(function(_,data)
+    return common.validation(data.result.properties, sdlResponseDataResult.properties,
+      "BasicCommunication.GetAppProperties")
+  end)
+
 end
 
 -- [[ Scenario ]]
@@ -56,14 +76,20 @@ common.Step("Clean environment", common.preconditions)
 common.Step("Start SDL, HMI, connect regular mobile, start Session", common.start)
 common.Step("SetAppProperties request for policyAppID1", common.setAppProperties, { appProperties1 })
 common.Step("SetAppProperties request for policyAppID2", common.setAppProperties, { appProperties2 })
+common.Step("SetAppProperties request for policyAppID3", common.setAppProperties, { appProperties3 })
+common.Step("SetAppProperties request for policyAppID4", common.setAppProperties, { appProperties4 })
 
 common.Title("Test")
+common.Step("GetAppProperties request: policyAppID is missing", getAppPropertiesAll,
+  {{ appProperties1, appProperties2, appProperties3, appProperties4 }})
 common.Step("GetAppProperties request: with policyAppID1", common.getAppProperties,
   { appProperties1 })
 common.Step("GetAppProperties request: with policyAppID2", common.getAppProperties,
   { appProperties2 })
-common.Step("GetAppProperties request: policyAppID is missing", getAppPropertiesAll,
-  {{ appProperties1, appProperties2 }})
+common.Step("GetAppProperties request: with policyAppID3", common.getAppProperties,
+  { appProperties3 })
+common.Step("GetAppProperties request: with policyAppID4", common.getAppProperties,
+  { appProperties4 })
 
 common.Title("Postconditions")
 common.Step("Stop SDL", common.postconditions)
