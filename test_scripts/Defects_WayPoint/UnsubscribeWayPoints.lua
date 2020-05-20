@@ -56,7 +56,7 @@ end
 
 
 --[[ Scenario ]]
-for i = 1, 2000 do
+for i = 1, 50 do
 runner.Title("Preconditions")
 runner.Step("Clean environment", common.preconditions)
 --runner.Step("Update ini file ApplicationResumingTimeout=5000", updateIniFile)
