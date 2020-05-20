@@ -52,9 +52,65 @@ function commonDefect.SubscribeWayPointsUnexpectedDisconnect()
   local cid = actions.getMobileSession():SendRPC("SubscribeWayPoints",{})
   EXPECT_HMICALL("Navigation.SubscribeWayPoints")
   :Do(function(_,data)
+    actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
+    test.mobileConnection:Close()
+    --actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
+  end)
+  --actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
+  commonDefect.getHMIConnection():ExpectNotification("BasicCommunication.OnAppUnregistered",
+    { unexpectedDisconnect = true })
+  :Do(function()
+      for i = 1, commonDefect.getAppsCount() do
+        test.mobileSession[i] = nil
+      end
+    end)
+end
+function commonDefect.SubscribeWayPointsUnexpectedDisconnect2()
+  local cid = actions.getMobileSession():SendRPC("SubscribeWayPoints",{})
+  EXPECT_HMICALL("Navigation.SubscribeWayPoints")
+  :Do(function(_,data)
+    --actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
     test.mobileConnection:Close()
     actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
   end)
+  --actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
+  commonDefect.getHMIConnection():ExpectNotification("BasicCommunication.OnAppUnregistered",
+    { unexpectedDisconnect = true })
+  :Do(function()
+      for i = 1, commonDefect.getAppsCount() do
+        test.mobileSession[i] = nil
+      end
+    end)
+end
+function commonDefect.SubscribeWayPointsUnexpectedDisconnect3()
+  local cid = actions.getMobileSession():SendRPC("SubscribeWayPoints",{})
+  EXPECT_HMICALL("Navigation.SubscribeWayPoints")
+  :Do(function(_,data)
+    --actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
+    test.mobileConnection:Close()
+    --actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
+  end)
+
+  commonDefect.getHMIConnection():ExpectNotification("BasicCommunication.OnAppUnregistered",
+    { unexpectedDisconnect = true })
+  :Do(function()
+    actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
+      for i = 1, commonDefect.getAppsCount() do
+        test.mobileSession[i] = nil
+      end
+    end)
+
+end
+
+function commonDefect.UnsubscribeWayPointsPointsUnexpectedDisconnect()
+  local cid = actions.getMobileSession():SendRPC("UnsubscribeWayPoints",{})
+  EXPECT_HMICALL("Navigation.UnsubscribeWayPoints"):Times(AtMost(2))
+  :Do(function(_,data)
+    actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
+    test.mobileConnection:Close()
+    --actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
+  end)
+  --actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
   commonDefect.getHMIConnection():ExpectNotification("BasicCommunication.OnAppUnregistered",
     { unexpectedDisconnect = true })
   :Do(function()
@@ -64,16 +120,37 @@ function commonDefect.SubscribeWayPointsUnexpectedDisconnect()
     end)
 end
 
-function commonDefect.UnsubscribeWayPointsPointsUnexpectedDisconnect()
+function commonDefect.UnsubscribeWayPointsPointsUnexpectedDisconnect2()
   local cid = actions.getMobileSession():SendRPC("UnsubscribeWayPoints",{})
   EXPECT_HMICALL("Navigation.UnsubscribeWayPoints"):Times(AtMost(2))
   :Do(function(_,data)
+    --actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
     test.mobileConnection:Close()
     actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
+  end)
+
+  commonDefect.getHMIConnection():ExpectNotification("BasicCommunication.OnAppUnregistered",
+    { unexpectedDisconnect = true })
+  :Do(function()
+      for i = 1, commonDefect.getAppsCount() do
+        test.mobileSession[i] = nil
+      end
+    end)
+  actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
+end
+
+function commonDefect.UnsubscribeWayPointsPointsUnexpectedDisconnect3()
+  local cid = actions.getMobileSession():SendRPC("UnsubscribeWayPoints",{})
+  EXPECT_HMICALL("Navigation.UnsubscribeWayPoints"):Times(AtMost(2))
+  :Do(function(_,data)
+    --actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
+    test.mobileConnection:Close()
+    --actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
   end)
   commonDefect.getHMIConnection():ExpectNotification("BasicCommunication.OnAppUnregistered",
     { unexpectedDisconnect = true })
   :Do(function()
+    actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
       for i = 1, commonDefect.getAppsCount() do
         test.mobileSession[i] = nil
       end

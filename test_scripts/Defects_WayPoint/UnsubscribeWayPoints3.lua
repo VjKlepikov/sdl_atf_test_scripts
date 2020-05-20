@@ -56,8 +56,9 @@ end
 
 
 --[[ Scenario ]]
-
---runner.Title("Preconditions")
+for i = 1, 10 do
+runner.Title("Test" ..i)
+runner.Title("Preconditions")
 runner.Step("Clean environment", common.preconditions)
 runner.Step("Update ini file ApplicationResumingTimeout=5000", updateIniFile)
 runner.Step("Update preloaded_pt", common.updatePreloadedPT)
@@ -65,20 +66,19 @@ runner.Step("Start SDL, HMI, connect Mobile, start Session", common.start)
 runner.Step("App registration", common.registerApp)
 runner.Step("Activate App", common.activateApp)
 
-for i = 1, 10 do
 runner.Title("Test" ..i)
 runner.Step("SubscribeWayPoints, close session", common.SubscribeWayPointsUnexpectedDisconnect)
 runner.Step("Connect mobile", common.connectMobile)
 runner.Step("App registration after disconnect", common.registerApp)
 runner.Step("Activate App", common.activateApp)
--- runner.Step("SubscribeWayPoints", SubscribeWayPoints)
--- runner.Step("UnsubscribeWayPoints, close session", common.UnsubscribeWayPointsPointsUnexpectedDisconnect)
--- runner.Step("Connect mobile", common.connectMobile)
--- runner.Step("App registration after disconnect", common.registerApp)
--- runner.Step("Activate App", common.activateApp)
--- runner.Step("UnsubscribeWayPoints", UnsubscribeWayPoints)
--- runner.Title("Postconditions")
--- runner.Step("Restore values in ini file", restoreValuestIniFile)
--- runner.Step("Clean sessions", common.cleanSessions)
--- runner.Step("Stop SDL", common.postconditions)
+runner.Step("SubscribeWayPoints", SubscribeWayPoints)
+runner.Step("UnsubscribeWayPoints, close session", common.UnsubscribeWayPointsPointsUnexpectedDisconnect3)
+runner.Step("Connect mobile", common.connectMobile)
+runner.Step("App registration after disconnect", common.registerApp)
+runner.Step("Activate App", common.activateApp)
+runner.Step("UnsubscribeWayPoints", UnsubscribeWayPoints)
+runner.Title("Postconditions")
+runner.Step("Restore values in ini file", restoreValuestIniFile)
+runner.Step("Clean sessions", common.cleanSessions)
+runner.Step("Stop SDL", common.postconditions)
 end

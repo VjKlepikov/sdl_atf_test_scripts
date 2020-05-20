@@ -1,1 +1,6 @@
 ./test_scripts/Defects_WayPoint/UnsubscribeWayPoints.lua
+./test_scripts/Defects_WayPoint/UnsubscribeWayPoints2.lua
+./test_scripts/Defects_WayPoint/UnsubscribeWayPoints3.lua
+./test_scripts/Defects_WayPoint/UnsubscribeWayPoints.lua
+./test_scripts/Defects_WayPoint/UnsubscribeWayPoints2.lua
+./test_scripts/Defects_WayPoint/UnsubscribeWayPoints3.lua
