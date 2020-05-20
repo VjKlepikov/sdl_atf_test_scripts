@@ -56,7 +56,7 @@ end
 
 
 --[[ Scenario ]]
-for i = 1, 10 do
+for i = 1, 100 do
 runner.Title("Test" ..i)
 runner.Title("Preconditions")
 runner.Step("Clean environment", common.preconditions)
