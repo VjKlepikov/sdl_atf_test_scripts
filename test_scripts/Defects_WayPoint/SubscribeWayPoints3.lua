@@ -77,8 +77,9 @@ runner.Step("Activate App", common.activateApp)
 -- runner.Step("App registration after disconnect", common.registerApp)
 -- runner.Step("Activate App", common.activateApp)
 -- runner.Step("UnsubscribeWayPoints", UnsubscribeWayPoints)
--- runner.Title("Postconditions")
--- runner.Step("Restore values in ini file", restoreValuestIniFile)
--- runner.Step("Clean sessions", common.cleanSessions)
--- runner.Step("Stop SDL", common.postconditions)
 end
+
+runner.Title("Postconditions")
+runner.Step("Restore values in ini file", restoreValuestIniFile)
+runner.Step("Clean sessions", common.cleanSessions)
+runner.Step("Stop SDL", common.postconditions)

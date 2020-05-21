@@ -229,6 +229,7 @@ function commonDefect.postconditions()
   postconditionsOrig()
   commonPreconditions:RestoreFile(preloadedPT)
   actions.getConfigAppParams().hashID = nil
+  commonDefect.wait(1000)
 end
 
 --[[ @ignitionOff: ignition off
