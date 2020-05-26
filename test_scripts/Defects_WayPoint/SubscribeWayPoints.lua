@@ -65,7 +65,7 @@ runner.Step("Start SDL, HMI, connect Mobile, start Session", common.start)
 runner.Step("App registration", common.registerApp)
 runner.Step("Activate App", common.activateApp)
 
-for i = 1, 50 do
+for i = 1, 20 do
 runner.Title("Test" ..i)
 runner.Step("SubscribeWayPoints, close session", common.SubscribeWayPointsUnexpectedDisconnect)
 runner.Step("Connect mobile", common.connectMobile)
