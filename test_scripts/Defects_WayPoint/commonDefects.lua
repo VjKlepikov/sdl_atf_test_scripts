@@ -20,12 +20,28 @@ commonDefect.wait = utils.wait
 commonDefect.cloneTable = utils.cloneTable
 commonDefect.getDeviceMAC = utils.getDeviceMAC
 local preloadedPT = commonFunctions:read_parameter_from_smart_device_link_ini("PreloadedPT")
+commonDefect.iterator = 10
 
 --[[ @unexpectedDisconnect: closing connection
 --! @parameters: none
 --! @return: none
 --]]
-function commonDefect.unexpectedDisconnect()
+function commonDefect.unexpectedDisconnect(pWait)
+  test.mobileConnection:Close()
+  commonDefect.getHMIConnection():ExpectNotification("BasicCommunication.OnAppUnregistered", { unexpectedDisconnect = true })
+  :Do(function()
+      for i = 1, commonDefect.getAppsCount() do
+        test.mobileSession[i] = nil
+      end
+    end)
+  utils.wait(pWait)
+end
+
+function commonDefect.unexpectedDisconnectUnsubscribeWayPoints(pTimes)
+  EXPECT_HMICALL("Navigation.UnsubscribeWayPoints"):Times(pTimes)
+  :Do(function(_,data)
+      actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
+    end)
   test.mobileConnection:Close()
   commonDefect.getHMIConnection():ExpectNotification("BasicCommunication.OnAppUnregistered", { unexpectedDisconnect = true })
   :Do(function()
@@ -35,18 +51,72 @@ function commonDefect.unexpectedDisconnect()
     end)
 end
 
-function commonDefect.SubscribeWayPoints()
-  local cid = actions.getMobileSession():SendRPC("SubscribeWayPoints",{})
+function commonDefect.registerAppSubscribeWayPoints(pAppId, pTime)
+  EXPECT_HMICALL("Navigation.SubscribeWayPoints")
+  :Times(pTime)
+  :Do(function(_,data)
+      actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
+    end)
+  actions.registerApp(pAppId)
+end
+
+function commonDefect.registerAppSubscribeWayPointsNoResponse(pAppId, pTime)
+  EXPECT_HMICALL("Navigation.SubscribeWayPoints")
+  :Times(pTime)
+  actions.registerApp(pAppId)
+end
+
+function commonDefect.SubscribeWayPoints(pAppId)
+  local cid = actions.getMobileSession(pAppId):SendRPC("SubscribeWayPoints",{})
   EXPECT_HMICALL("Navigation.SubscribeWayPoints")
   :Do(function(_,data)
       actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
     end)
-  actions.getMobileSession():ExpectResponse(cid, {success = true , resultCode = "SUCCESS"})
-  actions.getMobileSession():ExpectNotification("OnHashChange")
+  actions.getMobileSession(pAppId):ExpectResponse(cid, {success = true , resultCode = "SUCCESS"})
+  actions.getMobileSession(pAppId):ExpectNotification("OnHashChange")
   :Do(function(_,data)
-      actions.getConfigAppParams().hashID = data.payload.hashID
+      actions.getConfigAppParams(pAppId).hashID = data.payload.hashID
     end)
 end
+
+function commonDefect.UnsubscribeWayPoints(pAppId)
+  local cid = actions.getMobileSession(pAppId):SendRPC("UnsubscribeWayPoints",{})
+  EXPECT_HMICALL("Navigation.UnsubscribeWayPoints"):Times(1)
+  :Do(function(_,data)
+      actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
+    end)
+  actions.getMobileSession(pAppId):ExpectResponse(cid, {success = true , resultCode = "SUCCESS"})
+  actions.getMobileSession(pAppId):ExpectNotification("OnHashChange")
+  :Do(function(_,data)
+      actions.getConfigAppParams(pAppId).hashID = data.payload.hashID
+    end)
+end
+
+function commonDefect.OnWayPointChange(pTime, pAppId)
+  local notifications = {
+    wayPoints = {{
+      coordinate = {
+        latitudeDegrees = -90,
+        longitudeDegrees = -180},
+      locationName = "Ho Chi Minh City",
+      addressLines = {"182 LDH"},
+      locationDescription = "Flemington Building",
+      phoneNumber = "1234321",
+      searchAddress = {
+        countryName = "aaa",
+        countryCode = "084",
+        postalCode = "test",
+        administrativeArea = "aa",
+        subAdministrativeArea="a",
+        locality="a",
+        subLocality="a",
+        thoroughfare="a",
+        subThoroughfare="a"}}}}
+  actions.getHMIConnection():SendNotification("Navigation.OnWayPointChange", notifications)
+  actions.getMobileSession(pAppId):ExpectNotification("OnWayPointChange")
+  :Times(pTime)
+end
+
 
 function commonDefect.SubscribeWayPointsUnexpectedDisconnect()
   local cid = actions.getMobileSession():SendRPC("SubscribeWayPoints",{})
@@ -65,8 +135,29 @@ function commonDefect.SubscribeWayPointsUnexpectedDisconnect()
       end
     end)
 end
+
+function commonDefect.SubscribeWayPointsUnexpectedDisconnectWait(pWait)
+  local cid = actions.getMobileSession():SendRPC("SubscribeWayPoints",{})
+  EXPECT_HMICALL("Navigation.SubscribeWayPoints")
+  :Do(function(_,data)
+    actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
+    test.mobileConnection:Close()
+    --actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
+  end)
+  --actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
+  commonDefect.getHMIConnection():ExpectNotification("BasicCommunication.OnAppUnregistered",
+    { unexpectedDisconnect = true })
+  :Do(function()
+      for i = 1, commonDefect.getAppsCount() do
+        test.mobileSession[i] = nil
+      end
+    end)
+  utils.wait(pWait)
+end
+
 function commonDefect.SubscribeWayPointsUnexpectedDisconnect2()
   local cid = actions.getMobileSession():SendRPC("SubscribeWayPoints",{})
+  EXPECT_HMICALL("Navigation.UnsubscribeWayPoints"):Times(0)
   EXPECT_HMICALL("Navigation.SubscribeWayPoints")
   :Do(function(_,data)
     --actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
@@ -82,29 +173,10 @@ function commonDefect.SubscribeWayPointsUnexpectedDisconnect2()
       end
     end)
 end
-function commonDefect.SubscribeWayPointsUnexpectedDisconnect3()
-  local cid = actions.getMobileSession():SendRPC("SubscribeWayPoints",{})
-  EXPECT_HMICALL("Navigation.SubscribeWayPoints")
-  :Do(function(_,data)
-    --actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
-    test.mobileConnection:Close()
-    --actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
-  end)
-
-  commonDefect.getHMIConnection():ExpectNotification("BasicCommunication.OnAppUnregistered",
-    { unexpectedDisconnect = true })
-  :Do(function()
-    actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
-      for i = 1, commonDefect.getAppsCount() do
-        test.mobileSession[i] = nil
-      end
-    end)
-
-end
 
 function commonDefect.UnsubscribeWayPointsPointsUnexpectedDisconnect()
   local cid = actions.getMobileSession():SendRPC("UnsubscribeWayPoints",{})
-  EXPECT_HMICALL("Navigation.UnsubscribeWayPoints"):Times(AtMost(2))
+  EXPECT_HMICALL("Navigation.UnsubscribeWayPoints"):Times(1)
   :Do(function(_,data)
     actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
     test.mobileConnection:Close()
@@ -122,7 +194,7 @@ end
 
 function commonDefect.UnsubscribeWayPointsPointsUnexpectedDisconnect2()
   local cid = actions.getMobileSession():SendRPC("UnsubscribeWayPoints",{})
-  EXPECT_HMICALL("Navigation.UnsubscribeWayPoints"):Times(AtMost(2))
+  EXPECT_HMICALL("Navigation.UnsubscribeWayPoints"):Times(1)
   :Do(function(_,data)
     --actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
     test.mobileConnection:Close()
@@ -137,24 +209,6 @@ function commonDefect.UnsubscribeWayPointsPointsUnexpectedDisconnect2()
       end
     end)
   actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
-end
-
-function commonDefect.UnsubscribeWayPointsPointsUnexpectedDisconnect3()
-  local cid = actions.getMobileSession():SendRPC("UnsubscribeWayPoints",{})
-  EXPECT_HMICALL("Navigation.UnsubscribeWayPoints"):Times(AtMost(2))
-  :Do(function(_,data)
-    --actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
-    test.mobileConnection:Close()
-    --actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
-  end)
-  commonDefect.getHMIConnection():ExpectNotification("BasicCommunication.OnAppUnregistered",
-    { unexpectedDisconnect = true })
-  :Do(function()
-    actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
-      for i = 1, commonDefect.getAppsCount() do
-        test.mobileSession[i] = nil
-      end
-    end)
 end
 
 function commonDefect.cleanSessions()

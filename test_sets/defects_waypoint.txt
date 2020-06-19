@@ -1,0 +1,16 @@
+./test_scripts/Defects_WayPoint/1_SubscribeWayPointIgnored.lua
+./test_scripts/Defects_WayPoint/2_SubscribeWayPointsCrash.lua
+./test_scripts/Defects_WayPoint/3_SubscribeWayPointsCrash.lua
+./test_scripts/Defects_WayPoint/4_SubscribeWayPointsHPOnWay.lua
+./test_scripts/Defects_WayPoint/5_UnsubscribeWayPointsSpecialCase.lua
+./test_scripts/Defects_WayPoint/6_SubscribeWayPointsHP.lua
+./test_scripts/Defects_WayPoint/7_UnsubscribeWayPointsSpecialCase2.lua
+./test_scripts/Defects_WayPoint/8_SubscribeWayPointsHP_2apps.lua
+./test_scripts/Defects_WayPoint/9_UnsubscribeWayPointsDefect.lua
+./test_scripts/Defects_WayPoint/10_SubscribeWayPointsDraft.lua
+./test_scripts/Defects_WayPoint/11_SubscribeWayPointsDraftUN.lua
+./test_scripts/Defects_WayPoint/12_UnsubscribeWayPointsUnDisconnect.lua
+./test_scripts/Defects_WayPoint/13_SubscribeWayPoints2App.lua
+./test_scripts/Defects_WayPoint/14_SubscribeWayPointsUnDNoanswer.lua
+./test_scripts/Defects_WayPoint/15_SubscribeWayPointsGENERIC_ERROR.lua
+./test_scripts/Defects_WayPoint/16_SubscribeWayPointsNoAnswer.lua
