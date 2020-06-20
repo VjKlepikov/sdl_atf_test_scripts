@@ -113,6 +113,25 @@ runner.Step("UnsubscribeWayPoints App1", common.UnsubscribeWayPoints, {AppId2})
 runner.Step("Does not sends OnWayPointChange to App1, App2",
   OnWayPointChange, { NotExpected, NotExpected })
 
+runner.Title("Test_3")
+runner.Step("SubscribeWayPoints App1", common.SubscribeWayPoints)
+runner.Step("Sends OnWayPointChange to App1, doesn't send to App2",
+  OnWayPointChange, { Expected, NotExpected })
+runner.Step("SubscribeWayPoints App2", SubscribeWayPointsSecondApp, { AppId2 })
+runner.Step("Sends OnWayPointChange to App1, doesn't send to App2",
+  OnWayPointChange, { Expected, Expected })
+ runner.Step("unexpectedDisconnect with UnsubscribeWayPoints",
+    common.unexpectedDisconnectUnsubscribeWayPoints, { Expected })
+runner.Step("Connect mobile", common.connectMobile)
+runner.Step("App1 registration after disconnect with SubscribeWayPoints",
+    common.registerAppSubscribeWayPoints, { AppId1, Expected })
+runner.Step("Sends OnWayPointChange to App1, doesn't send to App2",
+  OnWayPointChange, { Expected, NotExpected })
+runner.Step("App2 registration after disconnect with SubscribeWayPoints",
+    common.registerAppSubscribeWayPointsSecond, { AppId2, NotExpected })
+runner.Step("Sends OnWayPointChange to App1, to App2",
+  OnWayPointChange, { Expected, Expected })
+
 runner.Title("Postconditions")
 runner.Step("Clean sessions", common.cleanSessions)
 runner.Step("Stop SDL", common.postconditions)

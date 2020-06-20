@@ -20,6 +20,11 @@ local Expected = 1
 local NotExpected = 0
 local AppId1 = 1
 
+local function SubscribeWayPointsIgnored()
+  local cid = common.getMobileSession():SendRPC("SubscribeWayPoints",{})
+  common.getMobileSession():ExpectResponse(cid, {success = false , resultCode = "IGNORED" })
+end
+
 --[[ Scenario ]]
 for i = 1, 1 do
   runner.Title("Preconditions")
@@ -43,11 +48,11 @@ for i = 1, 1 do
   runner.Step("UnsubscribeWayPoints, UnexpectedDisconnect", common.UnsubscribeWayPointsPointsUnexpectedDisconnect2)
   runner.Step("Connect mobile", common.connectMobile)
   runner.Step("App registration after disconnect without SubscribeWayPoints",
-    common.registerAppSubscribeWayPoints, { AppId1, NotExpected })
+    common.registerAppSubscribeWayPoints, { AppId1, Expected })
   runner.Step("Activate App", common.activateApp)
-  runner.Step("Does not send OnWayPointChange", common.OnWayPointChange, { NotExpected })
+  runner.Step("Send OnWayPointChange", common.OnWayPointChange, { Expected })
 
-  runner.Step("SubscribeWayPoints", common.SubscribeWayPoints)
+  runner.Step("SubscribeWayPoints", SubscribeWayPointsIgnored)
   runner.Step("Sends OnWayPointChange to App", common.OnWayPointChange, { Expected })
   runner.Step("UnsubscribeWayPoints", common.UnsubscribeWayPoints)
   runner.Step("Does not send OnWayPointChange to App", common.OnWayPointChange, { NotExpected })
