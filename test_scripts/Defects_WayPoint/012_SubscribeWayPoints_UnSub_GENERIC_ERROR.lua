@@ -45,9 +45,9 @@ for i = 1, common.iterator do
   runner.Step("SubscribeWayPoints", SubscribeWayPointsGENERIC_ERROR)
   runner.Step("Does not send OnWayPointChange", common.OnWayPointChange, { NotExpected })
   runner.Step("SubscribeWayPoints", common.SubscribeWayPoints)
-  runner.Step("Does not send OnWayPointChange", common.OnWayPointChange, { Expected })
+  runner.Step("Sends OnWayPointChange", common.OnWayPointChange, { Expected })
   runner.Step("UnsubscribeWayPoints", UnsubscribeWayPointsGENERIC_ERROR)
-  runner.Step("Does not send OnWayPointChange", common.OnWayPointChange, { Expected })
+  runner.Step("Sends OnWayPointChange", common.OnWayPointChange, { Expected })
   runner.Step("UnsubscribeWayPoints", common.UnsubscribeWayPoints)
   runner.Step("Does not send OnWayPointChange", common.OnWayPointChange, { NotExpected })
 end

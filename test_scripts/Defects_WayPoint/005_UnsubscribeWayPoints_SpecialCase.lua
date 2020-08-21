@@ -49,7 +49,7 @@ for i = 1, common.iterator do
   runner.Step("App registration after disconnect without SubscribeWayPoints",
     common.registerAppSubscribeWayPoints, { AppId1, Expected })
   runner.Step("Activate App", common.activateApp)
-  runner.Step("Send OnWayPointChange", common.OnWayPointChange, { Expected })
+  runner.Step("Sends OnWayPointChange", common.OnWayPointChange, { Expected })
 
   runner.Step("SubscribeWayPoints", SubscribeWayPointsIgnored)
   runner.Step("Sends OnWayPointChange to App", common.OnWayPointChange, { Expected })
