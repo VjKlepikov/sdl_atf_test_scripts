@@ -15,18 +15,16 @@ runner.testSettings.isSelfIncluded = false
 config.application1.registerAppInterfaceParams.appHMIType = { "NAVIGATION" }
 
 --[[ Local Variables ]]
-local Expected = 1
 local NotExpected = 0
-local AppId1 = 1
 
-local function SubscribeWayPointsNoAnswer()
+local function SubscribeWayPointsGENERIC_ERROR()
   local cid = common.getMobileSession():SendRPC("SubscribeWayPoints",{})
   EXPECT_HMICALL("Navigation.SubscribeWayPoints")
+  common.getMobileSession():ExpectResponse(cid, {success = false , resultCode = "GENERIC_ERROR" })
 end
 
-
 --[[ Scenario ]]
-for i = 1, 1 do
+for i = 1, common.iterator do
   runner.Title("Test" ..i)
   runner.Title("Preconditions")
   runner.Step("Clean environment", common.preconditions)
@@ -36,11 +34,9 @@ for i = 1, 1 do
   runner.Step("Activate App", common.activateApp)
 
   runner.Title("Test" ..i)
-
-  runner.Step("SubscribeWayPoints", SubscribeWayPointsNoAnswer)
   runner.Step("Does not send OnWayPointChange", common.OnWayPointChange, { NotExpected })
-  runner.Step("SubscribeWayPoints", common.SubscribeWayPoints)
-   runner.Step("Does not send OnWayPointChange", common.OnWayPointChange, { Expected })
+  runner.Step("SubscribeWayPoints", SubscribeWayPointsGENERIC_ERROR)
+  runner.Step("Does not send OnWayPointChange", common.OnWayPointChange, { NotExpected })
 
   runner.Title("Postconditions")
   runner.Step("Clean sessions", common.cleanSessions)

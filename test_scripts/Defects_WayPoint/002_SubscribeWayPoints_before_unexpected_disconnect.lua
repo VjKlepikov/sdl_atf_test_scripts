@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------------------------------------
--- Description: Potential fix for waypoint subscription requests
+-- Description: https://github.com/CustomSDL/Sync3.2v2/pull/734
 ---------------------------------------------------------------------------------------------------
 --[[ Required Shared libraries ]]
 local runner = require('user_modules/script_runner')
@@ -18,12 +18,11 @@ runner.Step("App registration", common.registerApp)
 runner.Step("Activate App", common.activateApp)
 
 for i = 1, common.iterator do
-runner.Title("Test" ..i)
-runner.Step("SubscribeWayPoints, close session", common.SubscribeWayPointsUnexpectedDisconnect2)
-runner.Step("Connect mobile", common.connectMobile)
-runner.Step("App registration after disconnect", common.registerApp)
-runner.Step("Activate App", common.activateApp)
-
+  runner.Title("Test" ..i)
+  runner.Step("SubscribeWayPoints, close session", common.SubscribeWayPointsUnexpectedDisconnect)
+  runner.Step("Connect mobile", common.connectMobile)
+  runner.Step("App registration after disconnect", common.registerApp)
+  runner.Step("Activate App", common.activateApp)
 end
 
 runner.Title("Postconditions")

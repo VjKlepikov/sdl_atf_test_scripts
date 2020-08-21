@@ -1,28 +1,29 @@
 ---------------------------------------------------------------------------------------------------
--- Description: [SubscribeWayPoints]: SDL must transfer request from mobile app to hMI
+-- Description: Potential fix for waypoint subscription requests
 ---------------------------------------------------------------------------------------------------
 --[[ Required Shared libraries ]]
 local runner = require('user_modules/script_runner')
 local common = require('test_scripts/Defects_WayPoint/commonDefects')
-local commonFunctions = require('user_modules/shared_testcases/commonFunctions')
 
 --[[ Test Configuration ]]
 runner.testSettings.isSelfIncluded = false
 config.application1.registerAppInterfaceParams.appHMIType = { "NAVIGATION" }
 
 --[[ Scenario ]]
-
---runner.Title("Preconditions")
+runner.Title("Preconditions")
 runner.Step("Clean environment", common.preconditions)
 runner.Step("Update preloaded_pt", common.updatePreloadedPT)
 runner.Step("Start SDL, HMI, connect Mobile, start Session", common.start)
 runner.Step("App registration", common.registerApp)
 runner.Step("Activate App", common.activateApp)
 
-for i = 1, 5 do
-runner.Title("Test" ..i)
-runner.Step("SubscribeWayPoints", common.SubscribeWayPoints)
-runner.Step("UnsubscribeWayPoints", common.UnsubscribeWayPoints)
+for i = 1, common.iterator do
+  runner.Title("Test" ..i)
+  runner.Step("SubscribeWayPoints, close session", common.SubscribeWayPointsAfterUnexpectedDisconnect)
+  runner.Step("Connect mobile", common.connectMobile)
+  runner.Step("App registration after disconnect", common.registerApp)
+  runner.Step("Activate App", common.activateApp)
+
 end
 
 runner.Title("Postconditions")

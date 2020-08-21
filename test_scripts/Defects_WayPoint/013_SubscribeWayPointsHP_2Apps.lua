@@ -9,7 +9,6 @@
 --[[ Required Shared libraries ]]
 local runner = require('user_modules/script_runner')
 local common = require('test_scripts/Defects_WayPoint/commonDefects')
-local commonFunctions = require('user_modules/shared_testcases/commonFunctions')
 
 --[[ Test Configuration ]]
 runner.testSettings.isSelfIncluded = false
@@ -83,6 +82,7 @@ runner.Step("Start SDL, HMI, connect Mobile, start Session", common.start)
 runner.Step("App1 registration", common.registerApp)
 runner.Step("App2 registration", common.registerApp, { AppId2 })
 runner.Step("Activate App1", common.activateApp)
+
 runner.Step("SubscribeWayPoints App1", common.SubscribeWayPoints)
 runner.Step("Sends OnWayPointChange to App1, doesn't send to App2",
   OnWayPointChange, { Expected, NotExpected })
@@ -109,7 +109,7 @@ runner.Step("Sends OnWayPointChange to App1, App2", OnWayPointChange, { Expected
 runner.Step("UnsubscribeWayPoints App2", UnsubscribeWaySecondApp, { AppId1 })
 runner.Step("Sends OnWayPointChange to App2, doesn't send to App1",
   OnWayPointChange, { NotExpected, Expected })
-runner.Step("UnsubscribeWayPoints App1", common.UnsubscribeWayPoints, {AppId2})
+runner.Step("UnsubscribeWayPoints App1", common.UnsubscribeWayPoints, { AppId2 })
 runner.Step("Does not sends OnWayPointChange to App1, App2",
   OnWayPointChange, { NotExpected, NotExpected })
 

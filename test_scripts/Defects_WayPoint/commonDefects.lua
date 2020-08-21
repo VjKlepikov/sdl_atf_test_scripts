@@ -20,7 +20,7 @@ commonDefect.wait = utils.wait
 commonDefect.cloneTable = utils.cloneTable
 commonDefect.getDeviceMAC = utils.getDeviceMAC
 local preloadedPT = commonFunctions:read_parameter_from_smart_device_link_ini("PreloadedPT")
-commonDefect.iterator = 10
+commonDefect.iterator = 1
 
 --[[ @unexpectedDisconnect: closing connection
 --! @parameters: none
@@ -164,7 +164,7 @@ function commonDefect.SubscribeWayPointsUnexpectedDisconnectWait(pWait)
   utils.wait(pWait)
 end
 
-function commonDefect.SubscribeWayPointsUnexpectedDisconnect2()
+function commonDefect.SubscribeWayPointsAfterUnexpectedDisconnect()
   local cid = actions.getMobileSession():SendRPC("SubscribeWayPoints",{})
   EXPECT_HMICALL("Navigation.UnsubscribeWayPoints"):Times(0)
   EXPECT_HMICALL("Navigation.SubscribeWayPoints")

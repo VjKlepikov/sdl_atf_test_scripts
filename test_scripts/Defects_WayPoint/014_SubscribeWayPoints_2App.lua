@@ -21,7 +21,7 @@ local AppId1 = 1
 local AppId2 = 2
 
 --[[ Scenario ]]
-for i = 1, 1 do
+for i = 1, common.iterator do
   runner.Title("Test" ..i)
   runner.Title("Preconditions")
   runner.Step("Clean environment", common.preconditions)

@@ -19,14 +19,8 @@ local Expected = 1
 local NotExpected = 0
 local AppId1 = 1
 
-local function SubscribeWayPointsGENERIC_ERROR()
-  local cid = common.getMobileSession():SendRPC("SubscribeWayPoints",{})
-  common.getMobileSession():ExpectResponse(cid, {success = false , resultCode = "GENERIC_ERROR" })
-end
-
-
 --[[ Scenario ]]
-for i = 1, 1 do
+for i = 1, common.iterator do
   runner.Title("Test" ..i)
   runner.Title("Preconditions")
   runner.Step("Clean environment", common.preconditions)
@@ -37,8 +31,20 @@ for i = 1, 1 do
 
   runner.Title("Test" ..i)
 
-  runner.Step("SubscribeWayPoints", SubscribeWayPointsGENERIC_ERROR)
-  runner.Step("Does not send OnWayPointChange", common.OnWayPointChange, { NotExpected })
+  runner.Step("SubscribeWayPoints", common.SubscribeWayPoints)
+  runner.Step("Sends OnWayPointChange", common.OnWayPointChange, { Expected })
+  runner.Step("unexpectedDisconnect with UnsubscribeWayPoints",
+    common.unexpectedDisconnectUnsubscribeWayPoints, { Expected })
+  runner.Step("Connect mobile", common.connectMobile)
+  runner.Step("App registration after disconnect with SubscribeWayPoints ",
+    common.registerAppSubscribeWayPoints, { AppId1, Expected })
+  runner.Step("OnWayPointChange", common.OnWayPointChange, { Expected })
+  runner.Step("UnsubscribeWayPoints", common.UnsubscribeWayPoints)
+  runner.Step("unexpectedDisconnect without UnsubscribeWayPoints",
+    common.unexpectedDisconnectUnsubscribeWayPoints, { NotExpected })
+  runner.Step("Connect mobile", common.connectMobile)
+   runner.Step("App registration after disconnect without SubscribeWayPoints ",
+    common.registerAppSubscribeWayPoints, { AppId1, NotExpected })
 
   runner.Title("Postconditions")
   runner.Step("Clean sessions", common.cleanSessions)

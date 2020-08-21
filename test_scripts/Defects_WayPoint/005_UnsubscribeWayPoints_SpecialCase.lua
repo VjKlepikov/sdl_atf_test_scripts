@@ -24,10 +24,8 @@ local function SubscribeWayPointsIgnored()
   common.getMobileSession():ExpectResponse(cid, {success = false , resultCode = "IGNORED" })
 end
 
-
 --[[ Scenario ]]
-for i = 1, 1 do
-  runner.Title("Test" ..i)
+for i = 1, common.iterator do
   runner.Title("Preconditions")
   runner.Step("Clean environment", common.preconditions)
   runner.Step("Update preloaded_pt", common.updatePreloadedPT)
@@ -36,16 +34,28 @@ for i = 1, 1 do
   runner.Step("Activate App", common.activateApp)
 
   runner.Title("Test" ..i)
+  runner.Step("SubscribeWayPoints, UnexpectedDisconnect", common.SubscribeWayPointsUnexpectedDisconnect)
+  runner.Step("Connect mobile", common.connectMobile)
+  runner.Step("App registration after disconnect without SubscribeWayPoints ",
+    common.registerAppSubscribeWayPoints, { AppId1, NotExpected })
+  runner.Step("Activate App", common.activateApp)
+  runner.Step("Does not send OnWayPointChange to App", common.OnWayPointChange, { NotExpected, AppId1 })
 
   runner.Step("SubscribeWayPoints", common.SubscribeWayPoints)
-  runner.Step("Sends OnWayPointChange", common.OnWayPointChange, { Expected })
-  runner.Step("unexpectedDisconnect with UnsubscribeWayPoints",
-    common.unexpectedDisconnectUnsubscribeWayPoints, { Expected })
+  runner.Step("Sends OnWayPointChange", common.OnWayPointChange, { Expected, AppId1 })
+
+  runner.Step("UnsubscribeWayPoints, UnexpectedDisconnect", common.UnsubscribeWayPointsPointsUnexpectedDisconnect)
   runner.Step("Connect mobile", common.connectMobile)
-  runner.Step("App registration after disconnect with SubscribeWayPoints ",
-    common.registerAppSubscribeWayPointsNoResponse, { AppId1, Expected })
-  runner.Step("OnWayPointChange", common.OnWayPointChange, { Expected })
-  runner.Step("SubscribeWayPoints IGNORED", SubscribeWayPointsIgnored)
+  runner.Step("App registration after disconnect without SubscribeWayPoints",
+    common.registerAppSubscribeWayPoints, { AppId1, Expected })
+  runner.Step("Activate App", common.activateApp)
+  runner.Step("Send OnWayPointChange", common.OnWayPointChange, { Expected })
+
+  runner.Step("SubscribeWayPoints", SubscribeWayPointsIgnored)
+  runner.Step("Sends OnWayPointChange to App", common.OnWayPointChange, { Expected })
+  runner.Step("UnsubscribeWayPoints", common.UnsubscribeWayPoints)
+  runner.Step("Does not send OnWayPointChange to App", common.OnWayPointChange, { NotExpected } )
+
 
   runner.Title("Postconditions")
   runner.Step("Clean sessions", common.cleanSessions)

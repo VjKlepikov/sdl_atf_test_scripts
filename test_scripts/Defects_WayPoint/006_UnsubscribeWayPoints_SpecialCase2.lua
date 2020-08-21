@@ -9,7 +9,6 @@
 --[[ Required Shared libraries ]]
 local runner = require('user_modules/script_runner')
 local common = require('test_scripts/Defects_WayPoint/commonDefects')
-local commonFunctions = require('user_modules/shared_testcases/commonFunctions')
 
 --[[ Test Configuration ]]
 runner.testSettings.isSelfIncluded = false
@@ -26,7 +25,7 @@ local function SubscribeWayPointsIgnored()
 end
 
 --[[ Scenario ]]
-for i = 1, 1 do
+for i = 1, common.iterator do
   runner.Title("Preconditions")
   runner.Step("Clean environment", common.preconditions)
   runner.Step("Update preloaded_pt", common.updatePreloadedPT)
