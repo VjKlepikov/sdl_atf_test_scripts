@@ -64,9 +64,6 @@ function commonDefect.registerAppSubscribeWayPointsSecond(pAppId, pTime)
   EXPECT_HMICALL("Navigation.SubscribeWayPoints"):Times(pTime)
 
   actions.registerApp(pAppId)
-  actions.getMobileSession(pAppId):ExpectNotification("OnWayPointChange")
-  :Times(1)
-  --actions.getMobileSession(pAppId):ExpectResponse(cid, {success = true , resultCode = "SUCCESS"})
 end
 
 function commonDefect.registerAppSubscribeWayPointsNoResponse(pAppId, pTime)
