@@ -37,6 +37,11 @@ function commonDefect.unexpectedDisconnect(pWait)
   utils.wait(pWait)
 end
 
+function commonDefect.startWait(pWait)
+  actions.start()
+  utils.wait(pWait)
+end
+
 function commonDefect.unexpectedDisconnectUnsubscribeWayPoints(pTimes)
   EXPECT_HMICALL("Navigation.UnsubscribeWayPoints"):Times(pTimes)
   :Do(function(_,data)

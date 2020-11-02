@@ -36,7 +36,7 @@ runner.Title("Test")
 runner.Title("Preconditions")
 runner.Step("Clean environment", common.preconditions)
 runner.Step("Update preloaded_pt", common.updatePreloadedPT)
-runner.Step("Start SDL, HMI, connect Mobile, start Session", common.start)
+runner.Step("Start SDL, HMI, connect Mobile, start Session", common.startWait)
 runner.Step("App registration", common.registerApp)
 runner.Step("Activate App", common.activateApp)
 

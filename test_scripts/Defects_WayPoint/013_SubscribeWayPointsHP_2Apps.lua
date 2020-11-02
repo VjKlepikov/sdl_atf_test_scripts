@@ -78,7 +78,7 @@ end
 runner.Title("Preconditions")
 runner.Step("Clean environment", common.preconditions)
 runner.Step("Update preloaded_pt", common.updatePreloadedPT)
-runner.Step("Start SDL, HMI, connect Mobile, start Session", common.start)
+runner.Step("Start SDL, HMI, connect Mobile, start Session", common.startWait)
 runner.Step("App1 registration", common.registerApp)
 runner.Step("App2 registration", common.registerApp, { AppId2 })
 runner.Step("Activate App1", common.activateApp)
