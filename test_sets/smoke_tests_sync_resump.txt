@@ -10,3 +10,4 @@
 ./test_scripts/Smoke/Resumption/009_Resumption_LIMITED_IGNITION_OFF.lua
 ./test_scripts/Smoke/Resumption/010_Resumption_LIMITED_level.lua
 ./test_scripts/Smoke/Resumption/011_Resumption_unexpected_disconnect.lua
+./test_scripts/Smoke/Resumption/012_AddCommand_resumption_order.lua
