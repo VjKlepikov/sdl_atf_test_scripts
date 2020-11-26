@@ -36,8 +36,7 @@ local requestParams = {
   vrCommands = {
     "VRCommandone",
     "VRCommandtwo"
-  },
-  grammarID = 1
+  }
 }
 
 local responseUiParams = {
@@ -51,7 +50,7 @@ local responseVrParams = {
 }
 
 --[[ Local Functions ]]
-local function withoutRespond_VR_Addcommand(params, pRunAfterTime)
+local function unexpectedDisconnect_VR_Addcommand(params, pRunAfterTime)
   local cid = common.getMobileSession():SendRPC("AddCommand", params)
 
   common.getHMIConnection():ExpectRequest("UI.AddCommand", responseUiParams)
@@ -72,7 +71,7 @@ local function withoutRespond_VR_Addcommand(params, pRunAfterTime)
   :Times(0)
 end
 
-local function withoutRespond_UI_Addcommand(params, pRunAfterTime)
+local function unexpectedDisconnect_UI_Addcommand(params, pRunAfterTime)
   local cid = common.getMobileSession():SendRPC("AddCommand", params)
 
   common.getHMIConnection():ExpectRequest("UI.AddCommand", responseUiParams)
@@ -100,12 +99,12 @@ runner.Step("Activate App", common.activateApp)
 runner.Title("Test")
 for i = 1, 50, 1 do
   runner.Step("Unexpected disconnect in " .. i .. "msec after response VR.AddCommand",
-    withoutRespond_VR_Addcommand, { requestParams, i })
+    unexpectedDisconnect_VR_Addcommand, { requestParams, i })
   runner.Step("Connect mobile", common.connectMobile)
   runner.Step("App registration after disconnect", common.registerApp)
   runner.Step("Activate App", common.activateApp)
   runner.Step("Unexpected disconnect in " .. i .. "msec after response UI.AddCommand",
-    withoutRespond_UI_Addcommand, { requestParams, i })
+    unexpectedDisconnect_UI_Addcommand, { requestParams, i })
   runner.Step("Connect mobile", common.connectMobile)
   runner.Step("App registration after disconnect", common.registerApp)
   runner.Step("Activate App", common.activateApp)

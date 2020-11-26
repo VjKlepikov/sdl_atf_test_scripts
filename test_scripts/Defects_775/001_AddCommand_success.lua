@@ -18,7 +18,7 @@
 ---------------------------------------------------------------------------------------------------
 --[[ Required Shared libraries ]]
 local runner = require('user_modules/script_runner')
-local common = require('user_modules/sequences/actions')
+local common = require('test_scripts/Defects_775/commonDefects')
 
 --[[ Test Configuration ]]
 runner.testSettings.isSelfIncluded = false

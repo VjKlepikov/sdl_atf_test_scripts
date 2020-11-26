@@ -7,7 +7,7 @@
 -- a. HMI and SDL are started
 -- b. App is registered and activated on SDL
 -- c. App is currently in Background, Full or Limited HMI level
--- d. App requests AddCommand with the both vrCommands and menuParams
+-- d. AddCommand is added with the both vrCommands and menuParams
 --
 -- Steps:
 -- App requests DeleteCommand with the both vrCommands and menuParams
@@ -45,8 +45,7 @@ local requestParams = {
   vrCommands = {
     "VRCommandone",
     "VRCommandtwo"
-  },
-  grammarID = 1
+  }
 }
 
 local responseUiParams = {
@@ -91,7 +90,7 @@ local function addCommand(params)
   end)
 
   common.getMobileSession():ExpectResponse(cid, { success = true, resultCode = "SUCCESS"})
- common.getMobileSession():ExpectNotification("OnHashChange")
+  common.getMobileSession():ExpectNotification("OnHashChange")
 end
 
 local function deleteVRCommand(paramsVr)

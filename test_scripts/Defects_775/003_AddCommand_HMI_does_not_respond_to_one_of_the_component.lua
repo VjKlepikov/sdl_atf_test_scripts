@@ -3,7 +3,7 @@
 --
 -- Description:
 -- [AddCommand] GENERIC_ERROR: SDL responds with 'GENERIC_ERROR, success:false' to mobile application
--- in case HMI does not sends response for UI.AddCommad or VR.AddCommad to SDL during SDL's default timeout
+-- in case HMI does not send response for UI.AddCommad or VR.AddCommad to SDL during SDL's default timeout
 --
 -- Pre-conditions:
 -- a. HMI and SDL are started
@@ -39,7 +39,7 @@
 
 --[[ Required Shared libraries ]]
 local runner = require('user_modules/script_runner')
-local common = require('user_modules/sequences/actions')
+local common = require('test_scripts/Defects_775/commonDefects')
 
 --[[ Test Configuration ]]
 runner.testSettings.isSelfIncluded = false
@@ -54,8 +54,7 @@ local requestParams = {
   vrCommands = {
     "VRCommandone",
     "VRCommandtwo"
-  },
-  grammarID = 1
+  }
 }
 
 local responseUiParams = {
@@ -88,7 +87,7 @@ local deleteVR_AddCommand = {
 }
 
 --[[ Local Functions ]]
-local function withoutRespond_VR_Addcommand(params)
+local function withoutResponse_VR_Addcommand(params)
   local cid = common.getMobileSession():SendRPC("AddCommand", params.requestParams)
 
   common.getHMIConnection():ExpectRequest("UI.AddCommand", responseUiParams)
@@ -109,7 +108,7 @@ local function withoutRespond_VR_Addcommand(params)
   end)
 end
 
-local function withoutRespond_UI_Addcommand(params)
+local function withoutResponse_UI_Addcommand(params)
   local cid = common.getMobileSession():SendRPC("AddCommand", params.requestParams)
 
   common.getHMIConnection():ExpectRequest("UI.AddCommand", responseUiParams)
@@ -130,7 +129,7 @@ local function withoutRespond_UI_Addcommand(params)
   end)
 end
 
-local function withoutRespond_UI_and_VR_Addcommand(params)
+local function withoutResponse_UI_and_VR_Addcommand(params)
   local cid = common.getMobileSession():SendRPC("AddCommand", params)
 
   common.getHMIConnection():ExpectRequest("UI.AddCommand", responseUiParams)
@@ -147,6 +146,8 @@ local function withoutRespond_UI_and_VR_Addcommand(params)
 
   common.getHMIConnection():ExpectRequest("UI.DeleteCommand")
   :Times(0)
+  common.getHMIConnection():ExpectRequest("VR.DeleteCommand")
+  :Times(0)
 end
 
 --[[ Scenario ]]
@@ -157,10 +158,10 @@ runner.Step("RAI", common.registerApp)
 runner.Step("Activate App", common.activateApp)
 
 runner.Title("Test")
-runner.Step("HMI does not response VR.AddCommand", withoutRespond_VR_Addcommand, { deleteUI_AddCommand })
-runner.Step("HMI does not response UI.AddCommand", withoutRespond_UI_Addcommand, { deleteVR_AddCommand })
+runner.Step("HMI does not response VR.AddCommand", withoutResponse_VR_Addcommand, { deleteUI_AddCommand })
+runner.Step("HMI does not response UI.AddCommand", withoutResponse_UI_Addcommand, { deleteVR_AddCommand })
 runner.Step("HMI does not response UI.AddCommand and VR.AddCommand",
-  withoutRespond_UI_and_VR_Addcommand, { requestParams })
+  withoutResponse_UI_and_VR_Addcommand, { requestParams })
 
 runner.Title("Postconditions")
 runner.Step("Stop SDL", common.postconditions)

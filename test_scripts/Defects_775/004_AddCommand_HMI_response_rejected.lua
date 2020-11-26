@@ -12,8 +12,9 @@
 -- Steps:
 -- App requests AddCommand with the both vrCommands and menuParams
 -- SDL sends to HMI UI.AddCommad and VR.AdddCommand to HMI
--- HMI sends response for UI.AddCommad and REJECTED response for VR.AdddCommand to SDL during SDL's default timeout
-
+-- HMI sends a successful response for UI.AddCommad and REJECTED response for VR.AdddCommand to SDL
+--  during SDL's default timeout
+--
 -- Expected:
 -- SDL sends UI.DeleteCommand for the successfully added cmdID to HMI
 -- SDL responds with 'REJECTED, success:false' to mobile application.
@@ -21,7 +22,7 @@
 -- Steps:
 -- App requests AddCommand with the both vrCommands and menuParams
 -- SDL sends to HMI UI.AddCommad and VR.AdddCommand to HMI
--- HMI sends response for VR.AddCommad and REJECTED response forUI.AdddCommand to SDL during SDL's default timeout
+-- HMI sends response for VR.AddCommad and REJECTED response for UI.AdddCommand to SDL during SDL's default timeout
 --
 -- Expected:
 -- SDL sends VR.DeleteCommand for the successfully added cmdID to HMI
@@ -39,7 +40,7 @@
 
 --[[ Required Shared libraries ]]
 local runner = require('user_modules/script_runner')
-local common = require('user_modules/sequences/actions')
+local common = require('test_scripts/Defects_775/commonDefects')
 
 --[[ Test Configuration ]]
 runner.testSettings.isSelfIncluded = false
@@ -54,8 +55,7 @@ local requestParams = {
   vrCommands = {
     "VRCommandone",
     "VRCommandtwo"
-  },
-  grammarID = 1
+  }
 }
 
 local responseUiParams = {
@@ -73,8 +73,7 @@ local deleteUI_AddCommand = {
   deleteUIcommand = {
     cmdID = 11,
     appID = common.getHMIAppId()
-  },
-  info = "VR component does not respond"
+  }
 }
 
 local deleteVR_AddCommand = {
@@ -82,9 +81,8 @@ local deleteVR_AddCommand = {
   deleteVRcommand = {
     appID = common.getHMIAppId(),
     cmdID = requestParams.cmdID,
-    type = "Command",
-  },
-  info = "UI component does not respond"
+    type = "Command"
+  }
 }
 
 --[[ Local Functions ]]
@@ -99,10 +97,10 @@ local function rejected_VR_Addcommand(params)
   common.getHMIConnection():ExpectRequest("VR.AddCommand", params.responseVrParams)
   :Do(function(_,data)
     -- HMI rejected
-    common.getHMIConnection():SendError(data.id, data.method, "GENERIC_ERROR", "Error message.")
+    common.getHMIConnection():SendError(data.id, data.method, "REJECTED", "Error message.")
   end)
 
-  common.getMobileSession():ExpectResponse(cid, { success = false, resultCode = "GENERIC_ERROR", info = "Error message." })
+  common.getMobileSession():ExpectResponse(cid, { success = false, resultCode = "REJECTED", info = "Error message." })
 
   common.getHMIConnection():ExpectRequest("UI.DeleteCommand", params.deleteUIcommand)
   :Do(function(_,data)
@@ -116,7 +114,7 @@ local function rejected_UI_Addcommand(params)
   common.getHMIConnection():ExpectRequest("UI.AddCommand", params.responseUiParams)
   :Do(function(_,data)
     -- HMI rejected
-    common.getHMIConnection():SendError(data.id, data.method, "GENERIC_ERROR", "Error message.")
+    common.getHMIConnection():SendError(data.id, data.method, "REJECTED", "Error message.")
   end)
 
   common.getHMIConnection():ExpectRequest("VR.AddCommand", params.responseVrParams)
@@ -124,7 +122,7 @@ local function rejected_UI_Addcommand(params)
     common.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS", {})
   end)
 
-  common.getMobileSession():ExpectResponse(cid, { success = false, resultCode = "GENERIC_ERROR", info = "Error message." })
+  common.getMobileSession():ExpectResponse(cid, { success = false, resultCode = "REJECTED", info = "Error message." })
 
   common.getHMIConnection():ExpectRequest("VR.DeleteCommand", params.deleteVRcommand)
   :Do(function(_,data)
@@ -132,24 +130,26 @@ local function rejected_UI_Addcommand(params)
   end)
 end
 
-local function rejected_Both_Addcommand(params)
+local function rejected_Both_Addcommand()
   local cid = common.getMobileSession():SendRPC("AddCommand", requestParams)
 
   common.getHMIConnection():ExpectRequest("UI.AddCommand", responseUiParams)
   :Do(function(_,data)
     -- HMI rejected
-    common.getHMIConnection():SendError(data.id, data.method, "GENERIC_ERROR", "Error message.")
+    common.getHMIConnection():SendError(data.id, data.method, "REJECTED", "Error message.")
   end)
 
   common.getHMIConnection():ExpectRequest("VR.AddCommand", responseVrParams)
   :Do(function(_,data)
     -- HMI rejected
-    common.getHMIConnection():SendError(data.id, data.method, "GENERIC_ERROR", "Error message.")
+    common.getHMIConnection():SendError(data.id, data.method, "REJECTED", "Error message.")
   end)
 
-  common.getMobileSession():ExpectResponse(cid, { success = false, resultCode = "GENERIC_ERROR", info = "Error message." })
+  common.getMobileSession():ExpectResponse(cid, { success = false, resultCode = "REJECTED", info = "Error message." })
 
   common.getHMIConnection():ExpectRequest("UI.DeleteCommand")
+  :Times(0)
+  common.getHMIConnection():ExpectRequest("VR.DeleteCommand")
   :Times(0)
 end
 
@@ -161,9 +161,9 @@ runner.Step("RAI", common.registerApp)
 runner.Step("Activate App", common.activateApp)
 
 runner.Title("Test")
-runner.Step("HMI sends VR.AddCommand with GENERIC_ERROR", rejected_VR_Addcommand, { deleteUI_AddCommand })
-runner.Step("HMI sends UI.AddCommand with GENERIC_ERROR", rejected_UI_Addcommand, { deleteVR_AddCommand })
-runner.Step("HMI sends UI and VR.AddCommand with GENERIC_ERROR", rejected_Both_Addcommand)
+runner.Step("HMI sends VR.AddCommand with REJECTED", rejected_VR_Addcommand, { deleteUI_AddCommand })
+runner.Step("HMI sends UI.AddCommand with REJECTED", rejected_UI_Addcommand, { deleteVR_AddCommand })
+runner.Step("HMI sends VR and UI.AddCommand with REJECTED ", rejected_Both_Addcommand)
 
 runner.Title("Postconditions")
 runner.Step("Stop SDL", common.postconditions)
