@@ -1,0 +1,4 @@
+./test_scripts/Defects_OnResetTimeout/001_OnResetTimeout_with_response.lua
+./test_scripts/Defects_OnResetTimeout/002_OnResetTimeout_without_response.lua
+./test_scripts/Defects_OnResetTimeout/003_OnResetTimeout_2_RPCs_in_the_same_time_with_responses.lua
+./test_scripts/Defects_OnResetTimeout/004_OnResetTimeout_2_RPCs_in_the_same_time_without_responses.lua
