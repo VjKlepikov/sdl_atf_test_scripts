@@ -35,6 +35,12 @@ function commonDefect.unexpectedDisconnect()
     end)
 end
 
+function commonDefect.startWait(pWait)
+  actions.start()
+  utils.wait(pWait)
+end
+
+
 --[[ @connectMobile: create connection
 --! @parameters: none
 --! @return: none
