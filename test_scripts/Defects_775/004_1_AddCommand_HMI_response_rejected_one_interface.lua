@@ -58,7 +58,7 @@ end
 --[[ Scenario ]]
 runner.Title("Preconditions")
 runner.Step("Clean environment", common.preconditions)
-runner.Step("Start SDL, HMI, connect Mobile, start Session", common.start)
+runner.Step("Start SDL, HMI, connect Mobile, start Session", common.startWait)
 runner.Step("RAI", common.registerApp)
 runner.Step("Activate App", common.activateApp)
 
