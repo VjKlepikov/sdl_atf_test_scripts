@@ -13,3 +13,4 @@
 ./test_scripts/Defects_WayPoint/013_SubscribeWayPointsHP_2Apps.lua
 ./test_scripts/Defects_WayPoint/014_SubscribeWayPoints_2App.lua
 ./test_scripts/Defects_WayPoint/015_SubscribeWayPoints_No_response_during_resumption.lua
+./test_scripts/Defects_WayPoint/016_SubscribeWayPoints_2Apps_during_resumption.lua
