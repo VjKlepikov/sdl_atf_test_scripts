@@ -20,7 +20,7 @@ commonDefect.wait = utils.wait
 commonDefect.cloneTable = utils.cloneTable
 commonDefect.getDeviceMAC = utils.getDeviceMAC
 local preloadedPT = commonFunctions:read_parameter_from_smart_device_link_ini("PreloadedPT")
-commonDefect.iterator = 1
+commonDefect.iterator = 10
 
 --[[ @unexpectedDisconnect: closing connection
 --! @parameters: none
@@ -62,6 +62,13 @@ function commonDefect.registerAppSubscribeWayPoints(pAppId, pTime)
   :Do(function(_,data)
       actions.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS",{})
     end)
+  actions.registerApp(pAppId)
+end
+
+function commonDefect.registerAppWithoutHashNoSubscribeWayPoints(pAppId, pTime)
+  commonDefect.getConfigAppParams(pAppId).hashID = nil
+  EXPECT_HMICALL("Navigation.SubscribeWayPoints")
+  :Times(pTime)
   actions.registerApp(pAppId)
 end
 
@@ -243,6 +250,7 @@ function commonDefect.connectMobile()
   :Do(function()
       utils.cprint(35, "Mobile connected")
     end)
+  utils.wait()
 end
 
 --[[ @preconditions: delete logs, backup preloaded file, update preloaded
