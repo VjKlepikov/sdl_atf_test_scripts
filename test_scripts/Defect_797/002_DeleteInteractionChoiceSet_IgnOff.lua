@@ -135,21 +135,24 @@ local function deleteInteractionChoiceSet(params)
 end
 
 --[[ Scenario ]]
-runner.Title("Preconditions")
-runner.Step("Clean environment", common.preconditions)
-runner.Step("Start SDL, HMI, connect Mobile, start Session", common.start)
-runner.Step("RAI", common.registerApp)
-runner.Step("Activate App", common.activateApp)
-runner.Step("Upload icon file", common.putFile, { putFileParams })
-runner.Step("CreateInteractionChoiceSet", createInteractionChoiceSet, { createAllParams })
-runner.Step("RAI App2", common.registerApp, { 2 })
+for i = 1, common.iterator do
+	runner.Title("Preconditions")
+	runner.Step("Clean environment", common.preconditions)
+	runner.Step("Start SDL, HMI, connect Mobile, start Session", common.start)
+	runner.Step("RAI", common.registerApp)
+	runner.Step("Activate App", common.activateApp)
+	runner.Step("Upload icon file", common.putFile, { putFileParams })
+	runner.Step("CreateInteractionChoiceSet", createInteractionChoiceSet, { createAllParams })
+	runner.Step("RAI App2", common.registerApp, { 2 })
 
-runner.Title("Test")
-runner.Step("DeleteInteractionChoiceSet Positive Case", deleteInteractionChoiceSet, { deleteAllParams })
-runner.Step("Ignition Off", common.ignitionOff)
-runner.Step("Start SDL, HMI, connect Mobile, start Session", common.start)
-runner.Step("App registration after ign off", common.registerApp)
+	runner.Title("Test" .. i)
+	runner.Step("DeleteInteractionChoiceSet Positive Case", deleteInteractionChoiceSet, { deleteAllParams })
+	runner.Step("Ignition Off", common.ignitionOff)
+	runner.Step("Start SDL, HMI, connect Mobile, start Session", common.start)
+	runner.Step("App registration after ign off", common.registerApp)
 
-runner.Title("Postconditions")
-runner.Step("Stop SDL", common.postconditions)
+	runner.Title("Postconditions")
+	runner.Step("Clean sessions", common.cleanSessions)
+	runner.Step("Stop SDL", common.postconditions)
+end
 

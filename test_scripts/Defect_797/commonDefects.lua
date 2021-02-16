@@ -21,6 +21,8 @@ commonDefect.cloneTable = utils.cloneTable
 commonDefect.getDeviceMAC = utils.getDeviceMAC
 local preloadedPT = commonFunctions:read_parameter_from_smart_device_link_ini("PreloadedPT")
 
+commonDefect.iterator = 10
+
 --[[ @unexpectedDisconnect: closing connection
 --! @parameters: none
 --! @return: none
@@ -133,13 +135,23 @@ function commonDefect.ignitionOff()
   RUN_AFTER(forceStopSDL, timeout + 500)
 end
 
-
 function commonDefect.putFile(params, pAppId)
   if not pAppId then pAppId = 1 end
   local mobileSession = commonDefect.getMobileSession(pAppId);
   local cid = mobileSession:SendRPC("PutFile", params.requestParams, params.filePath)
 
   mobileSession:ExpectResponse(cid, { success = true, resultCode = "SUCCESS"})
+end
+
+function commonDefect.cleanSessions()
+  for i = 1, actions.getAppsCount() do
+    test.mobileSession[i]:StopRPC()
+    :Do(function(_, d)
+        utils.cprint(35, "Mobile session " .. d.sessionId .. " deleted")
+        test.mobileSession[i] = nil
+      end)
+  end
+  utils.wait()
 end
 
 return commonDefect

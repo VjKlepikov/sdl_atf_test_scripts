@@ -79,22 +79,25 @@ local function createInteractionChoiceSet(params, pApp)
 end
 
 --[[ Scenario ]]
-runner.Title("Preconditions")
-runner.Step("Clean environment", common.preconditions)
-runner.Step("Start SDL, HMI, connect Mobile, start Session", common.start)
-runner.Step("RAI", common.registerApp)
-runner.Step("Activate App", common.activateApp)
-runner.Step("CreateInteractionChoiceSet", createInteractionChoiceSet, { createAllParams })
-runner.Step("RAI App2", common.registerApp, { 2 })
-runner.Step("Activate App", common.activateApp, { 2 })
-runner.Step("CreateInteractionChoiceSet App2", createInteractionChoiceSet, { createAllParams, 2 })
-runner.Step("RAI App2", common.registerApp, { 3 })
+for i = 1, common.iterator do
+	runner.Title("Preconditions")
+	runner.Step("Clean environment", common.preconditions)
+	runner.Step("Start SDL, HMI, connect Mobile, start Session", common.start)
+	runner.Step("RAI", common.registerApp)
+	runner.Step("Activate App", common.activateApp)
+	runner.Step("CreateInteractionChoiceSet", createInteractionChoiceSet, { createAllParams })
+	runner.Step("RAI App2", common.registerApp, { 2 })
+	runner.Step("Activate App", common.activateApp, { 2 })
+	runner.Step("CreateInteractionChoiceSet App2", createInteractionChoiceSet, { createAllParams, 2 })
+	runner.Step("RAI App3", common.registerApp, { 3 })
 
-runner.Title("Test")
-runner.Step("Close session", common.unexpectedDisconnect)
-runner.Step("Connect mobile", common.connectMobile)
-runner.Step("App registration after disconnect", common.registerAppWOPTU)
+	runner.Title("Test" .. i)
+	runner.Step("Close session", common.unexpectedDisconnect)
+	runner.Step("Connect mobile", common.connectMobile)
+	runner.Step("App registration after disconnect", common.registerAppWOPTU)
 
-runner.Title("Postconditions")
-runner.Step("Stop SDL", common.postconditions)
+	runner.Title("Postconditions")
+	runner.Step("Clean sessions", common.cleanSessions)
+	runner.Step("Stop SDL", common.postconditions)
+end
 
