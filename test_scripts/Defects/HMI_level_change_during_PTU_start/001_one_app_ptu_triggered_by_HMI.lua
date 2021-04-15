@@ -36,9 +36,9 @@ runner.Step("RAI", common.registerApp)
 runner.Step("Activate App", common.activateApp)
 runner.Step("PTU", common.policyTableUpdate)
 
-for iter, time in pairs(common.timeToSendNotif) do
+for iter=1, 400 do
   runner.Title("Test " .. iter)
-  runner.Step("Trigger PTU, OnEventChanged available=true", triggerPTUwithOnEventChange, { time })
+  runner.Step("Trigger PTU, OnEventChanged available=true", triggerPTUwithOnEventChange, { iter })
   runner.Step("PTU", common.policyTableUpdate)
   runner.Step("OnEventChanged available=false", onEventChangeAvailableFalse)
 end
