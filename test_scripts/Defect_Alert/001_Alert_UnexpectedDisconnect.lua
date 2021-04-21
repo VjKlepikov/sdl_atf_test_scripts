@@ -92,7 +92,7 @@ local function sendOnSystemContext(ctx)
 end
 
 local function prepareAlertParams(params, additionalParams)
-	params.responseUiParams.appID = commonDefect.getHMIAppId()
+	--params.responseUiParams.appID = commonDefect.getHMIAppId()
 
 	if additionalParams.softButtons ~= nil then
 		params.requestParams.duration = nil
@@ -136,7 +136,7 @@ local function unexpectedDisconnectAlert(params, additionalParams, pRunAfterTime
 	end)
 	:Times(AnyNumber())
 
-	params.ttsSpeakRequestParams.appID = commonDefect.getHMIAppId()
+	--params.ttsSpeakRequestParams.appID = commonDefect.getHMIAppId()
 	commonDefect.getHMIConnection():ExpectRequest("TTS.Speak", params.ttsSpeakRequestParams)
 	:Do(function(_,data)
 		commonDefect.log("SDL->HMI: RQ TTS.Speak")
