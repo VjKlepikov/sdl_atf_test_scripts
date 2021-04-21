@@ -12,7 +12,7 @@ local utils = require('user_modules/utils')
 --[[ Local Variables ]]
 local commonDefect = actions
 commonDefect.timeToSendNotif = {
-  0, 1, 2, 3, 4, 5, 7, 10, 13, 15, 17, 20, 25, 30, 35, 50, 70, 100, 120, 150, 200, 400
+  0, 1, 2, 3, 4, 5, 7, 10, 13, 15, 17, 20, 25, 30, 35, 50, 70, 85, 100, 110, 120, 150, 175, 200, 250, 300, 350, 400
 }
 
 --[[ App configuration parameters ]]
