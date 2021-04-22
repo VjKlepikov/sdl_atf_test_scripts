@@ -1,0 +1,2 @@
+./test_scripts/defect_814/001_SetDisplayLayout.lua
+./test_scripts/defect_814/002_SetDisplayLayout.lua
