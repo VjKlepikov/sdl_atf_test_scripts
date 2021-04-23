@@ -1,2 +1,4 @@
 ./test_scripts/defect_814/001_SetDisplayLayout.lua
 ./test_scripts/defect_814/002_SetDisplayLayout.lua
+./test_scripts/defect_814/003_RAI_during_UI.GetCapabilities_response.lua
+./test_scripts/defect_814/004_UIGetCapabilities_response_during_RAI.lua

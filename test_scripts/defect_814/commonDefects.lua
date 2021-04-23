@@ -10,6 +10,9 @@ local actions = require("user_modules/sequences/actions")
 local utils = require('user_modules/utils')
 local test = require("user_modules/dummy_connecttest")
 local atf_logger = require("atf_logger")
+local events = require("events")
+local commonFunctions = require("user_modules/shared_testcases/commonFunctions")
+local hmi_values = require("user_modules/hmi_values")
 
 --[[ Local Variables ]]
 local commonDefect = actions
@@ -170,11 +173,11 @@ function commonDefect.getDisplayCapValues()
 -- some capabilities are excluded due to SDL issue
   return {
     displayType = "TYPE2", -- default 'GEN2_8_DMA'
-    graphicSupported = false,  -- default 'true'
-    imageCapabilities = {
-      --"DYNAMIC", -- default
-      "STATIC"
-     },
+    graphicSupported = true,  -- default 'true'
+    -- imageCapabilities = {
+    --   --"DYNAMIC", -- default
+    --   "STATIC"
+    --  },
     imageFields = commonDefect.getDisplayCapImageFieldsValues(),
     mediaClockFormats = {
       "CLOCK1",
@@ -263,12 +266,110 @@ function commonDefect.registerAppLog(pAppId)
       commonDefect.getMobileSession(pAppId):ExpectResponse(corId, { success = true, resultCode = "SUCCESS" })
       :Do(function()
           commonDefect.log("SDL->App: RS RegisterAppInterface")
-          commonDefect.getMobileSession(pAppId):ExpectNotification("OnHMIStatus",
-            { hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN" })
-          commonDefect.getMobileSession(pAppId):ExpectNotification("OnPermissionsChange")
-          :Times(AnyNumber())
         end)
     end)
+end
+
+local function allowSDL()
+    actions.getHMIConnection():SendNotification("SDL.OnAllowSDLFunctionality", {
+    allowed = true,
+    source = "GUI",
+    device = {
+      id = utils.getDeviceMAC(),
+      name = utils.getDeviceName()
+    }
+  })
+end
+
+function commonDefect.startWoHMIonReady()
+  local event = events.Event()
+  event.matches = function(e1, e2) return e1 == e2 end
+  test:runSDL()
+  commonFunctions:waitForSDLStart(test)
+  :Do(function()
+      test:initHMI()
+      :Do(function()
+          utils.cprint(35, "HMI initialized")
+          test:connectMobile()
+          :Do(function()
+              utils.cprint(35, "Mobile connected")
+              allowSDL(test)
+              actions.getHMIConnection():RaiseEvent(event, "Start event")
+            end)
+        end)
+    end)
+  return actions.getHMIConnection():ExpectEvent(event, "Start event")
+end
+
+function commonDefect.getHMIParams()
+  local hmiCaps = hmi_values.getDefaultHMITable()
+  hmiCaps.UI.GetCapabilities.mandatory = false
+
+  -- Update UI.GetCapabilities
+  hmiCaps.UI.GetCapabilities.params.displayCapabilities.mediaClockFormats = {
+    "CLOCK1",
+    "CLOCK2",
+    "CLOCK3"
+    -- "CLOCKTEXT1", -- default
+    -- "CLOCKTEXT2", -- default
+    -- "CLOCKTEXT3", -- default
+    -- "CLOCKTEXT4"  -- default
+  }
+  hmiCaps.UI.GetCapabilities.params.displayCapabilities.graphicSupported = false -- default 'true'
+  hmiCaps.UI.GetCapabilities.params.displayCapabilities.imageCapabilities = {
+    "DYNAMIC"
+    -- "STATIC"  --default
+  }
+  hmiCaps.UI.GetCapabilities.params.hmiZoneCapabilities = "BACK" -- default 'FRONT'
+  hmiCaps.UI.GetCapabilities.params.softButtonCapabilities = {
+    {
+      shortPressAvailable = false, -- default 'true'
+      longPressAvailable = false, -- default 'true'
+      upDownAvailable = false, -- default 'true'
+      imageSupported = false -- default 'true'
+    }
+  }
+  return hmiCaps
+end
+
+function commonDefect.HMIonReady(pHMIParams)
+  test:initHMI_onReady(pHMIParams)
+  :Do(function()
+    utils.cprint(35, "HMI is ready")
+  end)
+end
+
+
+function commonDefect.RAIDuringUIGetCapabilities(pTime)
+local hmiCapsParam = commonDefect.getHMIParams()
+RUN_AFTER(commonDefect.registerAppLog, pTime)
+commonDefect.getHMIConnection():ExpectRequest("UI.GetCapabilities")
+:Do(function(_, data)
+    commonDefect.log("SDL->HMI: RQ UI.GetCapabilities")
+    commonDefect.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS", hmiCapsParam.UI.GetCapabilities.params)
+    commonDefect.log("SDL->HMI: RS UI.GetCapabilities")
+  end)
+
+commonDefect.HMIonReady(hmiCapsParam)
+commonDefect.getMobileSession():ExpectNotification("OnHMIStatus",
+  { hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN" })
+end
+
+function commonDefect.UIGetCapabilitiesDuringRAI(pTime)
+local hmiCapsParam = commonDefect.getHMIParams()
+local function HMIonReadyWithUpdateParam()
+  commonDefect.HMIonReady(hmiCapsParam)
+end
+RUN_AFTER(HMIonReadyWithUpdateParam, pTime)
+commonDefect.getHMIConnection():ExpectRequest("UI.GetCapabilities")
+:Do(function(_, data)
+    commonDefect.log("SDL->HMI: RQ UI.GetCapabilities")
+    commonDefect.getHMIConnection():SendResponse(data.id, data.method, "SUCCESS", hmiCapsParam.UI.GetCapabilities.params)
+    commonDefect.log("SDL->HMI: RS UI.GetCapabilities")
+  end)
+commonDefect.registerAppLog()
+commonDefect.getMobileSession():ExpectNotification("OnHMIStatus",
+  { hmiLevel = "NONE", audioStreamingState = "NOT_AUDIBLE", systemContext = "MAIN" })
 end
 
 return commonDefect
