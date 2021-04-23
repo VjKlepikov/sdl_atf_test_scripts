@@ -21,7 +21,7 @@ local common = require('test_scripts/defect_814/commonDefects')
 runner.testSettings.isSelfIncluded = false
 
 --[[ Scenario ]]
-for time = 0, 1000, 1  do
+for time = 0, 40, 0.5  do
 	runner.Title("Test_" .. time)
 	runner.Title("Preconditions")
 	runner.Step("Clean environment", common.preconditions)
