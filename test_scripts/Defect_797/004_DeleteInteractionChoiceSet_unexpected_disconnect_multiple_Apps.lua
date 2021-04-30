@@ -96,7 +96,7 @@ end
 for i = 1, common.iterator do
 	runner.Title("Preconditions")
 	runner.Step("Clean environment", common.preconditions)
-	runner.Step("Start SDL, HMI, connect Mobile, start Session", common.start)
+	runner.Step("Start SDL, HMI, connect Mobile, start Session", common.startWait)
 	runner.Step("RAI App1", common.registerApp)
 	runner.Step("Activate App", common.activateApp)
 	runner.Step("CreateInteractionChoiceSet App1", createInteractionChoiceSet, { createAllParams, 1 })

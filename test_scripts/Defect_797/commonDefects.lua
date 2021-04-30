@@ -154,4 +154,9 @@ function commonDefect.cleanSessions()
   utils.wait()
 end
 
+function commonDefect.startWait()
+  actions.start()
+  utils.wait(500)
+end
+
 return commonDefect
